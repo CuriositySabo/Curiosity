@@ -1,5 +1,6 @@
 package it.uninsubia.curiosityapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
@@ -12,16 +13,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val intent = Intent (this,RegisterActivity::class.java )
+        startActivity(intent)
+
     }
 
     override fun onStart() {
         super.onStart()
-        if(auth.currentUser == null) {
+
+        /*if(auth.currentUser == null) {
             loginUser()
-        }
+        }*/
     }
 
     private fun loginUser() {
-
+        val intent = Intent (this,RegisterActivity::class.java )
+        startActivity(intent)
     }
 }
