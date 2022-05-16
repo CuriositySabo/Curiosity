@@ -3,7 +3,6 @@ package it.uninsubia.curiosityapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
@@ -45,8 +44,45 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    private fun registerUser() {
-        auth.createUserWithEmailAndPassword(etemail.text.toString(), etpassword.text.toString())
+    private fun registerUser( ){
+        val nome = etnome.text.toString().trim()
+        val cognome = etcognome.text.toString().trim()
+        val email = etemail.text.toString().trim()
+        val password =  etpassword.text.toString().trim()
+
+
+        if(nome.isEmpty()) {
+            etnome.setError("é richiesto il tuo nome")
+            etnome.requestFocus()
+            return
+        }
+
+        if(cognome.isEmpty()) {
+            etnome.setError("é richiesto il tuo cognome")
+            etnome.requestFocus()
+            return
+        }
+
+        if(email.isEmpty()) {
+            etnome.setError("é richiesto una email")
+            etnome.requestFocus()
+            return
+        }
+
+        if(password.isEmpty()) {
+            etnome.setError("é richiesto una password")
+            etnome.requestFocus()
+            return
+        }
+
+        if(password.length < 6){
+            etnome.setError("é richiesto una password di più di 6 caratteri")
+            etnome.requestFocus()
+            return
+        }
+
+        FirebaseDatabase.getInstance("https://curiosity-db178-default-rtdb.firebaseio.com").getReference("test").setValue("$email, $password")
+        auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val intent = Intent(this, MainActivity::class.java)
