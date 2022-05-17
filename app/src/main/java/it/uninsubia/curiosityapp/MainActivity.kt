@@ -7,13 +7,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var auth : FirebaseAuth
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent (this,RegisterActivity::class.java )
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
 
     }
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
-        val intent = Intent (this,RegisterActivity::class.java )
-        startActivity(intent)
+//        val intent = Intent(this, LoginActivity::class.java)
+//        startActivity(intent)
     }
 }

@@ -30,15 +30,14 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+
         layout = ActivityRegisterBinding.inflate(layoutInflater)
-
-
 
         etnome = layout.editTextName
         etcognome = layout.editTextCognome
         etemail = layout.editTextEmail
         etpassword = layout.editTextPassword
-        button = layout.button
+        button = layout.registerbutton
         progressBar = layout.progressbar
 
 
