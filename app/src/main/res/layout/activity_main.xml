@@ -38,12 +38,7 @@
 
     <Button
         android:id="@+id/play"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Gioca Curiosity+"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
+        style="@style/customButton"
+        android:text="Gioca Curiosity+" />
 
 </LinearLayout>
