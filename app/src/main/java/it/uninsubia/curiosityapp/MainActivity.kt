@@ -1,12 +1,10 @@
 package it.uninsubia.curiosityapp
 
-import android.app.UiModeManager.MODE_NIGHT_YES
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth : FirebaseAuth
