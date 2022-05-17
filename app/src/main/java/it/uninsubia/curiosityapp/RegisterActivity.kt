@@ -79,6 +79,7 @@ class RegisterActivity : AppCompatActivity() {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etemail.error = "É necessario inserire una email esistente"
             etemail.requestFocus()
+            return
         }
 
         if (password.isEmpty()) {
@@ -121,14 +122,17 @@ class RegisterActivity : AppCompatActivity() {
                             }
                         }
 
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, LoginActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(this, "Errore nel registrare l'utente!", Toast.LENGTH_LONG)
                         .show()
                     progressBar.visibility = View.GONE
                 }
+
+                progressBar.visibility = View.GONE
             }
+
+
     }
 }

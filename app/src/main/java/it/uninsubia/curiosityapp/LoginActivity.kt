@@ -16,6 +16,7 @@ import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 import it.uninsubia.curiosityapp.databinding.ActivityRegisterBinding
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
+    private lateinit var tvForgot: TextView
     private lateinit var layout: ActivityLoginBinding
 
     private lateinit var button: Button
@@ -34,15 +35,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         super.onCreate(savedInstanceState)
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-
-
         layout = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(layout.root)
+
         etEmail = layout.editTextEmail
         etPassword = layout.editTextPassword
         progressBar = layout.progressbar
+
+        tvForgot = layout.forgotTv
+        tvForgot.setOnClickListener(this)
 
         button = layout.loginbutton
         button.setOnClickListener(this)
@@ -50,8 +52,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         tvRegistrati = layout.registerTv
         tvRegistrati.setOnClickListener(this)
 
-
-        setContentView(layout.root)
     }
 
     private fun loginUser() {
@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmail.error = "É necessario inserire una email esistente"
             etEmail.requestFocus()
+            return
         }
 
         if (password.isEmpty()) {
@@ -113,6 +114,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                 }
             }
+
+        progressBar.visibility = View.GONE
     }
 
     override fun onClick(v: View?) {
@@ -122,8 +125,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.registerTv -> {
-                val intent = Intent(this, RegisterActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, RegisterActivity::class.java))
+            }
+
+            R.id.forgotTv -> {
+                startActivity(Intent(this, ForgotPswActivity::class.java))
             }
         }
     }
