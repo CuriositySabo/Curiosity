@@ -89,8 +89,8 @@ class RegisterActivity : AppCompatActivity() {
 
 
         val db = FirebaseDatabase.getInstance("https://curiosity-db178-default-rtdb.firebaseio.com")
-        val ref = db.getReference("users").child(email)
-//        ref.setValue("$nome, $cognome, $email, $password")
+        val ref = db.getReference("users").child("$nome $cognome")
+        ref.setValue("$nome, $cognome, $email, $password")
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
