@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -19,7 +22,10 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etemail: EditText
     private lateinit var etpassword : EditText
     private lateinit var button: Button
+    private lateinit var progressBar : ProgressBar
     private lateinit var auth: FirebaseAuth
+
+    val DBURL = "https://curiosity-db178-default-rtdb.firebaseio.com"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,7 @@ class RegisterActivity : AppCompatActivity() {
         etemail = layout.editTextEmail
         etpassword = layout.editTextPassword
         button = layout.button
+        progressBar = layout.progressbar
 
 
         button.setOnClickListener() {
@@ -88,16 +95,34 @@ class RegisterActivity : AppCompatActivity() {
         }
 
 
-        val db = FirebaseDatabase.getInstance("https://curiosity-db178-default-rtdb.firebaseio.com")
-        val ref = db.getReference("users").child("$nome $cognome")
-        ref.setValue("$nome, $cognome, $email, $password")
+
+        progressBar.visibility = View.VISIBLE
+
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val user = User(nome, cognome, email)
+                    FirebaseDatabase.getInstance(DBURL).getReference("users")
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .setValue(user).addOnCompleteListener(this) { task ->
+                            if(task.isSuccessful) {
+                                Toast.makeText(this, "Utente registrato correttamente!", Toast.LENGTH_LONG).show()
+                                progressBar.visibility = View.GONE
+                            }
+                            else {
+                                Toast.makeText(this, "Errore nel registrare l'utente! Riprova!", Toast.LENGTH_LONG).show()
+                                progressBar.visibility = View.GONE
+                            }
+                        }
+
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
+                }
+                else {
+                    Toast.makeText(this, "Errore nel registrare l'utente!", Toast.LENGTH_LONG).show()
+                    progressBar.visibility = View.GONE
                 }
             }
     }
