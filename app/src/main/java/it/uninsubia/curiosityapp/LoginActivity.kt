@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
@@ -75,19 +76,29 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        progressBar.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
 
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(
-                        this,
-                        "Log in effettuato con successo!",
-                        Toast.LENGTH_LONG
-                    ).show()
+            .addOnCompleteListener() {
+                if (it.isSuccessful) {
+                    val user = FirebaseAuth.getInstance().currentUser
 
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+                    if (user!!.isEmailVerified) {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        Toast.makeText(
+                            this,
+                            "Log in effettuato con successo!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Controlla la tua email per verificare il tuo account",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
                     finish()
                 } else {
                     Toast.makeText(

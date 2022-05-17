@@ -98,11 +98,13 @@ class RegisterActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val userFirebase = FirebaseAuth.getInstance().currentUser
+                    userFirebase!!.sendEmailVerification()
                     val user = User(nome, cognome, email)
                     FirebaseDatabase.getInstance(DBURL).getReference("users")
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                        .setValue(user).addOnCompleteListener(this) { task ->
-                            if (task.isSuccessful) {
+                        .setValue(user).addOnCompleteListener(this) {
+                            if (it.isSuccessful) {
                                 Toast.makeText(
                                     this,
                                     "Utente registrato correttamente!",
@@ -119,7 +121,7 @@ class RegisterActivity : AppCompatActivity() {
                             }
                         }
 
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

@@ -15,21 +15,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+
 
     }
 
     override fun onStart() {
         super.onStart()
-
-        /*if(auth.currentUser == null) {
-            loginUser()
-        }*/
     }
 
-    private fun loginUser() {
-//        val intent = Intent(this, LoginActivity::class.java)
-//        startActivity(intent)
-    }
 }
