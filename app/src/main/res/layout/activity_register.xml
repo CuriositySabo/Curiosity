@@ -1,65 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
     android:layout_margin="24dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".RegisterActivity">
 
     <TextView
         android:id="@+id/prova"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Registrati"
+        android:layout_marginTop="24dp"
         android:gravity="center_horizontal"
+        android:text="Registrati"
         android:textSize="32dp"
-        style="@style/TextAppearance.MaterialComponents.Headline4"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <EditText
         android:id="@+id/editTextName"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:ems="10"
+        android:hint="Inserire nome"
         android:inputType="textPersonName"
-        android:hint="Inserire nome" />
-
-    <EditText
-        android:id="@+id/editTextCognome"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Inserire cognome"  />
+        app:layout_constraintTop_toBottomOf="@+id/prova"
+        tools:layout_editor_absoluteX="0dp" />
 
     <EditText
         android:id="@+id/editTextEmail"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:ems="10"
+        android:hint="email"
         android:inputType="textEmailAddress"
-        android:hint="email"/>
+        app:layout_constraintTop_toBottomOf="@+id/editTextCognome"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <EditText
+        android:id="@+id/editTextCognome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:hint="Inserire cognome"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/editTextName"
+        tools:layout_editor_absoluteX="0dp" />
 
     <EditText
         android:id="@+id/editTextPassword"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:ems="10"
+        android:hint="password"
         android:inputType="textPassword"
-        android:hint="password"/>
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Registrati"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="28dp"
+        android:text="Registrati"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword"
+        app:layout_constraintVertical_bias="0.097" />
 
+    <ProgressBar
+        android:layout_width="69dp"
+        android:layout_height="96dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.502"
+        android:visibility="invisible"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
