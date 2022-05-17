@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 import it.uninsubia.curiosityapp.databinding.ActivityRegisterBinding
 
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         layout = ActivityLoginBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         etEmail = layout.editTextEmail
         etPassword = layout.editTextPassword
