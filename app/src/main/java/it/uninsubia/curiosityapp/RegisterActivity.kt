@@ -3,6 +3,7 @@ package it.uninsubia.curiosityapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +31,7 @@ class RegisterActivity : AppCompatActivity() {
         etnome = layout.editTextName
         etcognome = layout.editTextCognome
         etemail = layout.editTextEmail
-        etpassword = layout.editTextEmail
+        etpassword = layout.editTextPassword
         button = layout.button
 
 
@@ -64,24 +65,33 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if(email.isEmpty()) {
-            etemail.error = "é richiesto una email"
+            etemail.error = "é richiesta una email"
             etemail.requestFocus()
             return
+        }
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etemail.error = "É necessario inserire una email esistente"
+            etemail.requestFocus()
         }
 
         if(password.isEmpty()) {
-            etemail.error = "é richiesto una password"
-            etemail.requestFocus()
-            return
-        }
-
-        if(password.length < 6){
-            etpassword.error = "é richiesto una password di più di 6 caratteri"
+            etpassword.error = "é richiesta una password"
             etpassword.requestFocus()
             return
         }
 
-        FirebaseDatabase.getInstance("https://curiosity-db178-default-rtdb.firebaseio.com").getReference("test").setValue("$email, $password")
+        if(password.length < 6){
+            etpassword.error = "é richiesta una password di più di 6 caratteri"
+            etpassword.requestFocus()
+            return
+        }
+
+
+        val db = FirebaseDatabase.getInstance("https://curiosity-db178-default-rtdb.firebaseio.com")
+        val ref = db.getReference("users").child(email)
+//        ref.setValue("$nome, $cognome, $email, $password")
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
