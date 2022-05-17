@@ -22,7 +22,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val auth = Firebase.auth
+        auth = Firebase.auth
         layout = ActivityRegisterBinding.inflate(layoutInflater)
 
 
@@ -52,32 +52,32 @@ class RegisterActivity : AppCompatActivity() {
 
 
         if(nome.isEmpty()) {
-            etnome.setError("é richiesto il tuo nome")
+            etnome.error = "é richiesto il tuo nome"
             etnome.requestFocus()
             return
         }
 
         if(cognome.isEmpty()) {
-            etnome.setError("é richiesto il tuo cognome")
-            etnome.requestFocus()
+            etcognome.setError("é richiesto il tuo cognome")
+            etcognome.requestFocus()
             return
         }
 
         if(email.isEmpty()) {
-            etnome.setError("é richiesto una email")
-            etnome.requestFocus()
+            etemail.error = "é richiesto una email"
+            etemail.requestFocus()
             return
         }
 
         if(password.isEmpty()) {
-            etnome.setError("é richiesto una password")
-            etnome.requestFocus()
+            etemail.error = "é richiesto una password"
+            etemail.requestFocus()
             return
         }
 
         if(password.length < 6){
-            etnome.setError("é richiesto una password di più di 6 caratteri")
-            etnome.requestFocus()
+            etpassword.error = "é richiesto una password di più di 6 caratteri"
+            etpassword.requestFocus()
             return
         }
 
