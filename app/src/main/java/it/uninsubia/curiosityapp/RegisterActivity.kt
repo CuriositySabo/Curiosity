@@ -28,7 +28,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
-    val DBURL = "https://curiosity-db178-default-rtdb.firebaseio.com"
+    private val dbUrl = "https://curiosity-db178-default-rtdb.firebaseio.com"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class RegisterActivity : AppCompatActivity() {
         button = layout.registerbutton
         progressBar = layout.progressbar
 
-        button.setOnClickListener() {
+        button.setOnClickListener {
             registerUser()
         }
 
@@ -65,7 +65,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (cognome.isEmpty()) {
-            etcognome.setError("é richiesto il tuo cognome")
+            etcognome.error = "é richiesto il tuo cognome"
             etcognome.requestFocus()
             return
         }
@@ -102,7 +102,7 @@ class RegisterActivity : AppCompatActivity() {
                     val userFirebase = FirebaseAuth.getInstance().currentUser
                     userFirebase!!.sendEmailVerification()
                     val user = User(nome, cognome, email)
-                    FirebaseDatabase.getInstance(DBURL).getReference("users")
+                    FirebaseDatabase.getInstance(dbUrl).getReference("users")
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                         .setValue(user).addOnCompleteListener(this) {
                             if (it.isSuccessful) {

@@ -1,19 +1,16 @@
 package it.uninsubia.curiosityapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
-import it.uninsubia.curiosityapp.databinding.ActivityRegisterBinding
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var tvForgot: TextView
@@ -85,7 +82,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         progressBar.visibility = View.VISIBLE
 
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener() {
+            .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val user = FirebaseAuth.getInstance().currentUser
 

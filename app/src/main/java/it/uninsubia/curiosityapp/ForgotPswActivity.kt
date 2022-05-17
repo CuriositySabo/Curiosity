@@ -1,6 +1,5 @@
 package it.uninsubia.curiosityapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
@@ -8,9 +7,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityForgotPswBinding
-import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 
 class ForgotPswActivity : AppCompatActivity() {
     private lateinit var layout: ActivityForgotPswBinding
@@ -29,7 +28,7 @@ class ForgotPswActivity : AppCompatActivity() {
         progressBar = layout.progressbar
         etEmail = layout.editTextEmail
         resetBtn = layout.resetBtn
-        resetBtn.setOnClickListener() {
+        resetBtn.setOnClickListener {
             resetPassword()
         }
 
@@ -52,7 +51,7 @@ class ForgotPswActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
-        auth.sendPasswordResetEmail(email).addOnCompleteListener() {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(
                     this,

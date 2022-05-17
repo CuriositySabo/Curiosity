@@ -1,13 +1,11 @@
 package it.uninsubia.curiosityapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         logoutBtn = layout.logoutBtn
-        logoutBtn.setOnClickListener() {
+        logoutBtn.setOnClickListener {
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
         }
