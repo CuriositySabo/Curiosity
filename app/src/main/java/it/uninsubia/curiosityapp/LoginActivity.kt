@@ -28,11 +28,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        auth = Firebase.auth
+        if(auth.currentUser != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
         super.onCreate(savedInstanceState)
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-        auth = Firebase.auth
+
 
         layout = ActivityLoginBinding.inflate(layoutInflater)
         etEmail = layout.editTextEmail
