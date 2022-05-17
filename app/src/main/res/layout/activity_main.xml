@@ -13,32 +13,29 @@
             android:id="@+id/menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/icon_menu"
+            app:srcCompat="@drawable/icon_menu_white"
             android:layout_margin="5dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:contentDescription="marte" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/img_home"
         android:layout_width="250dp"
         android:layout_height="400dp"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
-        android:layout_weight="0"
         app:srcCompat="@raw/mars_planet" />
 
     <TextView
         android:id="@+id/game_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        style="@style/customTextView"
         android:layout_marginBottom="20dp"
-        android:text="Sei molto curioso?"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:text="Sei molto curioso?" />
 
     <Button
         android:id="@+id/play"
         style="@style/customButton"
-        android:text="Gioca Curiosity+" />
+        android:text="Gioca a Curiosity+" />
 
 </LinearLayout>
