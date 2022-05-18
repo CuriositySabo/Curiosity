@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityForgotPswBinding
 
@@ -21,9 +22,10 @@ class ForgotPswActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
         layout = ActivityForgotPswBinding.inflate(layoutInflater)
         setContentView(layout.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        auth = FirebaseAuth.getInstance()
 
         progressBar = layout.progressbar
         etEmail = layout.editTextEmail
@@ -58,8 +60,7 @@ class ForgotPswActivity : AppCompatActivity() {
                     "Controlla la tua email per resettare la password!",
                     Toast.LENGTH_LONG
                 ).show()
-            }
-            else {
+            } else {
                 Toast.makeText(
                     this,
                     "Qualcosa non è risucito. Riprova!",

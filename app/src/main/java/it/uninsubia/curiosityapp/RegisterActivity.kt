@@ -32,11 +32,12 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        layout = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(layout.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         auth = Firebase.auth
 
-        layout = ActivityRegisterBinding.inflate(layoutInflater)
         etnome = layout.editTextName
         etcognome = layout.editTextCognome
         etemail = layout.editTextEmail
@@ -48,7 +49,6 @@ class RegisterActivity : AppCompatActivity() {
             registerUser()
         }
 
-        setContentView(layout.root)
     }
 
     private fun registerUser() {

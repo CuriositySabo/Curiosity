@@ -11,7 +11,7 @@ import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
-    private lateinit var layout : ActivityMainBinding
+    private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
