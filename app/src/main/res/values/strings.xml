@@ -11,4 +11,7 @@
     <string name="action_settings">Settings</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="game_text">Sei molto curioso?</string>
+    <string name="game_button_text">Gioca a Curiosity+</string>
+    <string name="planet_description">Pianeta Marte</string>
 </resources>

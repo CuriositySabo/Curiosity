@@ -11,17 +11,18 @@
         android:layout_height="400dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
-        app:srcCompat="@raw/mars_planet" />
+        app:srcCompat="@raw/mars_planet"
+        android:contentDescription="@string/planet_description" />
 
     <TextView
         android:id="@+id/game_text"
         style="@style/customTextView"
         android:layout_marginBottom="20dp"
-        android:text="Sei molto curioso?" />
+        android:text="@string/game_text" />
 
     <Button
         android:id="@+id/play"
         style="@style/customButton"
-        android:text="Gioca a Curiosity+" />
+        android:text="@string/game_button_text" />
 
 </LinearLayout>
