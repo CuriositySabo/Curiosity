@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CuriosityApp">
         <activity
+            android:name=".nav_drawer"
+            android:exported="false"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/Theme.CuriosityApp.NoActionBar" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
