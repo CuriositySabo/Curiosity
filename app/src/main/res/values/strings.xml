@@ -2,5 +2,5 @@
     <string name="app_name">CuriosityApp</string>
     <string name="menu_home">Homepage</string>
     <string name="menu_settings">Impostazioni</string>
-    <string name="nav_header_title">Titolo</string>
+    <string name="nav_header_title">Menu</string>
 </resources>
