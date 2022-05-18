@@ -8,11 +8,9 @@
     <fragment
         android:id="@+id/home_fragment"
         android:name="it.uninsubia.curiosityapp.home_fragment"
-        android:label="fragment_home_fragment"
         tools:layout="@layout/home_fragment_layout" />
     <fragment
         android:id="@+id/settings_fragment"
         android:name="it.uninsubia.curiosityapp.settings_fragment"
-        android:label="settings_fragment_layout"
         tools:layout="@layout/settings_fragment_layout" />
 </navigation>
