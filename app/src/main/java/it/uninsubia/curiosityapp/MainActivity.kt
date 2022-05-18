@@ -1,8 +1,15 @@
 package it.uninsubia.curiosityapp
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
@@ -13,6 +20,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
+
+    private val channelid = "notifyCuriosity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +37,38 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
+        createNotificationchanel()
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
+
+        val intent = Intent(this, CustomBroadcastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
+
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+
+        val momentTime = System.currentTimeMillis()
+
+        var time = 3
+        time *= 1000
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
+
+    }
+
+    private fun createNotificationchanel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "CuriosityChannel"
+            val descr = "Channel for Curiosity"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelid, name, importance)
+            channel.description = descr
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 }
