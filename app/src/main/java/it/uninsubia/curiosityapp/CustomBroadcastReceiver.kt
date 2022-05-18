@@ -13,8 +13,8 @@ class CustomBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val notification = NotificationCompat.Builder(context!!, channelid)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Foreground Service Kotlin Example")
-            .setContentText("You are listening queen_we_are_the_champions...")
+            .setContentTitle("Lo sapevi?")
+            .setContentText("Testo")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
