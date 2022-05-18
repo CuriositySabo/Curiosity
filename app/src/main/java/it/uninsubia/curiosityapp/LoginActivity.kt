@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
-        if(auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
+        if (auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
