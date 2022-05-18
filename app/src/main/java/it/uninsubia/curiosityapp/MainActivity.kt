@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        createNotificationchanel()
+        createNotificationchanel() // creazione del canale di notifica
 
     }
 
@@ -45,17 +45,18 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
 
-        val intent = Intent(this, CustomBroadcastReceiver::class.java)
+        val intent = Intent(this, CustomBroadcastReceiver::class.java) //creazione intent con il broadcast
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
 
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
-        val momentTime = System.currentTimeMillis()
+
+        val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
 
         var time = 3
         time *= 1000
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent) //esegui il broadcast dopo i millisecondi passati
 
     }
 
