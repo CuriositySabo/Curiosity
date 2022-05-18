@@ -15,21 +15,22 @@ import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var layout: ActivityMainBinding
+    //private lateinit var layout: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        layout = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(R.layout.activity_main)
+        //layout = ActivityMainBinding.inflate(layoutInflater)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
-        var navController = findNavController(R.id.nav_host_fragment)
+        val navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration =
             AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_settings), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        setContentView(layout.root)
+        //setContentView(layout.root)
     }
 
     override fun onSupportNavigateUp(): Boolean {
