@@ -10,7 +10,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         setContentView(R.layout.activity_main)
-        val intent = Intent(this,nav_drawer::class.java)
+        //La main activity chiama l'activity nav_drawer che gestisce il navigation drawer dell'interfaccia
+        val intent = Intent(this, nav_drawer::class.java)
         startActivity(intent)
     }
 }
