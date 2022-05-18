@@ -25,5 +25,5 @@
 
     <style name="Theme.CuriosityApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.CuriosityApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.CuriosityApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 </resources>
