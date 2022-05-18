@@ -5,13 +5,30 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
     android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
     tools:openDrawer="start"> <!--mostra il drawer quando il file XML è aperto in android studio design-->
-<!--drawerLayout: agisce come container, permette una visione interattiva delle view-->
+    <!--drawerLayout: agisce come container, permette una visione interattiva delle view-->
     <include
         layout="@layout/toolbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <!--Nav Host: agisce da host dei fragment dell'app-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/nav_graph" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--Navigation View-->
 
 </androidx.drawerlayout.widget.DrawerLayout>
