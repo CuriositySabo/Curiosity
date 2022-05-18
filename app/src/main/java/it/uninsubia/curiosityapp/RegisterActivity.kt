@@ -121,9 +121,7 @@ class RegisterActivity : AppCompatActivity() {
                                 progressBar.visibility = View.GONE
                             }
                         }
-
                     startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
                 } else {
                     Toast.makeText(this, "Errore nel registrare l'utente!", Toast.LENGTH_LONG)
                         .show()

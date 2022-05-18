@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
-        if(auth.currentUser != null) {
+        if(auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
@@ -94,25 +94,24 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             "Log in effettuato con successo!",
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     } else {
                         Toast.makeText(
                             this,
                             "Controlla la tua email per verificare il tuo account",
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     }
-
-                    finish()
                 } else {
                     Toast.makeText(
                         this,
                         "Errore nel log in",
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
-
-        progressBar.visibility = View.GONE
     }
 
     override fun onClick(v: View?) {
