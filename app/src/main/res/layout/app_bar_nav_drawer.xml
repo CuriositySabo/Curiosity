@@ -10,15 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_dark"
-        android:elevation="0dp"
-        android:windowTranslucentNavigation="true"
-        android:windowNoTitle="true">
+        android:stateListAnimator="@null">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@null"
             app:navigationIcon="@drawable/ic_menu"
             android:layout_marginStart="5dp"
             app:popupTheme="@style/Theme.Design.NoActionBar" />
