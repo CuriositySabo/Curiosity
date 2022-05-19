@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -19,7 +20,11 @@ class NotificationService : Service() {
     var TAG = "Timers"
     var Your_X_SECS = 5
 
+    private val channelidForeground = "notifyCuriosityForeground"
     private val channelid = "notifyCuriosity"
+
+    lateinit var channel: NotificationChannel
+    lateinit var serviceChannel: NotificationChannel
 
     val handler: Handler = Handler(Looper.getMainLooper())
 
@@ -30,10 +35,12 @@ class NotificationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "=======================onStartCommand========================")
         super.onStartCommand(intent, flags, startId)
-        val notification = NotificationCompat.Builder(this, channelid)
+
+        val notification = NotificationCompat.Builder(baseContext, channelidForeground)
             .setContentTitle("Curiosity")
             .setContentText("Curiosity is running")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setChannelId(channelidForeground)
             .build()
         startForeground(1, notification)
         startTimer()
@@ -43,7 +50,8 @@ class NotificationService : Service() {
 
     override fun onCreate() {
         Log.e(TAG, "onCreate")
-        createNotificationchanel() // creazione del canale di notifica
+        createNotificationChannel() // creazione dei canali di notifica per il foreground
+
     }
 
     override fun onDestroy() {
@@ -87,28 +95,44 @@ class NotificationService : Service() {
     }
 
     private fun notifcationSender() {
-        val notification = NotificationCompat.Builder(baseContext, channelid) // crea una notifica con le seguenti caratteristiche
+        val notification = NotificationCompat.Builder(
+            baseContext,
+            channelid
+        ) // crea una notifica con le seguenti caratteristiche
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Lo sapevi?")
             .setContentText("Testo")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setChannelId(channelid)
             .build()
 
-        val notificationManager = NotificationManagerCompat.from(baseContext) // il notification manager permette di postare la notifica
+        // il notification manager permette di postare la notifica
+        val notificationManager = NotificationManagerCompat.from(baseContext)
         notificationManager.notify(200, notification)
     }
 
-    private fun createNotificationchanel() {
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "CuriosityChannel"
-            val descr = "Channel for Curiosity"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(channelid, name, importance)
-            channel.description = descr
+            serviceChannel = NotificationChannel(
+                channelidForeground,
+                "Stato Curiosity Service",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            serviceChannel.description = "Channel for Curiosity service"
+            serviceChannel.lightColor = Color.RED
+
+            channel = NotificationChannel(
+                channelid,
+                "Curiosità",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.description = "Channel for Curiosity"
+            channel.lightColor = Color.GREEN
 
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-    }
 
+
+    }
 }
