@@ -29,7 +29,6 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".CustomBroadcastReceiver"/>
         <service android:name=".NotificationService"/>
     </application>
 

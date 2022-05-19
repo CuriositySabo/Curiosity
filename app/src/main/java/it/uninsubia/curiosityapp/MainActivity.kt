@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
     private lateinit var testBtn: Button
+    private lateinit var endtestBtn: Button
 
     private val channelid = "notifyCuriosity"
 
@@ -39,35 +40,21 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, NotificationService::class.java))
         }
 
+        endtestBtn = layout.endtestBtn
+        endtestBtn.setOnClickListener {
+            stopService(Intent(this, NotificationService::class.java))
+        }
+
+
         createNotificationchanel() // creazione del canale di notifica
 
     }
-
-    /*override fun onStart() {
-        super.onStart()
-
-
-        Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
-
-        val intent = Intent(this, CustomBroadcastReceiver::class.java) //creazione intent con il broadcast
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
-
-        val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
-
-        var time = 3
-        time *= 1000
-
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent) //esegui il broadcast dopo i millisecondi passati
-
-    }*/
-
 
     private fun createNotificationchanel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "CuriosityChannel"
             val descr = "Channel for Curiosity"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelid, name, importance)
             channel.description = descr
 
