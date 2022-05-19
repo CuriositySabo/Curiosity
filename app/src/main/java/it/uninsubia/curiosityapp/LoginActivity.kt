@@ -16,7 +16,6 @@ import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var tvForgot: TextView
     private lateinit var layout: ActivityLoginBinding
-
     private lateinit var button: Button
     private lateinit var tvRegistrati: TextView
     private lateinit var progressBar: ProgressBar
@@ -25,11 +24,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
         auth = Firebase.auth
-        if(auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
+        if (auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
