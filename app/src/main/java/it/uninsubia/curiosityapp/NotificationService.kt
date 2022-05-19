@@ -1,7 +1,10 @@
 package it.uninsubia.curiosityapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -40,6 +43,7 @@ class NotificationService : Service() {
 
     override fun onCreate() {
         Log.e(TAG, "onCreate")
+        createNotificationchanel() // creazione del canale di notifica
     }
 
     override fun onDestroy() {
@@ -48,7 +52,7 @@ class NotificationService : Service() {
         super.onDestroy()
     }
 
-    fun startTimer() {
+    private fun startTimer() {
         //set a new Timer
         timer = Timer()
 
@@ -60,7 +64,7 @@ class NotificationService : Service() {
         //timer.schedule(timerTask, 5000,1000); //
     }
 
-    fun stoptimertask() {
+    private fun stoptimertask() {
         //stop the timer, if it's not already null
         if (timer != null) {
             timer!!.cancel()
@@ -68,7 +72,7 @@ class NotificationService : Service() {
         }
     }
 
-    fun initializeTimerTask() {
+    private fun initializeTimerTask() {
         timerTask = object : TimerTask() {
             override fun run() {
 
@@ -82,7 +86,7 @@ class NotificationService : Service() {
         }
     }
 
-    fun notifcationSender() {
+    private fun notifcationSender() {
         val notification = NotificationCompat.Builder(baseContext, channelid) // crea una notifica con le seguenti caratteristiche
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Lo sapevi?")
@@ -92,6 +96,19 @@ class NotificationService : Service() {
 
         val notificationManager = NotificationManagerCompat.from(baseContext) // il notification manager permette di postare la notifica
         notificationManager.notify(200, notification)
+    }
+
+    private fun createNotificationchanel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "CuriosityChannel"
+            val descr = "Channel for Curiosity"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelid, name, importance)
+            channel.description = descr
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
 }

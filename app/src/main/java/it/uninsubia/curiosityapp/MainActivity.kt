@@ -1,9 +1,6 @@
 package it.uninsubia.curiosityapp
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -46,20 +43,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        createNotificationchanel() // creazione del canale di notifica
-
     }
 
-    private fun createNotificationchanel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "CuriosityChannel"
-            val descr = "Channel for Curiosity"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(channelid, name, importance)
-            channel.description = descr
 
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
 }
