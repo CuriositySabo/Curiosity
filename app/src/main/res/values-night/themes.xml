@@ -43,6 +43,11 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
     </style>
+
+    <style name="Theme.CuriosityApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.CuriosityApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+    </style>
 </resources>
 
     <!-- Base application theme. -->

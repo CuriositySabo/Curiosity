@@ -23,7 +23,5 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.CuriosityApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.CuriosityApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 </resources>
