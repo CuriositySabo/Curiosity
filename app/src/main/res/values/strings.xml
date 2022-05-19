@@ -14,4 +14,10 @@
     <string name="game_text">Sei molto curioso?</string>
     <string name="game_button_text">Gioca a Curiosity+</string>
     <string name="planet_description">Pianeta Marte</string>
+    <string name="login_title">Login</string>
+    <string name="login_email">Indirizzo email</string>
+    <string name="login_password">Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_register">Registrati</string>
+    <string name="login_forgot_pass">Password dimenticata?</string>
 </resources>
