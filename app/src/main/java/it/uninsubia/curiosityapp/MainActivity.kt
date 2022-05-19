@@ -1,15 +1,11 @@
 package it.uninsubia.curiosityapp
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
+    private lateinit var testBtn: Button
 
     private val channelid = "notifyCuriosity"
 
@@ -37,18 +34,23 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
+        testBtn = layout.testBtn
+        testBtn.setOnClickListener {
+            startService(Intent(this, NotificationService::class.java))
+        }
+
         createNotificationchanel() // creazione del canale di notifica
 
     }
 
-    override fun onStart() {
+    /*override fun onStart() {
         super.onStart()
+
+
         Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
 
         val intent = Intent(this, CustomBroadcastReceiver::class.java) //creazione intent con il broadcast
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
-
-
 
         val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
 
@@ -58,7 +60,8 @@ class MainActivity : AppCompatActivity() {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
         alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent) //esegui il broadcast dopo i millisecondi passati
 
-    }
+    }*/
+
 
     private fun createNotificationchanel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
