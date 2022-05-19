@@ -27,8 +27,8 @@ class MainActivity : AppCompatActivity() {
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
         }
-
-
+        val intent = Intent(this, nav_drawer::class.java)
+        startActivity(intent)
     }
 
 }

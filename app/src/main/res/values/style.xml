@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme" />
+
+    <style name="Theme.NavigationDrawer" />
+
+    <style name="Theme.NavigationDrawer.AppBarOverlay" />
+
+    <style name="Theme.NavigationDrawer.PopupOverlay" />
+</resources>
