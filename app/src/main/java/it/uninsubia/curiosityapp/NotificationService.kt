@@ -60,6 +60,7 @@ class NotificationService : Service() {
         super.onDestroy()
     }
 
+
     private fun startTimer(timetoNotification : Int) {
 
         //set a new Timer
@@ -69,8 +70,8 @@ class NotificationService : Service() {
         initializeTimerTask()
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer!!.schedule(timerTask, 5000, (timetoNotification * 1000).toLong()) //
-        //timer.schedule(timerTask, 5000,1000); //
+        timer!!.schedule(timerTask, 5000, (timetoNotification * 1000).toLong())
+
     }
 
     private fun stoptimertask() {
@@ -82,23 +83,30 @@ class NotificationService : Service() {
     }
 
     private fun initializeTimerTask() {
+        var i = 0
         timerTask = object : TimerTask() {
             override fun run() { //what the timer does when is running
                 handler.post {
-                    notifcationSender()
+                    getTextfromFirebase()
+                    i+=1
+                    notifcationSender(i.toString())
                 }
             }
         }
     }
 
-    private fun notifcationSender() {
+    private fun getTextfromFirebase() {
+        TODO("Not yet implemented")
+    }
+
+    private fun notifcationSender(testo : String) {
         val notification = NotificationCompat.Builder(
             baseContext,
             channelid
         ) // crea una notifica con le seguenti caratteristiche
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Lo sapevi?")
-            .setContentText("Testo")
+            .setContentText(testo)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setChannelId(channelid)
             .build()
