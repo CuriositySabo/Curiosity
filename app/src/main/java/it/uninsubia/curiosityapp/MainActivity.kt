@@ -32,9 +32,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
+        val timetoNotification = 60
+        // TODO: get timetoNotification from slider!
         testBtn = layout.testBtn
         testBtn.setOnClickListener {
-            startService(Intent(this, NotificationService::class.java))
+            val intent = Intent(this, NotificationService::class.java)
+            intent.putExtra("timetoNotification", timetoNotification)
+            startService(intent)
         }
 
         endtestBtn = layout.endtestBtn

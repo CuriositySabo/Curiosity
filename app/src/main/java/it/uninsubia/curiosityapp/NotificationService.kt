@@ -15,16 +15,15 @@ import androidx.core.app.NotificationManagerCompat
 import java.util.*
 
 class NotificationService : Service() {
-    var timer: Timer? = null
-    var timerTask: TimerTask? = null
-    var TAG = "Timers"
-    var Your_X_SECS = 5
+    private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
+    private var TAG = "Timers"
 
     private val channelidForeground = "notifyCuriosityForeground"
     private val channelid = "notifyCuriosity"
 
-    lateinit var channel: NotificationChannel
-    lateinit var serviceChannel: NotificationChannel
+    private lateinit var channel: NotificationChannel
+    private lateinit var serviceChannel: NotificationChannel
 
     val handler: Handler = Handler(Looper.getMainLooper())
 
@@ -43,7 +42,9 @@ class NotificationService : Service() {
             .setChannelId(channelidForeground)
             .build()
         startForeground(1, notification)
-        startTimer()
+
+        val timetoNotification = intent!!.getIntExtra("timetoNotification", 60)
+        startTimer(timetoNotification)
 
         return START_STICKY
     }
@@ -51,7 +52,6 @@ class NotificationService : Service() {
     override fun onCreate() {
         Log.e(TAG, "onCreate")
         createNotificationChannel() // creazione dei canali di notifica per il foreground
-
     }
 
     override fun onDestroy() {
@@ -60,7 +60,8 @@ class NotificationService : Service() {
         super.onDestroy()
     }
 
-    private fun startTimer() {
+    private fun startTimer(timetoNotification : Int) {
+
         //set a new Timer
         timer = Timer()
 
@@ -68,7 +69,7 @@ class NotificationService : Service() {
         initializeTimerTask()
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer!!.schedule(timerTask, 5000, (Your_X_SECS * 1000).toLong()) //
+        timer!!.schedule(timerTask, 5000, (timetoNotification * 1000).toLong()) //
         //timer.schedule(timerTask, 5000,1000); //
     }
 
@@ -82,13 +83,9 @@ class NotificationService : Service() {
 
     private fun initializeTimerTask() {
         timerTask = object : TimerTask() {
-            override fun run() {
-
-                //use a handler to run a toast that shows the current timestamp
+            override fun run() { //what the timer does when is running
                 handler.post {
-                    Log.e(TAG, "============= HO FATTO QUALCOSA ================")
                     notifcationSender()
-
                 }
             }
         }
@@ -132,7 +129,5 @@ class NotificationService : Service() {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-
-
     }
 }
