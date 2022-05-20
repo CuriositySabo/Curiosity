@@ -2,6 +2,10 @@ package it.uninsubia.curiosityapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -57,31 +62,36 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
+
+
         if (email.isEmpty()) {
-            etEmail.error = "Inserisci una email"
+            setErrorOnSearchView(etEmail,"Inserisci una mail")
+            //etEmail.setError(Html.fromHtml("<font bgcolor='white' color='black'>Inserisci una email</font>"))
+            //etEmail.error = "Inserisci una email"
             etEmail.requestFocus()
             return
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.error = "É necessario inserire una email esistente"
+            setErrorOnSearchView(etEmail,"É necessario inserire una email esistente")
+            //etEmail.error = "É necessario inserire una email esistente"
             etEmail.requestFocus()
             return
         }
 
         if (password.isEmpty()) {
-            etPassword.error = "é richiesta una password"
+            setErrorOnSearchView(etPassword,"É richiesta una password")
+            //etPassword.error = "é richiesta una password"
             etPassword.requestFocus()
             return
         }
 
         if (password.length < 6) {
-            etPassword.error = "é richiesta una password di più di 6 caratteri"
+            setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri")
+            //etPassword.error = "é richiesta una password di più di 6 caratteri"
             etPassword.requestFocus()
             return
         }
-
-        progressBar.visibility = View.VISIBLE
 
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
@@ -92,26 +102,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                         showToast("Login effettuato con successo")
-                        progressBar.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Controlla la tua email per verificare il tuo account",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        progressBar.visibility = View.GONE
+                        showToast("Controlla la tua email per verificare il tuo account")
                     }
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Errore nel log in",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    progressBar.visibility = View.GONE
+                    showToast("Email o password errate")
                 }
             }
     }
-
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.loginbutton -> {
@@ -138,6 +137,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         toast2.duration = Toast.LENGTH_SHORT
         toast2.view = layoutToast
         toast2.show()
-
+    }
+    private fun setErrorOnSearchView(editText: EditText, errorMessage : String)
+    {
+        val errorColor = ContextCompat.getColor(this,R.color.white)
+        val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
+        val fgcspan = ForegroundColorSpan(errorColor)
+        val bgcspan = BackgroundColorSpan(errorBackgroundColor)
+        val builder = SpannableStringBuilder(errorMessage)
+        builder.setSpan(bgcspan, 0, errorMessage.length, 4)
+        editText.error = builder
     }
 }
