@@ -20,4 +20,5 @@
     <string name="login_button">Login</string>
     <string name="login_register">Registrati</string>
     <string name="login_forgot_pass">Password dimenticata?</string>
+    <string name="login_register_text">Non hai un account?</string>
 </resources>
