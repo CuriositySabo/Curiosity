@@ -91,7 +91,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="20dp"
             android:textColor="@color/primary"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:text="@string/login_register"
             android:textSize="20sp" />
     </LinearLayout>

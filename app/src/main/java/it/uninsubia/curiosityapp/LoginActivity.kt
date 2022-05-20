@@ -1,8 +1,10 @@
 package it.uninsubia.curiosityapp
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -89,11 +91,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     if (user!!.isEmailVerified) {
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                        Toast.makeText(
-                            this,
-                            "Log in effettuato con successo!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        showToast("Login effettuato con successo")
                         progressBar.visibility = View.GONE
                     } else {
                         Toast.makeText(
@@ -129,6 +127,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
-
+    private fun showToast(message: String)
+    {
+        val view: View = LayoutInflater.from(this).inflate(R.layout.custom_toast,null)
+        val toast = Toast(this)
+        val tv_message: TextView = view.findViewById(R.id.tvMessage)
+        tv_message.setText(message)
+        tv_message.setTextColor(Color.WHITE)
+        toast.setView(view)
+        toast.show()
+    }
 }
