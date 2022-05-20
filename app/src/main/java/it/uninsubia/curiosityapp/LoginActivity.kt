@@ -1,11 +1,12 @@
 package it.uninsubia.curiosityapp
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -37,7 +38,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         layout = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(layout.root)
-
         etEmail = layout.editTextEmail
         etPassword = layout.editTextPassword
         progressBar = layout.progressbar
@@ -129,12 +129,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
     private fun showToast(message: String)
     {
-        val view: View = LayoutInflater.from(this).inflate(R.layout.custom_toast,null)
-        val toast = Toast(this)
-        val tv_message: TextView = view.findViewById(R.id.tvMessage)
-        tv_message.setText(message)
-        tv_message.setTextColor(Color.WHITE)
-        toast.setView(view)
-        toast.show()
+        val inflater: LayoutInflater = layoutInflater
+        val layoutToast = inflater.inflate(R.layout.custom_toast,(findViewById<ViewGroup?>(R.id.toast_root)))
+        val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
+        toastText.text = message
+        val toast2 = Toast(applicationContext)
+        toast2.setGravity(Gravity.CENTER,0,0)
+        toast2.duration = Toast.LENGTH_SHORT
+        toast2.view = layoutToast
+        toast2.show()
+
     }
 }
