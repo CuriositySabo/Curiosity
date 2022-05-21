@@ -116,11 +116,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val layoutToast = inflater.inflate(R.layout.custom_toast,(findViewById(R.id.toast_root)))
         val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
         toastText.text = message
-        val toast2 = Toast(applicationContext)
-        toast2.setGravity(Gravity.CENTER,0,0)
-        toast2.duration = Toast.LENGTH_SHORT
-        toast2.view = layoutToast
-        toast2.show()
+        val toast = Toast(applicationContext)
+        toast.setGravity(Gravity.BOTTOM,0,0)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layoutToast
+        toast.show()
     }
     private fun setErrorOnSearchView(editText: EditText, errorMessage : String)
     {
