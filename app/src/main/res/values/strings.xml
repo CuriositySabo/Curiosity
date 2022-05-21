@@ -30,4 +30,12 @@
 
     <string name="forgot_title">Reimposta password</string>
     <string name="forgot_button">Reset password</string>
+
+    <string-array name="settings_notification_frequency">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+    </string-array>
 </resources>
