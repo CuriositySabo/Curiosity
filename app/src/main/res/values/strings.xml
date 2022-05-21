@@ -33,4 +33,5 @@
     <string name="register_login">Login</string>
 
     <string name="forgot_title">Reimposta password</string>
+    <string name="forgot_button">Reset password</string>
 </resources>

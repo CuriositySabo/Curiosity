@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -34,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         layout = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(layout.root)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         auth = Firebase.auth
 
