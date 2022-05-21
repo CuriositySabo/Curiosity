@@ -2,15 +2,12 @@ package it.uninsubia.curiosityapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableStringBuilder
-import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -62,33 +59,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
-
-
         if (email.isEmpty()) {
             setErrorOnSearchView(etEmail,"Inserisci una mail")
-            //etEmail.setError(Html.fromHtml("<font bgcolor='white' color='black'>Inserisci una email</font>"))
-            //etEmail.error = "Inserisci una email"
             etEmail.requestFocus()
             return
         }
-
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             setErrorOnSearchView(etEmail,"É necessario inserire una email esistente")
-            //etEmail.error = "É necessario inserire una email esistente"
             etEmail.requestFocus()
             return
         }
-
         if (password.isEmpty()) {
             setErrorOnSearchView(etPassword,"É richiesta una password")
-            //etPassword.error = "é richiesta una password"
             etPassword.requestFocus()
             return
         }
-
         if (password.length < 6) {
             setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri")
-            //etPassword.error = "é richiesta una password di più di 6 caratteri"
             etPassword.requestFocus()
             return
         }
@@ -97,7 +84,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val user = FirebaseAuth.getInstance().currentUser
-
                     if (user!!.isEmailVerified) {
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
@@ -116,11 +102,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             R.id.loginbutton -> {
                 loginUser()
             }
-
             R.id.registerTv -> {
                 startActivity(Intent(this, RegisterActivity::class.java))
             }
-
             R.id.forgotTv -> {
                 startActivity(Intent(this, ForgotPswActivity::class.java))
             }
@@ -129,7 +113,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun showToast(message: String)
     {
         val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_toast,(findViewById<ViewGroup?>(R.id.toast_root)))
+        val layoutToast = inflater.inflate(R.layout.custom_toast,(findViewById(R.id.toast_root)))
         val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
         toastText.text = message
         val toast2 = Toast(applicationContext)
@@ -141,11 +125,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun setErrorOnSearchView(editText: EditText, errorMessage : String)
     {
         val errorColor = ContextCompat.getColor(this,R.color.white)
-        val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
+        //val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
         val fgcspan = ForegroundColorSpan(errorColor)
-        val bgcspan = BackgroundColorSpan(errorBackgroundColor)
+        //val bgcspan = BackgroundColorSpan(errorBackgroundColor)
         val builder = SpannableStringBuilder(errorMessage)
-        builder.setSpan(bgcspan, 0, errorMessage.length, 4)
+        builder.setSpan(fgcspan, 0, errorMessage.length, 4)
         editText.error = builder
     }
 }
