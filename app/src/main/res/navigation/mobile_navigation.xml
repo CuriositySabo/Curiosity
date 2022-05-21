@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="it.uninsubia.curiosityapp.ui.home.HomeFragment"
+        android:name="it.uninsubia.curiosityapp.ui.HomeFragment"
         android:label=""
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="it.uninsubia.curiosityapp.ui.gallery.GalleryFragment"
+        android:name="it.uninsubia.curiosityapp.ui.GalleryFragment"
         android:label=""
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="it.uninsubia.curiosityapp.ui.slideshow.SlideshowFragment"
+        android:name="it.uninsubia.curiosityapp.ui.SlideshowFragment"
         android:label=""
         tools:layout="@layout/fragment_slideshow" />
 </navigation>

@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp.ui.gallery
+package it.uninsubia.curiosityapp.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,16 +22,9 @@ class GalleryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        val textView: TextView = binding.textGallery
-        galleryViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
         return root
     }
 
