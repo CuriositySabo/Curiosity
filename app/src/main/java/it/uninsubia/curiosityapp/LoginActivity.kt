@@ -2,8 +2,6 @@ package it.uninsubia.curiosityapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -11,7 +9,6 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -58,24 +55,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun loginUser() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
+        val utility = UtilityFun()
 
         if (email.isEmpty()) {
-            setErrorOnSearchView(etEmail,"Inserisci una mail")
+            utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
             etEmail.requestFocus()
             return
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            setErrorOnSearchView(etEmail,"É necessario inserire una email esistente")
+            utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
             etEmail.requestFocus()
             return
         }
         if (password.isEmpty()) {
-            setErrorOnSearchView(etPassword,"É richiesta una password")
+            utility.setErrorOnSearchView(etPassword,"É richiesta una password",this)
             etPassword.requestFocus()
             return
         }
         if (password.length < 6) {
-            setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri")
+            utility.setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri",this)
             etPassword.requestFocus()
             return
         }
@@ -121,15 +119,5 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         toast.duration = Toast.LENGTH_SHORT
         toast.view = layoutToast
         toast.show()
-    }
-    private fun setErrorOnSearchView(editText: EditText, errorMessage : String)
-    {
-        val errorColor = ContextCompat.getColor(this,R.color.white)
-        //val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
-        val fgcspan = ForegroundColorSpan(errorColor)
-        //val bgcspan = BackgroundColorSpan(errorBackgroundColor)
-        val builder = SpannableStringBuilder(errorMessage)
-        builder.setSpan(fgcspan, 0, errorMessage.length, 4)
-        editText.error = builder
     }
 }

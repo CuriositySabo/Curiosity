@@ -4,11 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -25,6 +24,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etpassword: EditText
     private lateinit var button: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var tvLogin: TextView
 
     private lateinit var auth: FirebaseAuth
 
@@ -44,11 +44,14 @@ class RegisterActivity : AppCompatActivity() {
         etpassword = layout.editTextPassword
         button = layout.registerbutton
         progressBar = layout.progressbar
+        tvLogin = layout.loginTv
 
         button.setOnClickListener {
             registerUser()
         }
-
+        tvLogin.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
 
     private fun registerUser() {
@@ -56,40 +59,38 @@ class RegisterActivity : AppCompatActivity() {
         val cognome = etcognome.text.toString().trim()
         val email = etemail.text.toString().trim()
         val password = etpassword.text.toString().trim()
-
+        val utility = UtilityFun()
 
         if (nome.isEmpty()) {
-            etnome.error = "é richiesto il tuo nome"
+            utility.setErrorOnSearchView(etnome, "É richiesto il tuo nome", this)
             etnome.requestFocus()
             return
         }
-
         if (cognome.isEmpty()) {
-            etcognome.error = "é richiesto il tuo cognome"
+            utility.setErrorOnSearchView(etcognome, "É richiesto il tuo cognome", this)
             etcognome.requestFocus()
             return
         }
-
         if (email.isEmpty()) {
-            etemail.error = "é richiesta una email"
+            utility.setErrorOnSearchView(etemail, "É richiesta la tua email", this)
             etemail.requestFocus()
             return
         }
-
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etemail.error = "É necessario inserire una email esistente"
+            utility.setErrorOnSearchView(etemail, "Inserisci una email esistente!", this)
             etemail.requestFocus()
             return
         }
-
         if (password.isEmpty()) {
-            etpassword.error = "é richiesta una password"
+            utility.setErrorOnSearchView(etpassword, "É richiesta la tua password", this)
             etpassword.requestFocus()
             return
         }
-
         if (password.length < 6) {
-            etpassword.error = "é richiesta una password di più di 6 caratteri"
+            utility.setErrorOnSearchView(
+                etpassword,
+                "É richiesta una password di almeno 6 caratteri", this
+            )
             etpassword.requestFocus()
             return
         }
@@ -106,31 +107,29 @@ class RegisterActivity : AppCompatActivity() {
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                         .setValue(user).addOnCompleteListener(this) {
                             if (it.isSuccessful) {
-                                Toast.makeText(
-                                    this,
-                                    "Utente registrato correttamente!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                progressBar.visibility = View.GONE
+                                showToast("Utente registrato con successo!")
+                                progressBar.visibility = View.VISIBLE
+                                Thread.sleep(1000)
+                                startActivity(Intent(this, LoginActivity::class.java))
                             } else {
-                                Toast.makeText(
-                                    this,
-                                    "Errore nel registrare l'utente! Riprova!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                progressBar.visibility = View.GONE
+                                showToast("Errore nel registrare l'utente! Riprova!")
                             }
                         }
-                    startActivity(Intent(this, LoginActivity::class.java))
                 } else {
-                    Toast.makeText(this, "Errore nel registrare l'utente!", Toast.LENGTH_LONG)
-                        .show()
-                    progressBar.visibility = View.GONE
+                    showToast("Errore nel registrare l'utente!")
                 }
-
-                progressBar.visibility = View.GONE
             }
+    }
 
-
+    private fun showToast(message: String) {
+        val inflater: LayoutInflater = layoutInflater
+        val layoutToast = inflater.inflate(R.layout.custom_toast, (findViewById(R.id.toast_root)))
+        val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
+        toastText.text = message
+        val toast = Toast(applicationContext)
+        toast.setGravity(Gravity.BOTTOM, 0, 0)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layoutToast
+        toast.show()
     }
 }
