@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="it.uninsubia.curiosityapp.ui.GalleryFragment"
+        android:id="@+id/nav_settings"
+        android:name="it.uninsubia.curiosityapp.ui.SettingsFragment"
         android:label=""
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="it.uninsubia.curiosityapp.ui.SlideshowFragment"
+        android:id="@+id/nav_logout"
+        android:name="it.uninsubia.curiosityapp.ui.LogoutFragment"
         android:label=""
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_logout" />
 </navigation>
