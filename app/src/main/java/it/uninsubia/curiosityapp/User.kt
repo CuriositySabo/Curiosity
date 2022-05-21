@@ -1,5 +1,5 @@
 package it.uninsubia.curiosityapp
 
-class User (val nome : String, val cognome : String, val email : String) {
+data class User (val nome : String, val cognome : String, val email : String) {
 
 }

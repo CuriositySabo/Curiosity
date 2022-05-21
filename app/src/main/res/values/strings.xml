@@ -31,4 +31,6 @@
     <string name="register_button">Registrati</string>
     <string name="register_already">Hai già un account?</string>
     <string name="register_login">Login</string>
+
+    <string name="forgot_title">Reimposta password</string>
 </resources>
