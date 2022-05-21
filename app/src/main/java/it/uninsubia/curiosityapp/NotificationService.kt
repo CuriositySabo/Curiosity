@@ -12,6 +12,9 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 class NotificationService : Service() {
@@ -25,15 +28,21 @@ class NotificationService : Service() {
     private lateinit var channel: NotificationChannel
     private lateinit var serviceChannel: NotificationChannel
 
+    private lateinit var intent: Intent
+
     val handler: Handler = Handler(Looper.getMainLooper())
+    private lateinit var database: DatabaseReference
+
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.i(TAG, "=======================onStartCommand========================")
+        Log.e(TAG, "onStartCommand")
         super.onStartCommand(intent, flags, startId)
+
+        this.intent = intent!!
 
         val notification = NotificationCompat.Builder(baseContext, channelidForeground)
             .setContentTitle("Curiosity")
@@ -43,6 +52,7 @@ class NotificationService : Service() {
             .build()
         startForeground(1, notification)
 
+
         val timetoNotification = intent!!.getIntExtra("timetoNotification", 60)
         startTimer(timetoNotification)
 
@@ -51,6 +61,7 @@ class NotificationService : Service() {
 
     override fun onCreate() {
         Log.e(TAG, "onCreate")
+        database = Firebase.database.reference
         createNotificationChannel() // creazione dei canali di notifica per il foreground
     }
 
@@ -60,8 +71,7 @@ class NotificationService : Service() {
         super.onDestroy()
     }
 
-
-    private fun startTimer(timetoNotification : Int) {
+    private fun startTimer(timetoNotification: Int) {
 
         //set a new Timer
         timer = Timer()
@@ -84,22 +94,43 @@ class NotificationService : Service() {
 
     private fun initializeTimerTask() {
         var i = 0
+
         timerTask = object : TimerTask() {
             override fun run() { //what the timer does when is running
                 handler.post {
-                    getTextfromFirebase()
-                    i+=1
+
+                    retrieveCuriosity()
+                    i += 1
                     notifcationSender(i.toString())
                 }
             }
         }
     }
 
-    private fun getTextfromFirebase() {
-        TODO("Not yet implemented")
+    private fun retrieveCuriosity() {
+        val chosenFields = intent.getStringArrayListExtra("chosenFields")
+        val rnd = (0 until chosenFields!!.size).random()
+        val field = chosenFields[rnd]
+
+        val curiositiesinField =
+            database.child("curiosità").child(field!!).get().addOnSuccessListener {
+                Log.i("firebase", "Got value ${it.value}")
+                val curiosities = it.children
+                for(children in curiosities) {
+                    Log.i(TAG, children.toString())
+                }
+            }.addOnFailureListener {
+                Log.e("firebase", "Error getting data", it)
+            }
+
+        if (curiositiesinField != null) {
+
+        }
+
     }
 
-    private fun notifcationSender(testo : String) {
+
+    private fun notifcationSender(testo: String) {
         val notification = NotificationCompat.Builder(
             baseContext,
             channelid

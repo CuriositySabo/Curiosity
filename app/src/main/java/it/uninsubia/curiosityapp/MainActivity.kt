@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     private val channelid = "notifyCuriosity"
 
+    private val numberofFields = 10
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = ActivityMainBinding.inflate(layoutInflater)
@@ -34,10 +36,20 @@ class MainActivity : AppCompatActivity() {
 
         val timetoNotification = 5
         // TODO: get timetoNotification from slider!
+        val
+        // TODO: get Curiosity field
         testBtn = layout.testBtn
+
         testBtn.setOnClickListener {
             val intent = Intent(this, NotificationService::class.java)
             intent.putExtra("timetoNotification", timetoNotification)
+
+            val chosenFields = arrayListOf<String>()
+            chosenFields.add("Cinema")
+            chosenFields.add("Pizza")
+            chosenFields.add("Storia")
+            intent.putExtra("chosenFields", chosenFields)
+
             startService(intent)
         }
 
