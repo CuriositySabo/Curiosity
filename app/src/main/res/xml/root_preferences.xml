@@ -11,20 +11,13 @@
             app:title="@string/signature_title"
             app:useSimpleSummaryProvider="true" /-->
 
-        <!--ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" /-->
-
         <SwitchPreferenceCompat
             app:key="notification"
-            app:title="@string/notification_permission" />
+            app:title="@string/notification_permission"
+            android:defaultValue="true"/>
 
         <ListPreference
-            app:defaultValue="30 minuti"
+            app:defaultValue="30"
             app:entries="@array/settings_notification_frequency_entries"
             app:entryValues="@array/settings_notification_frequency_values"
             app:key="frequency"
@@ -33,7 +26,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header"
+    <PreferenceCategory app:title="@string/curiosity_header"
         android:layout="@layout/preference_category"
         tools:ignore="PrivateResource">
 

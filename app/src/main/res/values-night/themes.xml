@@ -10,14 +10,14 @@
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorOnPrimary">#000000</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/accent</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="materialButtonStyle">@style/customButton</item>
-        <item name="android:textViewStyle">@style/customTextView</item>
+        <!--item name="android:textViewStyle">@style/customTextView</item-->
         <item name="android:background">@color/bg_dark</item>
     </style>
     <style name="customButton" parent="Widget.MaterialComponents.Button">

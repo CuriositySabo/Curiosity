@@ -11,5 +11,5 @@
         android:gravity="start"
         android:textSize="22sp"
         android:textStyle="normal"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 </FrameLayout>

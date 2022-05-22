@@ -33,11 +33,11 @@
     <string name="forgot_button">Reset password</string>
     <!-- Settings -->
     <string name="notification_header">Notifiche</string>
-    <string name="sync_header">Sync</string>
+    <string name="curiosity_header">Curiosità</string>
     <!--Settings_notification-->
     <string name="notification_permission">Abilita le notifiche</string>
     <string name="notification_frequency">Frequenza di arrivo delle notifiche</string>
-    <!--Settings_-->
+    <!--Settings_curiosities-->
     <string name="sync_title">Sync email periodically</string>
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
