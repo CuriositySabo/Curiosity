@@ -30,7 +30,7 @@
         android:layout="@layout/preference_category"
         tools:ignore="PrivateResource">
 
-        <SwitchPreferenceCompat
+        <!--SwitchPreferenceCompat
             app:key="sync"
             app:title="@string/sync_title" />
 
@@ -39,7 +39,13 @@
             app:key="attachment"
             app:summaryOff="@string/attachment_summary_off"
             app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+            app:title="@string/attachment_title" /-->
+
+        <Preference
+            android:title="@string/curiosity_header">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="LogoutFragment.kt" />
+        </Preference>
 
     </PreferenceCategory>
 
