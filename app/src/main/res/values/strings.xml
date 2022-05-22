@@ -18,7 +18,7 @@
     <string name="login_register">Registrati</string>
     <string name="login_forgot_pass">Password dimenticata?</string>
     <string name="login_register_text">Non hai un account?</string>
-    
+
     <string name="register_title">Registrazione</string>
     <string name="register_name">Inserisci nome</string>
     <string name="register_cognome">Inserisci cognome</string>
@@ -31,11 +31,18 @@
     <string name="forgot_title">Reimposta password</string>
     <string name="forgot_button">Reset password</string>
 
-    <string-array name="settings_notification_frequency">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-    </string-array>
+    <!-- Preference Titles -->
+    <string name="notification_header">Notifiche</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
