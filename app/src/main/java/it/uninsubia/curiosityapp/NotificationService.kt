@@ -118,6 +118,7 @@ class NotificationService : Service() {
                 val curiosities = it.children
                 for(children in curiosities) {
                     Log.i(TAG, children.toString())
+//                    val test = children.getValue(CuriosityData::class.java)
                 }
             }.addOnFailureListener {
                 Log.e("firebase", "Error getting data", it)

@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        val timetoNotification = 5
+        val timetoNotification = 15
         // TODO: get timetoNotification from slider!
         val
         // TODO: get Curiosity field
