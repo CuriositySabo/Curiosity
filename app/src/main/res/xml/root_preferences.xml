@@ -1,26 +1,41 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/notification_header"
-        android:textSize="24sp"
-        android:layout="@layout/preference_category">
+        android:layout="@layout/preference_category"
+        tools:ignore="PrivateResource">
 
-        <EditTextPreference
+        <!--EditTextPreference
             app:key="signature"
             app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true" /-->
 
-        <ListPreference
+        <!--ListPreference
             app:defaultValue="reply"
             app:entries="@array/reply_entries"
             app:entryValues="@array/reply_values"
             app:key="reply"
             app:title="@string/reply_title"
+            app:useSimpleSummaryProvider="true" /-->
+
+        <SwitchPreferenceCompat
+            app:key="notification"
+            app:title="@string/notification_permission" />
+
+        <ListPreference
+            app:defaultValue="30 minuti"
+            app:entries="@array/settings_notification_frequency_entries"
+            app:entryValues="@array/settings_notification_frequency_values"
+            app:key="frequency"
+            app:title="@string/notification_frequency"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="@string/sync_header"
+        android:layout="@layout/preference_category"
+        tools:ignore="PrivateResource">
 
         <SwitchPreferenceCompat
             app:key="sync"
