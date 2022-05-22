@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -23,11 +22,12 @@ class NotificationService : Service() {
     private var timerTask: TimerTask? = null
     private var TAG = "Timers"
 
-    private val channelidForeground = "notifyCuriosityForeground"
-    private val channelid = "notifyCuriosity"
-
-    private lateinit var channel: NotificationChannel
+    private val channelidForeground = "Stato Curiosity Service"
     private lateinit var serviceChannel: NotificationChannel
+
+    private val channelid = "Curiosità"
+    private lateinit var channel: NotificationChannel
+
 
     private lateinit var intent: Intent
 
@@ -154,24 +154,22 @@ class NotificationService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             serviceChannel = NotificationChannel(
                 channelidForeground,
                 "Stato Curiosity Service",
                 NotificationManager.IMPORTANCE_HIGH
             )
-            serviceChannel.description = "Channel for Curiosity service"
-            serviceChannel.lightColor = Color.RED
 
             channel = NotificationChannel(
                 channelid,
                 "Curiosità",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
-            channel.description = "Channel for Curiosity"
-            channel.lightColor = Color.GREEN
 
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(serviceChannel)
         }
     }
 }
