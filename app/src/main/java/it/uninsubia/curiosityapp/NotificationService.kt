@@ -12,6 +12,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -32,6 +33,8 @@ class NotificationService : Service() {
 
     val handler: Handler = Handler(Looper.getMainLooper())
     private lateinit var database: DatabaseReference
+
+    var curiosityData = CuriosityData()
 
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -80,7 +83,7 @@ class NotificationService : Service() {
         initializeTimerTask()
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer!!.schedule(timerTask, 5000, (timetoNotification * 1000).toLong())
+        timer!!.schedule(timerTask, 0, (timetoNotification * 1000).toLong())
 
     }
 
@@ -93,52 +96,53 @@ class NotificationService : Service() {
     }
 
     private fun initializeTimerTask() {
-        var i = 0
 
         timerTask = object : TimerTask() {
             override fun run() { //what the timer does when is running
                 handler.post {
-
-                    retrieveCuriosity()
-                    i += 1
-                    notifcationSender(i.toString())
+                    notifcationSender(retrieveCuriosity())
                 }
             }
         }
     }
 
-    private fun retrieveCuriosity() {
+    private fun retrieveCuriosity() : CuriosityData{
         val chosenFields = intent.getStringArrayListExtra("chosenFields")
-        val rnd = (0 until chosenFields!!.size).random()
+        var rnd = (0 until chosenFields!!.size).random()
         val field = chosenFields[rnd]
+        Log.i(TAG, field)
+
 
         val curiositiesinField =
             database.child("curiosità").child(field!!).get().addOnSuccessListener {
-                Log.i("firebase", "Got value ${it.value}")
-                val curiosities = it.children
-                for(children in curiosities) {
+//                Log.i("firebase", "Got value ${it.value}")
+                rnd = (0 until it.children.count()).random()
+                var count = 0
+//                Log.i (TAG , curiosities.toString())
+                for (children : DataSnapshot in it.children){
+                    if(rnd == count)
+                        curiosityData = children.getValue(CuriosityData::class.java)!!
                     Log.i(TAG, children.toString())
-//                    val test = children.getValue(CuriosityData::class.java)
+                    count++
                 }
+                Log.e(TAG, curiosityData.toString())
             }.addOnFailureListener {
                 Log.e("firebase", "Error getting data", it)
             }
-
-        if (curiositiesinField != null) {
-
-        }
-
+//        Thread.sleep(500)
+        Log.e(TAG, curiosityData.toString())
+        return  curiosityData
     }
 
 
-    private fun notifcationSender(testo: String) {
+    private fun notifcationSender(curiosityData: CuriosityData) {
         val notification = NotificationCompat.Builder(
             baseContext,
             channelid
         ) // crea una notifica con le seguenti caratteristiche
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Lo sapevi?")
-            .setContentText(testo)
+            .setContentTitle(curiosityData.title)
+            .setContentText(curiosityData.text)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setChannelId(channelid)
             .build()
