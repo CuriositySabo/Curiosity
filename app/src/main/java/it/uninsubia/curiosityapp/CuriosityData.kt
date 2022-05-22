@@ -1,6 +1,5 @@
 package it.uninsubia.curiosityapp
 
-class CuriosityData( val title: String, val testo : String) {
-
+data class CuriosityData( val title: String, val text: String) {
 }
 
