@@ -22,6 +22,7 @@
             app:entryValues="@array/settings_notification_frequency_values"
             app:key="frequency"
             app:title="@string/notification_frequency"
+            app:negativeButtonText="Annulla"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>

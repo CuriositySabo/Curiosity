@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import it.uninsubia.curiosityapp.databinding.FragmentSubjectSelectionBinding
+import it.uninsubia.curiosityapp.databinding.FragmentTopicSelectionBinding
 
-class SubjectSelectionFragment : Fragment() {
+class TopicSelectionFragment : Fragment() {
 
-    private var _binding: FragmentSubjectSelectionBinding? = null
+    private var _binding: FragmentTopicSelectionBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -21,7 +21,7 @@ class SubjectSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentSubjectSelectionBinding.inflate(inflater, container, false)
+        _binding = FragmentTopicSelectionBinding.inflate(inflater, container, false)
         val root: View = binding.root
         return root
     }
