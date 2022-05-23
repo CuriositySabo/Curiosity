@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
+    private lateinit var testBtn: Button
 
     private val channelid = "notifyCuriosity"
 
@@ -30,33 +32,36 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        createNotificationchanel() // creazione del canale di notifica
+
         logoutBtn = layout.logoutBtn
         logoutBtn.setOnClickListener {
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        createNotificationchanel() // creazione del canale di notifica
+        testBtn = layout.testBtn
+        testBtn.setOnClickListener {
+            var time = 3
+            time *= 1000
+
+            Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
+
+            val intent = Intent(this, SendNotificationBroadcast::class.java) //creazione intent con il broadcast
+            intent.putExtra("time", time)
+            Log.e("MainActivity", time.toString())
+            val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
+
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+            alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent) //esegui il broadcast dopo i millisecondi passati
+        }
+
+
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
-
-        val intent = Intent(this, SendNotificationBroadcast::class.java) //creazione intent con il broadcast
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE)
-
-        val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
-
-        var time = 3
-        time *= 1000
-
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent) //esegui il broadcast dopo i millisecondi passati
-
-    }
 
     private fun createNotificationchanel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

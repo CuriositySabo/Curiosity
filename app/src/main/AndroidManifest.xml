@@ -28,8 +28,21 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".SendNotificationBroadcast"/>
-        <receiver android:name=".iknewReceiver"/>
+        <receiver
+            android:name=".SendNotificationBroadcast"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_SENT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".IknewReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_KNEW" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
