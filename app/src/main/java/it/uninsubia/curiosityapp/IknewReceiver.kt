@@ -25,9 +25,9 @@ class IknewReceiver : BroadcastReceiver() {
         notificationManager.cancel(200)
 
         //creazione intent con il broadcast
-        val intent = Intent(context, SendNotificationBroadcast::class.java)
+        val actionIntent = Intent(context, SendNotificationBroadcast::class.java)
         val pendingIntent =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val momentTime = System.currentTimeMillis()
 
@@ -36,7 +36,7 @@ class IknewReceiver : BroadcastReceiver() {
 
         //esegui il broadcast dopo i millisecondi passati
         val alarmManager =
-            context?.getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+            context.getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
         alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
     }
 }
