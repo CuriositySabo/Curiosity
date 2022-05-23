@@ -43,6 +43,15 @@
                 <action android:name="NOTI_KNEW" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".IDKnowReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_DKNOW" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
