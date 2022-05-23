@@ -28,7 +28,8 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".CustomBroadcastReceiver"/>
+        <receiver android:name=".SendNotificationBroadcast"/>
+        <receiver android:name=".iknewReceiver"/>
     </application>
 
 </manifest>

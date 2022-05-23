@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -45,10 +44,9 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         Toast.makeText(this, "Notifica partita", Toast.LENGTH_LONG).show()
 
-        val intent = Intent(this, CustomBroadcastReceiver::class.java) //creazione intent con il broadcast
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
-
-
+        val intent = Intent(this, SendNotificationBroadcast::class.java) //creazione intent con il broadcast
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE)
 
         val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
 
