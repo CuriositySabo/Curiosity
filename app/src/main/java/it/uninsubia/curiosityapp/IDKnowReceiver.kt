@@ -30,7 +30,7 @@ class IDKnowReceiver : BroadcastReceiver() {
         val momentTime = System.currentTimeMillis()
 
 
-        Log.e("time IknewReceiver", time.toString())
+        Log.e("IDknow", time.toString())
 
         //esegui il broadcast dopo i millisecondi passati
         val alarmManager =
