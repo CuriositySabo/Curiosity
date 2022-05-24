@@ -98,7 +98,7 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
             var indexElement = 0
             when(topicsName.text)
             {
-                 "Cinema" -> {
+                "Cinema" -> {
                     indexElement = 0
                 }
                 "Cucina" -> {
@@ -109,10 +109,10 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
                 }
                 "Tecnologia" -> {
                     indexElement = 3
-                }"Sport" -> {
-                indexElement = 4
-            }
-
+                }
+                "Sport" -> {
+                    indexElement = 4
+                }
             }
             list[indexElement].checked = topicsCheck.isChecked
             //scrivo la lista su file
