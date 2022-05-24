@@ -42,7 +42,7 @@ class TopicSelectionFragment : Fragment() {
     }
     private fun addDataSet()
     {
-        val data = DataSourceList.createData()
+        val data = DataSourceList.createData(this.context)
         topicsAdapter.submitList(data)
     }
 }

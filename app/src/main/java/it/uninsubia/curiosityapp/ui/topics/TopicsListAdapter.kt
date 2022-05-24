@@ -65,6 +65,7 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
                 onClick(topicsCheck)
             }
         }
+
         private fun onClick(v: View) {
             if(v !is CheckBox)
             {
