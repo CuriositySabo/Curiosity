@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         var time = 1
-        time *= 5000 // in realtà ce ne mette 18
+        time *= 30000 // in realtà ce ne mette di più
 
         val settingsData = SettingsData(time)
 
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Notifica Settata", Toast.LENGTH_LONG).show()
 
         //creazione intent con il broadcast da inviare
-        val intent = Intent(this, NotificationSenderBroadcast::class.java)
+        val intent = Intent(this, NotificationAnswerSenderBroadcast::class.java)
         val pendingIntent =
             PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 

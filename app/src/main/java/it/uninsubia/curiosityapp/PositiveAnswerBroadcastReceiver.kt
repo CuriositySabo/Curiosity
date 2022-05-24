@@ -14,19 +14,21 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
 
-class NotificationAnswerBroadcastReceiver : BroadcastReceiver() {
+class PositiveAnswerBroadcastReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
+        Log.e("positivo","positivo")
+
         val time = getJsonDataFromTmp(context!!).time
         Log.e("Notification Answer", time.toString())
 
         Toast.makeText(context, "Notifica partita", Toast.LENGTH_LONG).show()
         val notificationManager =
-            NotificationManagerCompat.from(context!!)
+            NotificationManagerCompat.from(context)
         notificationManager.cancel(200)
 
         //creazione intent con il broadcast
-        val actionIntent = Intent(context, NotificationSenderBroadcast::class.java)
+        val actionIntent = Intent(context, NotificationAnswerSenderBroadcast::class.java)
         val pendingIntent =
             PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_MUTABLE)
 
@@ -55,6 +57,7 @@ class NotificationAnswerBroadcastReceiver : BroadcastReceiver() {
         val gson = Gson()
         val settingsDatatype = object : TypeToken<SettingsData>(){}.type
         val settings : SettingsData = gson.fromJson(jsonString, settingsDatatype)
+        Log.e("Answer", settings.toString())
         return settings
     }
 }
