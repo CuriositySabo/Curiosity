@@ -1,17 +1,67 @@
 package it.uninsubia.curiosityapp.ui.topics
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.FileWriter
+import java.io.IOException
 import java.io.PrintWriter
 import java.lang.Exception
 
 class DataSourceList {
     companion object {
-        fun createData(context: Context?): ArrayList<TopicsModel> {
-            val list = ArrayList<TopicsModel>()
+        fun createData(context: Context?): List<TopicsModel> {
+            fileCheck(context)
+            return readFromFile(context)
+        }
+
+        private fun readFromFile(context: Context?): List<TopicsModel> {
+            var jsonString= ""
+            val list: List<TopicsModel>
+            val directory = File("${context?.filesDir}/tmp")
+            val filePath = File("$directory/topics.json")
+            try {
+                jsonString = filePath.bufferedReader().use {
+                    it.readText()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val gson = Gson()
+            val dataType = object : TypeToken<List<TopicsModel>>() {}.type
+            list = gson.fromJson(jsonString, dataType)
+            return list
+        }
+
+        private fun fileCheck(context: Context?) {
+            val fileName = "topics.json"
+            val path = "${context?.filesDir}/tmp/" + fileName
+            val file = File(path)
+            if (!file.exists())
+                createFile(fileName, context)
+        }
+
+        private fun createFile(fileName: String, context: Context?) {
+            val directory = File(context?.filesDir, "tmp")
+            directory.mkdirs()
+            val filepath = File(directory, fileName)
+            val list = createList()
+            try{
+                PrintWriter(FileWriter(filepath)).use{
+                    val gson = Gson()
+                    val jsonString = gson.toJson(list)
+                    it.write(jsonString)
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }
+
+        private fun createList() : ArrayList<TopicsModel> {
+            val list : ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
                     "Cinema",
@@ -30,14 +80,14 @@ class DataSourceList {
                 TopicsModel(
                     "Storia",
                     "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/storia2.jpg",
-                    true
+                    false
                 )
             )
             list.add(
                 TopicsModel(
                     "Tecnologia",
                     "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/tecnologia.jpg",
-                    true
+                    false
                 )
             )
             list.add(
@@ -49,72 +99,6 @@ class DataSourceList {
             )
             return list
         }
-
-        private fun fileCheck(context: Context?) :Boolean
-        {
-            val fileName = "topics.json"
-            val file = File(fileName)
-            if (file.exists())
-                Log.e("file","il file esiste")
-            else
-            {
-                Log.e("file","il file ==== NON ===== esiste")
-                createFile(fileName, context)
-            }
-            return file.exists()
-        }
-
-        private fun createFile(fileName: String, context: Context?)
-        {
-            val path = context?.filesDir
-            val directory = File(path, "tmp")
-            directory.mkdirs()
-            File(directory,fileName)
-            //scrivo le informazioni di default
-            try{
-                PrintWriter(FileWriter(directory)).use{
-                    val gson = Gson()
-                    var topic = TopicsModel(
-                        "Cinema",
-                        "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/cinema.jpg",
-                        false
-                    )
-                    var jsonString = gson.toJson(topic)
-                    it.write(jsonString)
-                    topic = TopicsModel(
-                        "Cucina",
-                        "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/cucina.jpg",
-                        false
-                    )
-                    jsonString = gson.toJson(topic)
-                    it.append(jsonString)
-                    topic = TopicsModel(
-                        "Storia",
-                        "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/storia2.jpg",
-                        true
-                    )
-                    jsonString = gson.toJson(topic)
-                    it.append(jsonString)
-                    topic = TopicsModel(
-                        "Tecnologia",
-                        "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/tecnologia.jpg",
-                        true
-                    )
-                    jsonString = gson.toJson(topic)
-                    it.append(jsonString)
-                    topic = TopicsModel(
-                        "Sport",
-                        "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/sport.jpg",
-                        false
-                    )
-                    jsonString = gson.toJson(topic)
-                    it.append(jsonString)
-                }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-        }
     }
 }
+
