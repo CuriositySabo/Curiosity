@@ -1,5 +1,6 @@
 package it.uninsubia.curiosityapp.ui.topics
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.R
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.io.PrintWriter
+import java.lang.Exception
 
 class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -17,7 +25,7 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return TopicsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.card_layout,parent,false)
+            LayoutInflater.from(parent.context).inflate(R.layout.card_layout,parent,false), parent.context
         )
     }
 
@@ -39,7 +47,7 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         items = topicList
     }
 
-    class TopicsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class TopicsViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView)
     {
         private val topicsImage: ImageView = itemView.findViewById(R.id.iv_topic_image)
         private val topicsName: TextView = itemView.findViewById(R.id.topic_name)
@@ -56,22 +64,68 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
             topicsName.text = topic.topicName
             topicsCheck.isChecked = topic.checked
             topicsImage.setOnClickListener {
-                onClick(topicsImage)
+                onClick(topicsImage, context)
             }
             topicsName.setOnClickListener {
-                onClick(topicsName)
+                onClick(topicsName, context)
             }
             topicsCheck.setOnClickListener {
-                onClick(topicsCheck)
+                onClick(topicsCheck, context)
             }
         }
 
-        private fun onClick(v: View) {
+        private fun onClick(v: View, context: Context) {
             if(v !is CheckBox)
             {
                 topicsCheck.isChecked = !topicsCheck.isChecked
             }
-            //salvataggio su file ------------------------------------------
+            //recupero la lista
+            var jsonString= ""
+            val list: List<TopicsModel>
+            val directory = File("${context.filesDir}/tmp")
+            val filePath = File("$directory/topics.json")
+            try {
+                jsonString = filePath.bufferedReader().use {
+                    it.readText()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val gson = Gson()
+            val dataType = object : TypeToken<List<TopicsModel>>() {}.type
+            list = gson.fromJson(jsonString, dataType)
+            //accedo alla lista
+            var indexElement = 0
+            when(topicsName.text)
+            {
+                 "Cinema" -> {
+                    indexElement = 0
+                }
+                "Cucina" -> {
+                    indexElement = 1
+                }
+                "Storia" -> {
+                    indexElement = 2
+                }
+                "Tecnologia" -> {
+                    indexElement = 3
+                }"Sport" -> {
+                indexElement = 4
+            }
+
+            }
+            list[indexElement].checked = topicsCheck.isChecked
+            //scrivo la lista su file
+            try{
+                PrintWriter(FileWriter(filePath)).use{
+                    jsonString = gson.toJson(list)
+                    it.write(jsonString)
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
         }
     }
 }
