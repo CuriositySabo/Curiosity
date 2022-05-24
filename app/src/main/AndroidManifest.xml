@@ -29,7 +29,7 @@
             android:exported="false" />
 
         <receiver
-            android:name=".SendNotificationBroadcast"
+            android:name=".NotificationSenderBroadcast"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_SENT" />
@@ -37,18 +37,10 @@
         </receiver>
 
         <receiver
-            android:name=".IknewReceiver"
+            android:name=".NotificationAnswerBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_KNEW" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".IDKnowReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="NOTI_DKNOW" />
             </intent-filter>
         </receiver>
 
