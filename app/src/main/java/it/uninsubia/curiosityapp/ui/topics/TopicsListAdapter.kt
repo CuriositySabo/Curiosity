@@ -3,6 +3,7 @@ package it.uninsubia.curiosityapp.ui.topics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,8 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     {
         private val topicsImage: ImageView = itemView.findViewById(R.id.iv_topic_image)
         private val topicsName: TextView = itemView.findViewById(R.id.topic_name)
+        private val topicsCheck: CheckBox = itemView.findViewById(R.id.selected)
+
         fun bind(topic: TopicsModel) {
             val requestOptions = RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
@@ -51,6 +54,23 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
                 .load(topic.image)
                 .into(topicsImage)
             topicsName.text = topic.topicName
+            topicsCheck.isChecked = topic.checked
+            topicsImage.setOnClickListener {
+                onClick(topicsImage)
+            }
+            topicsName.setOnClickListener {
+                onClick(topicsName)
+            }
+            topicsCheck.setOnClickListener {
+                onClick(topicsCheck)
+            }
+        }
+        private fun onClick(v: View) {
+            if(v !is CheckBox)
+            {
+                topicsCheck.isChecked = !topicsCheck.isChecked
+            }
+            //salvataggio su file ------------------------------------------
         }
     }
 }
