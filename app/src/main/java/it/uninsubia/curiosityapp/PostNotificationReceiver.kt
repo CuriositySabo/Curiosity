@@ -7,6 +7,11 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import it.uninsubia.curiosityapp.ui.topics.TopicsModel
+import java.io.File
+import java.io.IOException
 
 
 class PostNotificationReceiver : BroadcastReceiver() {
@@ -60,9 +65,60 @@ class PostNotificationReceiver : BroadcastReceiver() {
         // il notification manager permette di postare la notifica
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(200, notification)
+
+        retrieveCuriosity(context)
     }
 
+    private fun retrieveCuriosity(context: Context){
+        val topics = readTopics(context)
+        val chosenFields = ArrayList<TopicsModel>()
+        topics.forEach {
+            if(it.checked)
+                chosenFields.add(it)
+        }
 
+        var rnd = (chosenFields.indices).random()
+        val field = chosenFields[rnd]
+        Log.i(tag, field.topicName)
+
+/*        val curiositiesinField =
+            database.child("curiosità").child(field!!).get().addOnSuccessListener {
+//                Log.i("firebase", "Got value ${it.value}")
+                rnd = (0 until it.children.count()).random()
+                var count = 0
+//                Log.i (TAG , curiosities.toString())
+                for (children: DataSnapshot in it.children) {
+                    if (rnd == count)
+                        curiosityData = children.getValue(CuriosityData::class.java)!!
+                    Log.i(TAG, children.toString())
+                    count++
+                }
+                Log.e(TAG, curiosityData.toString())
+            }.addOnFailureListener {
+                Log.e("firebase", "Error getting data", it)
+            }
+//        Thread.sleep(500)
+        Log.e(TAG, curiosityData.toString())
+        return curiosityData*/
+    }
+
+    private fun readTopics(context: Context): List<TopicsModel> {
+        var jsonString = ""
+        val list: List<TopicsModel>
+        val directory = File("${context.filesDir}/tmp")
+        val filePath = File("$directory/topics.json")
+        try {
+            jsonString = filePath.bufferedReader().use {
+                it.readText()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val gson = Gson()
+        val dataType = object : TypeToken<List<TopicsModel>>() {}.type
+        list = gson.fromJson(jsonString, dataType)
+        return list
+    }
 
 
 }
