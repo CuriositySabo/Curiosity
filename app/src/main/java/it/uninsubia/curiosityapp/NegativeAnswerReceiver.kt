@@ -12,14 +12,21 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.io.FileWriter
 import java.io.IOException
+import java.io.PrintWriter
 
 class NegativeAnswerReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.e("negativo","negativo")
+        if (intent != null) {
+            Log.e("positivo", intent.getStringExtra("test")!!)
+        }
 
-        val time = getJsonDataFromTmp(context!!).time
+        val notificationData = getJsonDataFromLastNotification(context!!)
+        writeKnownCuriosities(context, notificationData)
+
+        val time = getJsonDataFromSettings(context).time
         Log.e("Notification Answer", time.toString())
 
         Toast.makeText(context, "Notifica partita", Toast.LENGTH_LONG).show()
@@ -40,8 +47,8 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
     }
 
-    private fun getJsonDataFromTmp(context: Context): SettingsData {
-        val jsonString: String
+    private fun getJsonDataFromSettings(context: Context): SettingsData {
+        var jsonString = ""
         val directory = File("${context.filesDir}/tmp")
         val filepath = File("$directory/settings.json")
 
@@ -55,9 +62,92 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         }
 
         val gson = Gson()
-        val settingsDatatype = object : TypeToken<SettingsData>(){}.type
-        val settings : SettingsData = gson.fromJson(jsonString, settingsDatatype)
-        Log.e("Answer", settings.toString())
+        val settingsDatatype = object : TypeToken<SettingsData>() {}.type
+        val settings: SettingsData = gson.fromJson(jsonString, settingsDatatype)
+        Log.e("Positive Answer", settings.toString())
         return settings
+    }
+
+    private fun getJsonDataFromLastNotification(context: Context): NotificationData {
+        var jsonString = ""
+        val directory = File("${context.filesDir}/tmp")
+        val filepath = File("$directory/lastnotification.json")
+        try {
+            jsonString = filepath.bufferedReader().use {
+                it.readText()
+            }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+        }
+        val gson = Gson()
+        val notificationDataType = object : TypeToken<NotificationData>() {}.type
+        val notificationInfo: NotificationData = gson.fromJson(jsonString, notificationDataType)
+        Log.e("Positive Answer", notificationInfo.toString())
+        return notificationInfo
+    }
+
+    private fun writeKnownCuriosities(
+        context: Context,
+        notificationData: NotificationData
+    ) {
+        val topic = notificationData.topic
+        val title = notificationData.title
+        val text = notificationData.text
+
+        val directory = File(context.filesDir, "tmp") // path directory tmp
+        val filepath = File(directory, "knowncuriosities.json") // path del file
+
+        val fileData = readKnownCuriosities(context)
+        var curiositytoadd: HashMap<Long, Boolean>
+
+        //se il file contiene già la mappa col topic la copio e modifico quella
+        //altrimenti ne creo una nuova
+        if (fileData.knowncuriosity[topic] != null) {
+            curiositytoadd = fileData.knowncuriosity[topic]!!
+        } else {
+            curiositytoadd = hashMapOf<Long, Boolean>()
+        }
+
+        //genero il codice della curiosità equivalente a quello del db
+        val code = "$title $text".hashCode().toLong()
+        //modifico la mappa che contiene le curiosità di un determinato topic aggiungendo una entry
+        curiositytoadd[code] = false
+        //sovrascrivo la mappa del topic corrispondente con quella nuova o modificata
+        fileData.knowncuriosity[topic] = curiositytoadd
+
+
+        //scrivo le modifiche effettuate sul file
+        try {
+            PrintWriter(FileWriter(filepath)).use {
+                val gson = Gson()
+                val jsonString = gson.toJson(fileData)
+                // scrive la classe in formato json sul file
+                it.write(jsonString)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun readKnownCuriosities(context: Context): KnownCuriosityData {
+        var jsonString = ""
+        val directory = File("${context.filesDir}/tmp") // path della directory
+        val filepath = File("$directory/knowncuriosities.json") // path del filepath
+
+        // leggi tutto il testo presente sul file
+        try {
+            jsonString = filepath.bufferedReader().use {
+                it.readText()
+            }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+        }
+
+        val gson = Gson()
+        //salvo il tipo dell'oggetto scritto sul file
+        val dataType = object : TypeToken<KnownCuriosityData>() {}.type
+        //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
+
+        return gson.fromJson(jsonString, dataType)
     }
 }

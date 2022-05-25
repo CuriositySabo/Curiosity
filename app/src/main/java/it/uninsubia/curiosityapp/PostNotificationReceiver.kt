@@ -20,17 +20,22 @@ class PostNotificationReceiver : BroadcastReceiver() {
         val title = "Lo sapevi"
         val text = "Testo"
         val topic = "Storia"
+
+        val requestcode = "$title $text".hashCode()
+
         //recupero del tempo per schedulare la notifica putextra e getextra non funzionano bene!
         // creazione del broadcast per la risposta
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
+        actionIntent.putExtra("test", "test per lo sapevo")
         val pIntentPositive = PendingIntent.getBroadcast(
-            context, 1, actionIntent,
+            context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
         )
 
         actionIntent = Intent(context, NegativeAnswerReceiver::class.java)
+        actionIntent.putExtra("test", "test per non lo sapevo")
         val pIntentNegative = PendingIntent.getBroadcast(
-            context, 2, actionIntent,
+            context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
         )
 

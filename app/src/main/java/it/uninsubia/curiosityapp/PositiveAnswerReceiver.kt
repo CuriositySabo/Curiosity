@@ -19,7 +19,10 @@ import java.io.PrintWriter
 class PositiveAnswerReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.e("positivo", "positivo")
+        if (intent != null) {
+            Log.e("positivo", intent.getStringExtra("test")!!)
+        }
+
         val notificationData = getJsonDataFromLastNotification(context!!)
         writeKnownCuriosities(context, notificationData)
 
