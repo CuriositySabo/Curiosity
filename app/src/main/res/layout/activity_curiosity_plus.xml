@@ -1,121 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_container_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="48dp"
+    android:orientation="vertical"
+    android:weightSum="100"
     tools:context=".ui.CuriosityPlus">
-    <LinearLayout
-        android:id="@+id/game_container_layout"
+
+    <TextView
+        android:id="@+id/game_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="48dp"
-        android:weightSum="100"
-        tools:ignore="MissingConstraints">
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="36dp"
+        android:layout_weight="10"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="@string/game_title"
+        android:textSize="32sp"
+        android:textStyle="normal" />
 
-        <TextView
-            android:id="@+id/game_title"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/game_container_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="48dp"
+        android:layout_weight="70"
+        app:cardBackgroundColor="@color/bg_dark"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:cardPreventCornerOverlap="true">
+
+        <FrameLayout
+            android:id="@+id/start_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:text="@string/game_title"
-            android:layout_marginHorizontal="36dp"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="32sp"
-            android:layout_weight="10"
-            android:gravity="center" />
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/game_container_card"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="48dp"
-            android:layout_weight="75"
-            app:cardBackgroundColor="@color/bg_dark"
-            app:cardElevation="5dp"
-            app:cardPreventCornerOverlap="true"
-            app:cardCornerRadius="8dp">
-
-            <LinearLayout
-                android:id="@+id/game_internal_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <androidx.cardview.widget.CardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#2F373A"
+                android:elevation="12dp"
+                app:cardCornerRadius="60dp">
 
                 <ImageView
-                    android:id="@+id/iv_game"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="36dp"
+                    android:id="@+id/imageView_play"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
                     android:layout_gravity="center"
-                    android:layout_weight="3"
-                    android:src="@drawable/ic_launcher_background"
-                    android:visibility="visible"
-                    android:contentDescription="@string/game_image_description"/>
+                    android:background="@drawable/ic_play_game"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="@string/game_image_description"
+                    android:padding="1dp"
+                    android:textSize="25sp"
+                    app:cornerRadius="60dp" />
 
-                <TextView
-                    android:id="@+id/tv_game"
-                    android:layout_marginTop="36dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/toast_borders"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_weight="6"
-                    android:text="Prova"
-                    android:textSize="20sp"
-                    android:padding="10dp"/>
+            </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                    android:id="@+id/container_buttons"
-                    android:layout_marginVertical="20dp"
-                    android:layout_width="match_parent"
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/progress_bar_start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_bar_item"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                app:indicatorColor="@color/teal_200"
+                app:indicatorSize="130dp"
+                app:trackThickness="10dp" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/game_internal_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="36dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/game_image_description"
+                android:src="@drawable/ic_launcher_background"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_game"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="36dp"
+                android:layout_weight="4"
+                android:padding="10dp"
+                android:text="Sapevi che la pizza è buona?"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:id="@+id/container_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_sapevo"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#00897B"
+                    android:drawableLeft="@drawable/ic_sapevo"
+                    android:text="@string/game_green"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_sapevo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_sapevo"
-                        android:text="La sapevo"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:backgroundTint="#00897B"
-                        android:layout_marginEnd="10dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_non_sapevo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_non_sapevo"
-                        android:text="Ora la so"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:backgroundTint="#D32F2F"
-                        android:layout_marginStart="10dp"/>
-                </LinearLayout>
-
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_non_sapevo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#D32F2F"
+                    android:drawableLeft="@drawable/ic_non_sapevo"
+                    android:text="@string/game_red"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="48dp"
-            android:layout_gravity="center"
-            android:paddingHorizontal="80dp"
-            android:text="@string/game_exit"
-            android:textSize="20sp"
-            android:fontFamily="sans-serif-medium"
-            android:layout_weight="7"/>
+    </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/button_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="48dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="8"
+        android:fontFamily="sans-serif-medium"
+        android:paddingHorizontal="80dp"
+        android:text="@string/game_exit"
+        android:textSize="20sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

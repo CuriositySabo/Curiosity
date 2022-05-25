@@ -47,4 +47,6 @@
     <string name="game_title">Curiosity +</string>
     <string name="game_exit">Esci</string>
     <string name="game_image_description">Immagine di una curiosità</string>
+    <string name="game_green">La sapevo!</string>
+    <string name="game_red">Ora la so!</string>
 </resources>
