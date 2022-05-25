@@ -43,4 +43,8 @@
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!--Curiosity+-->
+    <string name="game_title">Curiosity +</string>
+    <string name="game_exit">Esci</string>
+    <string name="game_image_description">Immagine di una curiosità</string>
 </resources>

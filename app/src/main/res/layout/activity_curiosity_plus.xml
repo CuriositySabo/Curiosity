@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.CuriosityPlus">
+    <LinearLayout
+        android:id="@+id/game_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="48dp"
+        android:weightSum="100"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/game_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="@string/game_title"
+            android:layout_marginHorizontal="36dp"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="32sp"
+            android:layout_weight="10"
+            android:gravity="center" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/game_container_card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="48dp"
+            android:layout_weight="75"
+            app:cardBackgroundColor="@color/bg_dark"
+            app:cardElevation="5dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:id="@+id/game_internal_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_game"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="3"
+                    android:src="@drawable/ic_launcher_background"
+                    android:visibility="visible"
+                    android:contentDescription="@string/game_image_description"/>
+
+                <TextView
+                    android:id="@+id/tv_game"
+                    android:layout_marginTop="36dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/toast_borders"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_weight="6"
+                    android:text="Prova"
+                    android:textSize="20sp"
+                    android:padding="10dp"/>
+
+                <LinearLayout
+                    android:id="@+id/container_buttons"
+                    android:layout_marginVertical="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_sapevo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_sapevo"
+                        android:text="La sapevo"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#00897B"
+                        android:layout_marginEnd="10dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_non_sapevo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_non_sapevo"
+                        android:text="Ora la so"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#D32F2F"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="48dp"
+            android:layout_gravity="center"
+            android:paddingHorizontal="80dp"
+            android:text="@string/game_exit"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:layout_weight="7"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
