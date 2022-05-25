@@ -29,7 +29,7 @@
             android:exported="false" />
 
         <receiver
-            android:name=".NotificationAnswerSenderBroadcast"
+            android:name=".PostNotificationReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_SENT" />
@@ -37,7 +37,7 @@
         </receiver>
 
         <receiver
-            android:name=".PositiveAnswerBroadcastReceiver"
+            android:name=".PositiveAnswerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_KNEW" />
@@ -45,7 +45,7 @@
         </receiver>
 
         <receiver
-            android:name=".NegativeAnswerBroadcastReceiver"
+            android:name=".NegativeAnswerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_KNEW" />

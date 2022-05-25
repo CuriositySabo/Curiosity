@@ -53,31 +53,15 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         var time = 1
-        time *= 30000 // in realtà ce ne mette di più
+        time *= 5000 // in realtà ce ne mette di più
 
         val settingsData = SettingsData(time)
-
-
-        val directory = File(this.filesDir, "tmp") // crea la directory tmp
-        val filepath = File(directory, "settings.json") // crea il file json
-
-
-        try {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                val jsonString = gson.toJson(settingsData)
-                // scrive la classe in formato json sul file
-                it.write(jsonString)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
+        createFile(settingsData)
 
         Toast.makeText(this, "Notifica Settata", Toast.LENGTH_LONG).show()
 
         //creazione intent con il broadcast da inviare
-        val intent = Intent(this, NotificationAnswerSenderBroadcast::class.java)
+        val intent = Intent(this, PostNotificationReceiver::class.java)
         val pendingIntent =
             PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -110,6 +94,39 @@ class MainActivity : AppCompatActivity() {
 
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createFile(settingsData: SettingsData) {
+        val directory = File(this.filesDir, "tmp") // crea la directory tmp
+        if (!directory.exists()){
+            directory.mkdirs()
+        }
+
+        var filepath = File(directory, "settings.json")
+
+        // crea il file setting se non esiste
+        try {
+            PrintWriter(FileWriter(filepath)).use {
+                val gson = Gson()
+                val jsonString = gson.toJson(settingsData)
+                // scrive la classe contenente i settings in formato json sul file
+                it.write(jsonString)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
+        filepath = File(directory, "knowncuriosities.json")
+        // creo il file knowncuriosity se non esiste
+        if (!filepath.exists()) {
+            PrintWriter(FileWriter(filepath)).use {
+                val gson = Gson()
+                // inizializzo con la classe vuota il file
+                val jsonString = gson.toJson(KnownCuriosityData())
+                it.write(jsonString)
+            }
         }
     }
 }

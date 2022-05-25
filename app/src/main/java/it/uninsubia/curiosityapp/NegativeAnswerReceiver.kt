@@ -14,10 +14,10 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
 
-class PositiveAnswerBroadcastReceiver : BroadcastReceiver() {
+class NegativeAnswerReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.e("positivo","positivo")
+        Log.e("negativo","negativo")
 
         val time = getJsonDataFromTmp(context!!).time
         Log.e("Notification Answer", time.toString())
@@ -28,7 +28,7 @@ class PositiveAnswerBroadcastReceiver : BroadcastReceiver() {
         notificationManager.cancel(200)
 
         //creazione intent con il broadcast
-        val actionIntent = Intent(context, NotificationAnswerSenderBroadcast::class.java)
+        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
         val pendingIntent =
             PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_MUTABLE)
 
