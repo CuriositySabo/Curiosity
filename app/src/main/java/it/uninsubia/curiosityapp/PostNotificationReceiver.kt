@@ -7,33 +7,38 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.gson.Gson
-import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
 
 
 class PostNotificationReceiver : BroadcastReceiver() {
     private val channelid = "notifyCuriosity"
+    private val tag = "PostNotification"
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val title = "Lo sapevi"
-        val text = "Testo"
-        val topic = "Storia"
+
+        val stringArray = intent!!.getStringArrayExtra("notificationData")!!
+        val title = stringArray[0]
+        val text = stringArray[1]
+        val topic = stringArray[2]
 
         val requestcode = "$title $text".hashCode()
+        Log.e(tag, " \nrequest code : $requestcode \ntitle : $title \ntext : $text \ntopic: $topic")
 
         //recupero del tempo per schedulare la notifica putextra e getextra non funzionano bene!
         // creazione del broadcast per la risposta
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
-        actionIntent.putExtra("test", "test per lo sapevo")
+
+        actionIntent.putExtra("test", "per positivo")
+        actionIntent.putExtra("notificationData", stringArray)
+
         val pIntentPositive = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
         )
 
         actionIntent = Intent(context, NegativeAnswerReceiver::class.java)
-        actionIntent.putExtra("test", "test per non lo sapevo")
+        actionIntent.putExtra("test", "per negativo")
+        actionIntent.putExtra("notificationData", stringArray)
+
         val pIntentNegative = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
@@ -51,34 +56,13 @@ class PostNotificationReceiver : BroadcastReceiver() {
             .addAction(R.mipmap.ic_launcher, "Non lo sapevo", pIntentNegative)
             .build()
 
-        val notificationData = NotificationData(title, text, topic)
-        writeNotificationToTmp(context, notificationData)
 
         // il notification manager permette di postare la notifica
         val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager
         notificationManager.notify(200, notification)
     }
 
-    private fun writeNotificationToTmp(context: Context, notificationData: NotificationData) {
-        var jsonString = ""
-        val directory = File("${context.filesDir}/tmp")
-        val filepath = File("$directory/lastnotification.json")
 
-        try {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                jsonString = gson.toJson(notificationData)
-                // scrive la classe in formato json sul file
-                it.write(jsonString)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        Log.e("Answer", jsonString)
-
-    }
 
 
 }

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMainBinding
     private lateinit var logoutBtn: Button
     private lateinit var testBtn: Button
+    private lateinit var editTextTitle : EditText
+    private lateinit var editTextText : EditText
+    private lateinit var editTextTopic : EditText
 
     private val channelid = "notifyCuriosity"
 
@@ -43,17 +47,26 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
+
+        editTextTitle = layout.editTextTitle
+        editTextText = layout.editTextText
+        editTextTopic = layout.editTextTopic
+
+
+
         testBtn = layout.testBtn
         testBtn.setOnClickListener {
+            val notificationData = NotificationData(editTextTitle.text.toString(), editTextText.text.toString(), editTextTopic.text.toString())
+            doStuff(notificationData)
         }
 
     }
 
-
-    override fun onStart() {
-        super.onStart()
+    private fun doStuff(notificationData: NotificationData) {
         var time = 1
-        time *= 5000 // in realtà ce ne mette di più
+        time *= 2000 // in realtà ce ne mette di più
+
+        val requestcode = notificationData.hashCode()
 
         val settingsData = SettingsData(time)
         createFile(settingsData)
@@ -62,8 +75,10 @@ class MainActivity : AppCompatActivity() {
 
         //creazione intent con il broadcast da inviare
         val intent = Intent(this, PostNotificationReceiver::class.java)
+        val stringArray = arrayOf(notificationData.title, notificationData.text, notificationData.topic)
+        intent.putExtra("notificationData", stringArray)
         val pendingIntent =
-            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(this, requestcode, intent, PendingIntent.FLAG_MUTABLE)
 
         val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
 
@@ -82,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             pendingIntent
         )
     }
+
+
 
     // per creare il canale di notifica
     private fun createNotificationchanel() {

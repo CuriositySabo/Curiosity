@@ -20,14 +20,17 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent != null) {
-            Log.e("positivo", intent.getStringExtra("test")!!)
+            Log.e("negativo", intent.getStringExtra("test")!!)
         }
 
-        val notificationData = getJsonDataFromLastNotification(context!!)
-        writeKnownCuriosities(context, notificationData)
+        val stringArray = intent!!.getStringArrayExtra("notificationData")!!
+        val requestcode = stringArray.hashCode()
+
+        val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])
+        writeKnownCuriosities(context!!, notificationData)
 
         val time = getJsonDataFromSettings(context).time
-        Log.e("Notification Answer", time.toString())
+        Log.e("NegativeAnswer", time.toString())
 
         Toast.makeText(context, "Notifica partita", Toast.LENGTH_LONG).show()
         val notificationManager =
@@ -36,8 +39,15 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
 
         //creazione intent con il broadcast
         val actionIntent = Intent(context, PostNotificationReceiver::class.java)
+        actionIntent.putExtra("notificationData", stringArray)
+
         val pendingIntent =
-            PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_MUTABLE)
+            PendingIntent.getBroadcast(
+                context,
+                requestcode,
+                actionIntent,
+                PendingIntent.FLAG_MUTABLE
+            )
 
         val momentTime = System.currentTimeMillis()
 
@@ -48,7 +58,7 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
     }
 
     private fun getJsonDataFromSettings(context: Context): SettingsData {
-        var jsonString = ""
+        val jsonString: String
         val directory = File("${context.filesDir}/tmp")
         val filepath = File("$directory/settings.json")
 
@@ -68,23 +78,6 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         return settings
     }
 
-    private fun getJsonDataFromLastNotification(context: Context): NotificationData {
-        var jsonString = ""
-        val directory = File("${context.filesDir}/tmp")
-        val filepath = File("$directory/lastnotification.json")
-        try {
-            jsonString = filepath.bufferedReader().use {
-                it.readText()
-            }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-        }
-        val gson = Gson()
-        val notificationDataType = object : TypeToken<NotificationData>() {}.type
-        val notificationInfo: NotificationData = gson.fromJson(jsonString, notificationDataType)
-        Log.e("Positive Answer", notificationInfo.toString())
-        return notificationInfo
-    }
 
     private fun writeKnownCuriosities(
         context: Context,
@@ -98,15 +91,15 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         val filepath = File(directory, "knowncuriosities.json") // path del file
 
         val fileData = readKnownCuriosities(context)
-        var curiositytoadd: HashMap<Long, Boolean>
 
         //se il file contiene già la mappa col topic la copio e modifico quella
         //altrimenti ne creo una nuova
-        if (fileData.knowncuriosity[topic] != null) {
-            curiositytoadd = fileData.knowncuriosity[topic]!!
-        } else {
-            curiositytoadd = hashMapOf<Long, Boolean>()
-        }
+        val curiositytoadd: HashMap<Long, Boolean> =
+            if (fileData.knowncuriosity[topic] != null) {
+                fileData.knowncuriosity[topic]!!
+            } else {
+                hashMapOf()
+            }
 
         //genero il codice della curiosità equivalente a quello del db
         val code = "$title $text".hashCode().toLong()
