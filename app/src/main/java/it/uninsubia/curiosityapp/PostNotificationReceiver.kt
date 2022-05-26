@@ -10,6 +10,8 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
+import it.uninsubia.myfirebasetest.CuriositiesRepository
+import it.uninsubia.myfirebasetest.FirebaseCallback
 import java.io.File
 import java.io.IOException
 
@@ -17,54 +19,12 @@ import java.io.IOException
 class PostNotificationReceiver : BroadcastReceiver() {
     private val channelid = "notifyCuriosity"
     private val tag = "PostNotification"
-    private lateinit var repository: CuriositiesRepository
+
+    // inizializzo piccola repository in locale
+    private val repository: CuriositiesRepository = CuriositiesRepository()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        // il context non è mai null
-        val chosenTopic = chooseRandomTopic(context!!)
-
-        // inizializzo piccola repository in locale
-        repository = CuriositiesRepository(chosenTopic)
-
-        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
-        var curiosityList = arrayListOf<CuriosityData>()
-
-        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
-        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
-        getResponseUsingCallback(object : FirebaseCallback {
-            override fun onResponse(response: Response) {
-                print(response)
-                //trasformo la risposta da parte del db in un lista di curiosità
-                convertResponse(response, curiosityList)
-
-                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
-                val rnd = curiosityList.indices.random()
-
-                // inizializzo la variabile per contenere la curiosità random scelta
-                var chosenCuriosity = CuriosityData()
-                Log.e(tag, rnd.toString())
-
-                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
-                // restituiscce posizione e valore
-                for ((i, curiosity: CuriosityData) in curiosityList.withIndex()) {
-                    if (i == rnd) {
-                        chosenCuriosity = curiosity
-                    }
-                }
-
-                // non passabile con l'intent.putExtra perchè serve un tipo supportato
-                // perciò lo trasformo in tale
-                val curiosity = arrayListOf<String>(
-                    chosenCuriosity.title,
-                    chosenCuriosity.text,
-                    chosenTopic
-                )
-
-                // creo la notifica e la posto
-                notificationCreator(context, curiosity)
-            }
-        })
-
+        newStuff(context!!)
     }
 
     private fun readTopics(context: Context): List<TopicsModel> {
@@ -89,7 +49,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         response.curiosities?.let { curiosities ->
             curiosities.forEach { curiosity ->
                 curiosity.title.let {
-                    Log.e(tag, it)
+                    Log.i(tag, it)
                 }
             }
         }
@@ -101,18 +61,24 @@ class PostNotificationReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun convertResponse(response: Response, curiosityList: ArrayList<CuriosityData>) {
+    private fun convertResponse(response: Response): ArrayList<CuriosityData> {
+        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        var curiosityList = arrayListOf<CuriosityData>()
+
         response.curiosities?.let { curiosities ->
             curiosities.forEach { curiosity ->
                 curiosityList.add(curiosity)
             }
         }
 
+
         response.exception?.let { exception ->
             exception.message?.let {
                 Log.e(tag, it)
             }
         }
+
+        return curiosityList
 
     }
 
@@ -182,7 +148,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         return chosenFields[rnd].topicName
     }
 
-    private fun readKnownCuriosities(context: Context): KnownCuriosityData {
+    private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
         var jsonString = ""
         val directory = File("${context.filesDir}/tmp") // path della directory
         val filepath = File("$directory/knowncuriosities.json") // path del filepath
@@ -198,9 +164,89 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         val gson = Gson()
         //salvo il tipo dell'oggetto scritto sul file
-        val dataType = object : TypeToken<KnownCuriosityData>() {}.type
+        val dataType = object : TypeToken<KnownCuriositiesData>() {}.type
         //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
 
         return gson.fromJson(jsonString, dataType)
+    }
+
+    /*private fun oldStuff(context: Context) {
+        // il context non è mai null
+        val chosenTopic = chooseRandomTopic(context!!)
+
+        // inizializzo piccola repository in locale
+        repository = CuriositiesRepository(chosenTopic)
+
+        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        var curiosityList = arrayListOf<CuriosityData>()
+
+        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
+        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
+        getResponseUsingCallback(object : FirebaseCallback {
+            override fun onResponse(response: Response) {
+                print(response)
+                //trasformo la risposta da parte del db in un lista di curiosità
+                convertResponse(response, curiosityList)
+
+                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
+                val rnd = curiosityList.indices.random()
+
+                // inizializzo la variabile per contenere la curiosità random scelta
+                var chosenCuriosity = CuriosityData()
+                Log.e(tag, rnd.toString())
+
+                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
+                // restituiscce posizione e valore
+                for ((i, curiosity: CuriosityData) in curiosityList.withIndex()) {
+                    if (i == rnd) {
+                        chosenCuriosity = curiosity
+                    }
+                }
+
+                // non passabile con l'intent.putExtra perchè serve un tipo supportato
+                // perciò lo trasformo in tale
+                val curiosity = arrayListOf<String>(
+                    chosenCuriosity.title,
+                    chosenCuriosity.text,
+                    chosenTopic
+                )
+
+                // creo la notifica e la posto
+                notificationCreator(context, curiosity)
+            }
+        })
+
+    }*/
+
+    private fun newStuff(context: Context) {
+        // il context non è mai null
+        val chosenTopic = chooseRandomTopic(context)
+
+        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
+        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
+        getResponseUsingCallback(object : FirebaseCallback {
+            override fun onResponse(response: Response) {
+                print(response)
+                //trasformo la risposta da parte del db in un lista di curiosità
+                val curiosityList = convertResponse(response)
+
+
+                val knownCuriositiesmap = readKnownCuriosities(context)
+                /*do {
+                    val randomIndex = Random.nextInt(curiosityList.size)
+                    val randitemcode = "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}"
+                } while (randitemcode ==  )*/
+                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
+
+
+                // inizializzo la variabile per contenere la curiosità random scelta
+                var chosenCuriosity = CuriosityData()
+
+                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
+                // restituiscce posizione e valore
+
+
+            }
+        })
     }
 }

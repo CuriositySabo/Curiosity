@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             PrintWriter(FileWriter(filepath)).use {
                 val gson = Gson()
                 // inizializzo con la classe vuota il file
-                val jsonString = gson.toJson(KnownCuriosityData())
+                val jsonString = gson.toJson(KnownCuriositiesData())
                 it.write(jsonString)
             }
         }

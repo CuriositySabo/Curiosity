@@ -12,9 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
-import java.io.PrintWriter
 
 class NegativeAnswerReceiver : BroadcastReceiver() {
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
@@ -27,9 +25,9 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         val requestcode = stringArray.hashCode()
 
         val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])
-        writeKnownCuriosities(context!!, notificationData)
+//        writeKnownCuriosities(context!!, notificationData)
 
-        val time = getJsonDataFromSettings(context).time
+        val time = getJsonDataFromSettings(context!!).time
         Log.e("NegativeAnswer", time.toString())
 
         Toast.makeText(context, "Notifica partita", Toast.LENGTH_LONG).show()
@@ -79,7 +77,7 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
     }
 
 
-    private fun writeKnownCuriosities(
+    /*private fun writeKnownCuriosities(
         context: Context,
         notificationData: NotificationData
     ) {
@@ -120,9 +118,9 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
+    }*/
 
-    private fun readKnownCuriosities(context: Context): KnownCuriosityData {
+    private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
         var jsonString = ""
         val directory = File("${context.filesDir}/tmp") // path della directory
         val filepath = File("$directory/knowncuriosities.json") // path del filepath
@@ -138,7 +136,7 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
 
         val gson = Gson()
         //salvo il tipo dell'oggetto scritto sul file
-        val dataType = object : TypeToken<KnownCuriosityData>() {}.type
+        val dataType = object : TypeToken<KnownCuriositiesData>() {}.type
         //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
 
         return gson.fromJson(jsonString, dataType)
