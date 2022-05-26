@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -12,47 +11,17 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.io.FileWriter
 import java.io.IOException
+import java.io.PrintWriter
 
 class PositiveAnswerReceiver : BroadcastReceiver() {
+    private val tag = "Positive answer"
+
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent != null) {
-            Log.e("positivo", intent.getStringExtra("test")!!)
-        }
+        newStuff(context!!, intent!!)
 
-        val stringArray = intent!!.getStringArrayListExtra("notificationData")!!
-        val requestcode = stringArray.hashCode()
-
-        val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])
-//        writeKnownCuriosities(context!!, notificationData)
-
-        val time = getJsonDataFromSettings(context!!).time
-        Log.e("PositiveAnswer", time.toString())
-
-        Toast.makeText(context, "Notifica partita", Toast.LENGTH_LONG).show()
-        val notificationManager =
-            NotificationManagerCompat.from(context)
-        notificationManager.cancel(200)
-
-        //creazione intent con il broadcast
-        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
-        actionIntent.putExtra("notificationData", stringArray)
-
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                requestcode,
-                actionIntent,
-                PendingIntent.FLAG_MUTABLE
-            )
-
-        val momentTime = System.currentTimeMillis()
-
-        //esegui il broadcast dopo i millisecondi passati
-        val alarmManager =
-            context.getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
     }
 
     private fun getJsonDataFromSettings(context: Context): SettingsData {
@@ -77,34 +46,35 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
     }
 
 
-    /*private fun writeKnownCuriosities(
+    private fun writeKnownCuriosity(
         context: Context,
-        notificationData: NotificationData
+        notificationData: ArrayList<String>
     ) {
-        val topic = notificationData.topic
-        val title = notificationData.title
-        val text = notificationData.text
+
+        val title = notificationData[0]
+        val text = notificationData[1]
+        val topic = notificationData[2]
 
         val directory = File(context.filesDir, "tmp") // path directory tmp
         val filepath = File(directory, "knowncuriosities.json") // path del file
 
+
         val fileData = readKnownCuriosities(context)
+        //creo una copia della mappa all'interno del file
+        val knownCuriositiesModified = readKnownCuriosities(context).knowncuriosities
 
         //se il file contiene già la mappa col topic la copio e modifico quella
         //altrimenti ne creo una nuova
-        val curiositytoadd: HashMap<Long, Boolean> =
-            if (fileData.knowncuriosity[topic] != null) {
-                fileData.knowncuriosity[topic]!!
-            } else {
-                hashMapOf()
-            }
+
 
         //genero il codice della curiosità equivalente a quello del db
-        val code = "$title $text".hashCode().toLong()
+        val code = "$title $text $topic".hashCode()
+
+
         //modifico la mappa che contiene le curiosità di un determinato topic aggiungendo una entry
-        curiositytoadd[code] = true
+        knownCuriositiesModified[code] = true
         //sovrascrivo la mappa del topic corrispondente con quella nuova o modificata
-        fileData.knowncuriosity[topic] = curiositytoadd
+        fileData.knowncuriosities = knownCuriositiesModified
 
 
         //scrivo le modifiche effettuate sul file
@@ -118,7 +88,83 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }*/
+    }
+
+    private fun newStuff(context: Context, intent: Intent) {
+        val notificationData = intent.getStringArrayListExtra("notificationData")!!
+        Log.e(tag, notificationData.toString())
+
+
+        writeKnownCuriosity(context, notificationData)
+
+        val time = getJsonDataFromSettings(context).time
+        Log.e(tag, time.toString())
+
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.cancel(200)
+
+
+        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
+
+        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
+        actionIntent.putExtra("notificationData", notificationData)
+
+        val requestcode = notificationData.hashCode()
+
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                requestcode,
+                actionIntent,
+                PendingIntent.FLAG_MUTABLE
+            )
+
+        val momentTime = System.currentTimeMillis()
+
+        //esegui il broadcast dopo i millisecondi passati
+        val alarmManager =
+            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
+        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
+
+    }
+
+
+    private fun oldStuff(context: Context, intent: Intent) {
+
+        val stringArray = intent!!.getStringArrayListExtra("notificationData")!!
+        val requestcode = stringArray.hashCode()
+
+        val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])
+//        writeKnownCuriosities(context!!, notificationData)
+
+        val time = getJsonDataFromSettings(context).time
+        Log.e("PositiveAnswer", time.toString())
+
+        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
+        val notificationManager =
+            NotificationManagerCompat.from(context)
+        notificationManager.cancel(200)
+
+        //creazione intent con il broadcast
+        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
+        actionIntent.putExtra("notificationData", stringArray)
+
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                requestcode,
+                actionIntent,
+                PendingIntent.FLAG_MUTABLE
+            )
+
+        val momentTime = System.currentTimeMillis()
+
+        //esegui il broadcast dopo i millisecondi passati
+        val alarmManager =
+            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
+    }
 
     private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
         var jsonString = ""

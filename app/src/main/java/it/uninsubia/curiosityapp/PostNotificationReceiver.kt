@@ -30,7 +30,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     private fun notifyCuriosity(context: Context) {
         // il context non è mai null
-        val chosenTopic = chooseRandomTopic(context)
+
 
         // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
         // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
@@ -44,16 +44,16 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 Log.e(tag, knownCuriositiesmap.toString())
 
                 var randomIndex : Int
+                var chosenTopic : String
                 do {
+                    chosenTopic = chooseRandomTopic(context)
                     randomIndex = Random.nextInt(curiosityList.size)
                     val randitemcode =
                         "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}".hashCode()
-                } while (knownCuriositiesmap.contains(randitemcode))
+                } while (curiosityList[randomIndex].topic != chosenTopic || knownCuriositiesmap.contains(randitemcode))
                 // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
                 val chosenCuriosity = curiosityList[randomIndex]
-
-                Log.e(tag, chosenCuriosity.title)
-
+                Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
                 // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
                 // restituiscce posizione e valore
                 // creo la notifica e la posto
@@ -122,7 +122,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
     }
 
     private fun notificationCreator(context: Context, chosenCuriosity: CuriosityData) {
-        val curiosity = arrayListOf<String>(
+        val curiosity = arrayListOf(
             chosenCuriosity.title,
             chosenCuriosity.text,
             chosenCuriosity.topic
