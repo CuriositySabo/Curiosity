@@ -7,6 +7,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -71,6 +73,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     private fun retrieveCuriosity(context: Context){
         val topics = readTopics(context)
+        val database = Firebase.database.reference
         val chosenFields = ArrayList<TopicsModel>()
         topics.forEach {
             if(it.checked)
@@ -81,25 +84,25 @@ class PostNotificationReceiver : BroadcastReceiver() {
         val field = chosenFields[rnd]
         Log.i(tag, field.topicName)
 
-/*        val curiositiesinField =
-            database.child("curiosità").child(field!!).get().addOnSuccessListener {
-//                Log.i("firebase", "Got value ${it.value}")
-                rnd = (0 until it.children.count()).random()
+        val curiositiesinField =
+            database.child("curiosità").child(field.topicName).get().addOnSuccessListener {
+                Log.i("firebase", "Got value ${it.value}")
+//                rnd = (0 until it.children.count()).random()
                 var count = 0
 //                Log.i (TAG , curiosities.toString())
-                for (children: DataSnapshot in it.children) {
+                /*for (children: DataSnapshot in it.children) {
                     if (rnd == count)
                         curiosityData = children.getValue(CuriosityData::class.java)!!
                     Log.i(TAG, children.toString())
                     count++
                 }
-                Log.e(TAG, curiosityData.toString())
+                Log.e(TAG, curiosityData.toString())*/
             }.addOnFailureListener {
                 Log.e("firebase", "Error getting data", it)
             }
 //        Thread.sleep(500)
-        Log.e(TAG, curiosityData.toString())
-        return curiosityData*/
+//        Log.e(TAG, curiosityData.toString())
+//        return curiosityData
     }
 
     private fun readTopics(context: Context): List<TopicsModel> {
