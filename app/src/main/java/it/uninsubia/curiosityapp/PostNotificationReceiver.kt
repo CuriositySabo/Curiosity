@@ -14,6 +14,7 @@ import it.uninsubia.myfirebasetest.CuriositiesRepository
 import it.uninsubia.myfirebasetest.FirebaseCallback
 import java.io.File
 import java.io.IOException
+import kotlin.random.Random
 
 
 class PostNotificationReceiver : BroadcastReceiver() {
@@ -24,7 +25,41 @@ class PostNotificationReceiver : BroadcastReceiver() {
     private val repository: CuriositiesRepository = CuriositiesRepository()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        newStuff(context!!)
+        notifyCuriosity(context!!)
+    }
+
+    private fun notifyCuriosity(context: Context) {
+        // il context non è mai null
+        val chosenTopic = chooseRandomTopic(context)
+
+        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
+        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
+        getResponseUsingCallback(object : FirebaseCallback {
+            override fun onResponse(response: Response) {
+//                print(response)
+                //trasformo la risposta da parte del db in un lista di curiosità
+                val curiosityList = convertResponse(response)
+
+                val knownCuriositiesmap = readKnownCuriosities(context).knowncuriosities
+                Log.e(tag, knownCuriositiesmap.toString())
+
+                var randomIndex : Int
+                do {
+                    randomIndex = Random.nextInt(curiosityList.size)
+                    val randitemcode =
+                        "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}".hashCode()
+                } while (knownCuriositiesmap.contains(randitemcode))
+                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
+                val chosenCuriosity = curiosityList[randomIndex]
+
+                Log.e(tag, chosenCuriosity.title)
+
+                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
+                // restituiscce posizione e valore
+                // creo la notifica e la posto
+                notificationCreator(context, chosenCuriosity)
+            }
+        })
     }
 
     private fun readTopics(context: Context): List<TopicsModel> {
@@ -86,17 +121,18 @@ class PostNotificationReceiver : BroadcastReceiver() {
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 
-    private fun notificationCreator(context: Context, curiosity: ArrayList<String>) {
-        val title = curiosity[0]
-        val text = curiosity[1]
-        val topic = curiosity[2]
+    private fun notificationCreator(context: Context, chosenCuriosity: CuriosityData) {
+        val curiosity = arrayListOf<String>(
+            chosenCuriosity.title,
+            chosenCuriosity.text,
+            chosenCuriosity.topic
+        )
 
-        val requestcode = "$title $text".hashCode()
+        val requestcode = "${curiosity[0]} ${curiosity[1]} ${curiosity[2]}".hashCode()
 
         // creazione del broadcast per la risposta
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
 
-        actionIntent.putExtra("test", "per positivo")
         actionIntent.putExtra("notificationData", curiosity)
 
         val pIntentPositive = PendingIntent.getBroadcast(
@@ -105,7 +141,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         )
 
         actionIntent = Intent(context, NegativeAnswerReceiver::class.java)
-        actionIntent.putExtra("test", "per negativo")
+
         actionIntent.putExtra("notificationData", curiosity)
 
         val pIntentNegative = PendingIntent.getBroadcast(
@@ -116,8 +152,8 @@ class PostNotificationReceiver : BroadcastReceiver() {
         // creazione della notifica
         val notification = NotificationCompat.Builder(context!!, channelid)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(title)
-            .setContentText(text)
+            .setContentTitle(curiosity[0])
+            .setContentText(curiosity[1])
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             //sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il
             //con il PendingIntent
@@ -168,85 +204,5 @@ class PostNotificationReceiver : BroadcastReceiver() {
         //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
 
         return gson.fromJson(jsonString, dataType)
-    }
-
-    /*private fun oldStuff(context: Context) {
-        // il context non è mai null
-        val chosenTopic = chooseRandomTopic(context!!)
-
-        // inizializzo piccola repository in locale
-        repository = CuriositiesRepository(chosenTopic)
-
-        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
-        var curiosityList = arrayListOf<CuriosityData>()
-
-        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
-        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
-        getResponseUsingCallback(object : FirebaseCallback {
-            override fun onResponse(response: Response) {
-                print(response)
-                //trasformo la risposta da parte del db in un lista di curiosità
-                convertResponse(response, curiosityList)
-
-                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
-                val rnd = curiosityList.indices.random()
-
-                // inizializzo la variabile per contenere la curiosità random scelta
-                var chosenCuriosity = CuriosityData()
-                Log.e(tag, rnd.toString())
-
-                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
-                // restituiscce posizione e valore
-                for ((i, curiosity: CuriosityData) in curiosityList.withIndex()) {
-                    if (i == rnd) {
-                        chosenCuriosity = curiosity
-                    }
-                }
-
-                // non passabile con l'intent.putExtra perchè serve un tipo supportato
-                // perciò lo trasformo in tale
-                val curiosity = arrayListOf<String>(
-                    chosenCuriosity.title,
-                    chosenCuriosity.text,
-                    chosenTopic
-                )
-
-                // creo la notifica e la posto
-                notificationCreator(context, curiosity)
-            }
-        })
-
-    }*/
-
-    private fun newStuff(context: Context) {
-        // il context non è mai null
-        val chosenTopic = chooseRandomTopic(context)
-
-        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
-        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
-        getResponseUsingCallback(object : FirebaseCallback {
-            override fun onResponse(response: Response) {
-                print(response)
-                //trasformo la risposta da parte del db in un lista di curiosità
-                val curiosityList = convertResponse(response)
-
-
-                val knownCuriositiesmap = readKnownCuriosities(context)
-                /*do {
-                    val randomIndex = Random.nextInt(curiosityList.size)
-                    val randitemcode = "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}"
-                } while (randitemcode ==  )*/
-                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
-
-
-                // inizializzo la variabile per contenere la curiosità random scelta
-                var chosenCuriosity = CuriosityData()
-
-                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
-                // restituiscce posizione e valore
-
-
-            }
-        })
     }
 }
