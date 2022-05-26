@@ -7,9 +7,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -20,19 +17,116 @@ import java.io.IOException
 class PostNotificationReceiver : BroadcastReceiver() {
     private val channelid = "notifyCuriosity"
     private val tag = "PostNotification"
+    private lateinit var repository: CuriositiesRepository
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        // il context non è mai null
+        val chosenTopic = chooseRandomTopic(context!!)
 
-        val curiosity: ArrayList<String> = retrieveCuriosity(context!!)
+        // inizializzo piccola repository in locale
+        repository = CuriositiesRepository(chosenTopic)
 
-        val title =curiosity[0]
+        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        var curiosityList = arrayListOf<CuriosityData>()
+
+        // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
+        // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
+        getResponseUsingCallback(object : FirebaseCallback {
+            override fun onResponse(response: Response) {
+                print(response)
+                //trasformo la risposta da parte del db in un lista di curiosità
+                convertResponse(response, curiosityList)
+
+                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
+                val rnd = curiosityList.indices.random()
+
+                // inizializzo la variabile per contenere la curiosità random scelta
+                var chosenCuriosity = CuriosityData()
+                Log.e(tag, rnd.toString())
+
+                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
+                // restituiscce posizione e valore
+                for ((i, curiosity: CuriosityData) in curiosityList.withIndex()) {
+                    if (i == rnd) {
+                        chosenCuriosity = curiosity
+                    }
+                }
+
+                // non passabile con l'intent.putExtra perchè serve un tipo supportato
+                // perciò lo trasformo in tale
+                val curiosity = arrayListOf<String>(
+                    chosenCuriosity.title,
+                    chosenCuriosity.text,
+                    chosenTopic
+                )
+
+                // creo la notifica e la posto
+                notificationCreator(context, curiosity)
+            }
+        })
+
+    }
+
+    private fun readTopics(context: Context): List<TopicsModel> {
+        var jsonString = ""
+        val list: List<TopicsModel>
+        val directory = File("${context.filesDir}/tmp")
+        val filePath = File("$directory/topics.json")
+        try {
+            jsonString = filePath.bufferedReader().use {
+                it.readText()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val gson = Gson()
+        val dataType = object : TypeToken<List<TopicsModel>>() {}.type
+        list = gson.fromJson(jsonString, dataType)
+        return list
+    }
+
+    private fun print(response: Response) {
+        response.curiosities?.let { curiosities ->
+            curiosities.forEach { curiosity ->
+                curiosity.title.let {
+                    Log.e(tag, it)
+                }
+            }
+        }
+
+        response.exception?.let { exception ->
+            exception.message?.let {
+                Log.e(tag, it)
+            }
+        }
+    }
+
+    private fun convertResponse(response: Response, curiosityList: ArrayList<CuriosityData>) {
+        response.curiosities?.let { curiosities ->
+            curiosities.forEach { curiosity ->
+                curiosityList.add(curiosity)
+            }
+        }
+
+        response.exception?.let { exception ->
+            exception.message?.let {
+                Log.e(tag, it)
+            }
+        }
+
+    }
+
+    private fun getResponseUsingCallback(callback: FirebaseCallback) {
+        repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
+    }
+
+    private fun notificationCreator(context: Context, curiosity: ArrayList<String>) {
+        val title = curiosity[0]
         val text = curiosity[1]
         val topic = curiosity[2]
 
         val requestcode = "$title $text".hashCode()
-        Log.e(tag, " \nrequest code : $requestcode \ntitle : $title \ntext : $text \ntopic: $topic")
 
-        //recupero del tempo per schedulare la notifica putextra e getextra non funzionano bene!
         // creazione del broadcast per la risposta
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
 
@@ -69,15 +163,11 @@ class PostNotificationReceiver : BroadcastReceiver() {
         // il notification manager permette di postare la notifica
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(200, notification)
-
-
     }
 
-    private fun retrieveCuriosity(context: Context): ArrayList<String> {
+    private fun chooseRandomTopic(context: Context): String {
         // leggo tutti i topics esistenti
         val topics = readTopics(context)
-        // salvo la reference al db
-        val database = Firebase.database.reference
 
         // in chosenfield  metto i topics checkati dall'utente
         val chosenFields = ArrayList<TopicsModel>()
@@ -86,58 +176,9 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 chosenFields.add(it)
         }
 
-
         // genero un numero random contenuto nel range degli indici della lista
         var rnd = (chosenFields.indices).random()
-        // utilizzo il valore appena generato per scegliere un campo tra le curiosità
-        val field = chosenFields[rnd]
-        Log.e(tag, field.topicName)
-        // classe che rappresenta come le informazioni sono rappresentate dal db
-        var curiosityData = CuriosityData()
-        // entro nel campo curiosità del db,
-        // poi nel suo nodo figlio corrispondente e successivamente estrapolo una curiosità
-        database.child("curiosità").child(field.topicName).get().addOnSuccessListener {
-            Log.i("firebase", "Got value ${it.value}")
-            // genero un valore random tra i valori possibili
-            // (ovvero il numero di curiosità presenti in un determinato topic)
-            rnd = (0 until it.children.count()).random()
-            Log.e(tag, it.children.count().toString())
-            // for each particolare per contare gli indici passati e salvare il valore del children al momento
-            for ((count, children: DataSnapshot) in it.children.withIndex()) {
-                // quando l'indice che si sta prendendo in considerazione in questo momento è uguale a quello random
-                if (rnd == count) {
-                    //salvo il valore nella mia classe
-                    curiosityData = children.getValue(CuriosityData::class.java)!!
-                }
-                Log.i(tag, children.toString())
-            }
-            Log.e(tag, curiosityData.toString())
-        }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it) // se l'operazione fallisce mostro un errore
-        }
-        Thread.sleep(200)
-        Log.e(tag, curiosityData.toString())
-        //trasformo curiosity data nell'oggetto che utilizzano le notifiche
-        return arrayListOf<String>(curiosityData.title, curiosityData.text, field.topicName)
+        // utilizzerò il valore appena generato per scegliere un campo tra le curiosità
+        return chosenFields[rnd].topicName
     }
-
-    private fun readTopics(context: Context): List<TopicsModel> {
-        var jsonString = ""
-        val list: List<TopicsModel>
-        val directory = File("${context.filesDir}/tmp")
-        val filePath = File("$directory/topics.json")
-        try {
-            jsonString = filePath.bufferedReader().use {
-                it.readText()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        val gson = Gson()
-        val dataType = object : TypeToken<List<TopicsModel>>() {}.type
-        list = gson.fromJson(jsonString, dataType)
-        return list
-    }
-
-
 }

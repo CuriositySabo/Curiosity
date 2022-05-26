@@ -1,6 +1,6 @@
 package it.uninsubia.curiosityapp
 
-data class CuriosityData(val title: String, val text: String) {
+data class CuriosityData(var title: String, val text: String) {
     constructor() : this("", "")
 }
 
