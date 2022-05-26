@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -22,10 +23,11 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        val stringArray = intent!!.getStringArrayExtra("notificationData")!!
-        val title = stringArray[0]
-        val text = stringArray[1]
-        val topic = stringArray[2]
+        val curiosity: ArrayList<String> = retrieveCuriosity(context!!)
+
+        val title =curiosity[0]
+        val text = curiosity[1]
+        val topic = curiosity[2]
 
         val requestcode = "$title $text".hashCode()
         Log.e(tag, " \nrequest code : $requestcode \ntitle : $title \ntext : $text \ntopic: $topic")
@@ -35,7 +37,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
 
         actionIntent.putExtra("test", "per positivo")
-        actionIntent.putExtra("notificationData", stringArray)
+        actionIntent.putExtra("notificationData", curiosity)
 
         val pIntentPositive = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
@@ -44,7 +46,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         actionIntent = Intent(context, NegativeAnswerReceiver::class.java)
         actionIntent.putExtra("test", "per negativo")
-        actionIntent.putExtra("notificationData", stringArray)
+        actionIntent.putExtra("notificationData", curiosity)
 
         val pIntentNegative = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
@@ -68,41 +70,55 @@ class PostNotificationReceiver : BroadcastReceiver() {
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(200, notification)
 
-        retrieveCuriosity(context)
+
     }
 
-    private fun retrieveCuriosity(context: Context){
+    private fun retrieveCuriosity(context: Context): ArrayList<String> {
+        // leggo tutti i topics esistenti
         val topics = readTopics(context)
+        // salvo la reference al db
         val database = Firebase.database.reference
+
+        // in chosenfield  metto i topics checkati dall'utente
         val chosenFields = ArrayList<TopicsModel>()
         topics.forEach {
-            if(it.checked)
+            if (it.checked)
                 chosenFields.add(it)
         }
 
-        var rnd = (chosenFields.indices).random()
-        val field = chosenFields[rnd]
-        Log.i(tag, field.topicName)
 
-        val curiositiesinField =
-            database.child("curiosità").child(field.topicName).get().addOnSuccessListener {
-                Log.i("firebase", "Got value ${it.value}")
-//                rnd = (0 until it.children.count()).random()
-                var count = 0
-//                Log.i (TAG , curiosities.toString())
-                /*for (children: DataSnapshot in it.children) {
-                    if (rnd == count)
-                        curiosityData = children.getValue(CuriosityData::class.java)!!
-                    Log.i(TAG, children.toString())
-                    count++
+        // genero un numero random contenuto nel range degli indici della lista
+        var rnd = (chosenFields.indices).random()
+        // utilizzo il valore appena generato per scegliere un campo tra le curiosità
+        val field = chosenFields[rnd]
+        Log.e(tag, field.topicName)
+        // classe che rappresenta come le informazioni sono rappresentate dal db
+        var curiosityData = CuriosityData()
+        // entro nel campo curiosità del db,
+        // poi nel suo nodo figlio corrispondente e successivamente estrapolo una curiosità
+        database.child("curiosità").child(field.topicName).get().addOnSuccessListener {
+            Log.i("firebase", "Got value ${it.value}")
+            // genero un valore random tra i valori possibili
+            // (ovvero il numero di curiosità presenti in un determinato topic)
+            rnd = (0 until it.children.count()).random()
+            Log.e(tag, it.children.count().toString())
+            // for each particolare per contare gli indici passati e salvare il valore del children al momento
+            for ((count, children: DataSnapshot) in it.children.withIndex()) {
+                // quando l'indice che si sta prendendo in considerazione in questo momento è uguale a quello random
+                if (rnd == count) {
+                    //salvo il valore nella mia classe
+                    curiosityData = children.getValue(CuriosityData::class.java)!!
                 }
-                Log.e(TAG, curiosityData.toString())*/
-            }.addOnFailureListener {
-                Log.e("firebase", "Error getting data", it)
+                Log.i(tag, children.toString())
             }
-//        Thread.sleep(500)
-//        Log.e(TAG, curiosityData.toString())
-//        return curiosityData
+            Log.e(tag, curiosityData.toString())
+        }.addOnFailureListener {
+            Log.e("firebase", "Error getting data", it) // se l'operazione fallisce mostro un errore
+        }
+        Thread.sleep(200)
+        Log.e(tag, curiosityData.toString())
+        //trasformo curiosity data nell'oggetto che utilizzano le notifiche
+        return arrayListOf<String>(curiosityData.title, curiosityData.text, field.topicName)
     }
 
     private fun readTopics(context: Context): List<TopicsModel> {
