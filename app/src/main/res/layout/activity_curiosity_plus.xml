@@ -37,7 +37,7 @@
             android:id="@+id/start_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="120dp"
@@ -84,12 +84,29 @@
 
         </FrameLayout>
 
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/game_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:max="20"
+            android:indeterminate="false"
+            android:progress="0"
+            app:indicatorColor="@color/teal_200"
+            android:rotation="270"
+            app:indicatorSize="300dp"
+            app:trackThickness="10dp"
+            app:showAnimationBehavior="inward"
+            android:layout_gravity="center_horizontal"
+            android:elevation="1dp"
+            android:background="@null" />
+
         <LinearLayout
             android:id="@+id/game_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_game"
@@ -100,7 +117,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/game_image_description"
                 android:src="@mipmap/ic_launcher_round"
-                android:visibility="visible" />
+                android:elevation="2dp"/>
 
             <TextView
                 android:id="@+id/tv_game"
@@ -112,7 +129,8 @@
                 android:layout_weight="4"
                 android:padding="10dp"
                 android:text="Sapevi che la pizza è buona?"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:elevation="2dp"/>
 
             <LinearLayout
                 android:id="@+id/container_buttons"

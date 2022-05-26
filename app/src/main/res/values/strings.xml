@@ -50,4 +50,6 @@
     <string name="game_green">La sapevo!</string>
     <string name="game_red">Ora la so!</string>
     <string name="game_image_start_description">Clicca per partire!</string>
+    <string name="game_end_of_curiosities">Sembra che non ci siano più curiosità per te,
+        riprova fra qualche update </string>
 </resources>
