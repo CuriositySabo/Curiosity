@@ -181,4 +181,26 @@ class PostNotificationReceiver : BroadcastReceiver() {
         // utilizzerò il valore appena generato per scegliere un campo tra le curiosità
         return chosenFields[rnd].topicName
     }
+
+    private fun readKnownCuriosities(context: Context): KnownCuriosityData {
+        var jsonString = ""
+        val directory = File("${context.filesDir}/tmp") // path della directory
+        val filepath = File("$directory/knowncuriosities.json") // path del filepath
+
+        // leggi tutto il testo presente sul file
+        try {
+            jsonString = filepath.bufferedReader().use {
+                it.readText()
+            }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+        }
+
+        val gson = Gson()
+        //salvo il tipo dell'oggetto scritto sul file
+        val dataType = object : TypeToken<KnownCuriosityData>() {}.type
+        //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
+
+        return gson.fromJson(jsonString, dataType)
+    }
 }

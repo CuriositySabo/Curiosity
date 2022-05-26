@@ -23,7 +23,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
             Log.e("positivo", intent.getStringExtra("test")!!)
         }
 
-        val stringArray = intent!!.getStringArrayExtra("notificationData")!!
+        val stringArray = intent!!.getStringArrayListExtra("notificationData")!!
         val requestcode = stringArray.hashCode()
 
         val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])

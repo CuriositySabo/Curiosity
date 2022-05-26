@@ -42,15 +42,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-
-
         testBtn = layout.testBtn
         testBtn.setOnClickListener {
             doStuff()
         }
 
     }
-
 
     private fun doStuff() {
         var time = 1
@@ -85,8 +82,6 @@ class MainActivity : AppCompatActivity() {
             pendingIntent
         )
     }
-
-
 
     // per creare il canale di notifica
     private fun createNotificationchanel() {
