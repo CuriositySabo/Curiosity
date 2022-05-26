@@ -49,4 +49,5 @@
     <string name="game_image_description">Immagine di una curiosità</string>
     <string name="game_green">La sapevo!</string>
     <string name="game_red">Ora la so!</string>
+    <string name="game_image_start_description">Clicca per partire!</string>
 </resources>
