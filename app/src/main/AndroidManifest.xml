@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="it.uninsubia.curiosityapp">
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -36,6 +36,30 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".PostNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_SENT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".PositiveAnswerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_KNEW" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".NegativeAnswerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NOTI_KNEW" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
