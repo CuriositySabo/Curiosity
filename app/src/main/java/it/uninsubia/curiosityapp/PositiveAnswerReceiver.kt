@@ -20,7 +20,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
 
     // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
-        newStuff(context!!, intent!!)
+        rescheduleNotification(context!!, intent!!)
 
     }
 
@@ -41,7 +41,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         val gson = Gson()
         val settingsDatatype = object : TypeToken<SettingsData>() {}.type
         val settings: SettingsData = gson.fromJson(jsonString, settingsDatatype)
-        Log.e("Positive Answer", settings.toString())
+        Log.e(tag, settings.toString())
         return settings
     }
 
@@ -90,7 +90,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun newStuff(context: Context, intent: Intent) {
+    private fun rescheduleNotification(context: Context, intent: Intent) {
         val notificationData = intent.getStringArrayListExtra("notificationData")!!
         Log.e(tag, notificationData.toString())
 
@@ -129,42 +129,6 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
 
     }
 
-
-    private fun oldStuff(context: Context, intent: Intent) {
-
-        val stringArray = intent!!.getStringArrayListExtra("notificationData")!!
-        val requestcode = stringArray.hashCode()
-
-        val notificationData = NotificationData(stringArray[0], stringArray[1], stringArray[2])
-//        writeKnownCuriosities(context!!, notificationData)
-
-        val time = getJsonDataFromSettings(context).time
-        Log.e("PositiveAnswer", time.toString())
-
-        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
-        val notificationManager =
-            NotificationManagerCompat.from(context)
-        notificationManager.cancel(200)
-
-        //creazione intent con il broadcast
-        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
-        actionIntent.putExtra("notificationData", stringArray)
-
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                requestcode,
-                actionIntent,
-                PendingIntent.FLAG_MUTABLE
-            )
-
-        val momentTime = System.currentTimeMillis()
-
-        //esegui il broadcast dopo i millisecondi passati
-        val alarmManager =
-            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
-    }
 
     private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
         var jsonString = ""
