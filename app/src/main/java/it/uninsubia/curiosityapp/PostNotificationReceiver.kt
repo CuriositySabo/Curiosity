@@ -177,15 +177,15 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_mars_foreground)
             .setLargeIcon(bitmap)
 //            .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
             .setPriority(NotificationCompat.PRIORITY_MIN)
             //sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il
             //con il PendingIntent
-            .addAction(R.mipmap.ic_launcher, "Lo sapevo", pIntentPositive)
-            .addAction(R.mipmap.ic_launcher, "Non lo sapevo", pIntentNegative)
+            .addAction(R.drawable.ic_sapevo, "Lo sapevo", pIntentPositive)
+            .addAction(R.drawable.ic_non_sapevo, "Non lo sapevo", pIntentNegative)
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText(curiosity[1])

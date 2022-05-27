@@ -1,13 +1,10 @@
 package it.uninsubia.curiosityapp
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(layout.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
+        createFile(SettingsData(10))
         auth = FirebaseAuth.getInstance()
 
         val intent = Intent(this, nav_drawer::class.java)
@@ -38,39 +36,6 @@ class MainActivity : AppCompatActivity() {
         createNotificationchanel() // creazione del canale di notifica
     }
 
-    private fun doStuff() {
-        var time = 1
-        time *= 2000 // in realtà ce ne mette di più
-
-        val settingsData = SettingsData(time)
-        createFile(settingsData)
-
-        Toast.makeText(this, "Notifica Settata", Toast.LENGTH_LONG).show()
-
-        //creazione intent con il broadcast da inviare
-        val intent = Intent(this, PostNotificationReceiver::class.java)
-
-
-        val pendingIntent =
-            PendingIntent.getBroadcast(this, baseContext.hashCode(), intent, PendingIntent.FLAG_MUTABLE)
-
-        val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
-
-
-        val alarmManager =
-            getSystemService(ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-
-        /*
-         setto una sveglia, secondo il tempo prestabilito, che viene lanciate anche a se il
-         device è in sleep. Quando la sveglia "suona" viene lanciato il pending intent ovvero il
-         in broadcast
-         */
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            momentTime + time,
-            pendingIntent
-        )
-    }
 
     // per creare il canale di notifica
     private fun createNotificationchanel() {
@@ -118,4 +83,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 }

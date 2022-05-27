@@ -13,8 +13,7 @@
 
         <SwitchPreferenceCompat
             app:key="notification"
-            app:title="@string/notification_permission"
-            android:defaultValue="true"/>
+            app:title="@string/notification_permission" />
 
         <ListPreference
             app:defaultValue="30"
