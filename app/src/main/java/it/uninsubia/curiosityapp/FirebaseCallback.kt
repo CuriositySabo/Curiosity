@@ -1,6 +1,4 @@
-package it.uninsubia.myfirebasetest
-
-import it.uninsubia.curiosityapp.Response
+package it.uninsubia.curiosityapp
 
 interface FirebaseCallback {
     fun onResponse(response: Response)

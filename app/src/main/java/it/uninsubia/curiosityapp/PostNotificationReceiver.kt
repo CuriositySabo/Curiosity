@@ -1,6 +1,5 @@
 package it.uninsubia.curiosityapp
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,8 +11,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
-import it.uninsubia.myfirebasetest.CuriositiesRepository
-import it.uninsubia.myfirebasetest.FirebaseCallback
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -126,7 +123,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 
-    @SuppressLint("ResourceType")
     private fun notificationCreator(context: Context, chosenCuriosity: CuriosityData) {
         val curiosity = arrayListOf(
             chosenCuriosity.title,
@@ -156,7 +152,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         )
 
 
-        var imageStream: InputStream
+        val imageStream: InputStream
         when (curiosity[2]) {
             "Storia" -> imageStream = context.resources.openRawResource(R.raw.storia)
             "Tecnologia" -> imageStream = context.resources.openRawResource(R.raw.tecnologia)

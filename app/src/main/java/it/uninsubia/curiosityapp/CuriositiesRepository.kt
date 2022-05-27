@@ -1,9 +1,7 @@
-package it.uninsubia.myfirebasetest
+package it.uninsubia.curiosityapp
 
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import it.uninsubia.curiosityapp.CuriosityData
-import it.uninsubia.curiosityapp.Response
 
 class CuriositiesRepository(
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference,
