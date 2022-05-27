@@ -1,9 +1,11 @@
 package it.uninsubia.curiosityapp
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -14,6 +16,7 @@ import it.uninsubia.myfirebasetest.CuriositiesRepository
 import it.uninsubia.myfirebasetest.FirebaseCallback
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import kotlin.random.Random
 
 
@@ -31,7 +34,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
     private fun notifyCuriosity(context: Context) {
         // il context non è mai null
 
-
         // utilizzo un interfaccia per far si che una volta completate le operazioni con internet si esegua il codice
         // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
         getResponseUsingCallback(object : FirebaseCallback {
@@ -43,14 +45,17 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 val knownCuriositiesmap = readKnownCuriosities(context).knowncuriosities
                 Log.e(tag, knownCuriositiesmap.toString())
 
-                var randomIndex : Int
-                var chosenTopic : String
+                var randomIndex: Int
+                var chosenTopic: String
                 do {
                     chosenTopic = chooseRandomTopic(context)
                     randomIndex = Random.nextInt(curiosityList.size)
                     val randitemcode =
                         "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}".hashCode()
-                } while (curiosityList[randomIndex].topic != chosenTopic || knownCuriositiesmap.contains(randitemcode))
+                } while (curiosityList[randomIndex].topic != chosenTopic || knownCuriositiesmap.contains(
+                        randitemcode
+                    )
+                )
                 // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
                 val chosenCuriosity = curiosityList[randomIndex]
                 Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
@@ -98,7 +103,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     private fun convertResponse(response: Response): ArrayList<CuriosityData> {
         // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
-        var curiosityList = arrayListOf<CuriosityData>()
+        val curiosityList = arrayListOf<CuriosityData>()
 
         response.curiosities?.let { curiosities ->
             curiosities.forEach { curiosity ->
@@ -121,6 +126,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 
+    @SuppressLint("ResourceType")
     private fun notificationCreator(context: Context, chosenCuriosity: CuriosityData) {
         val curiosity = arrayListOf(
             chosenCuriosity.title,
@@ -149,16 +155,45 @@ class PostNotificationReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_MUTABLE
         )
 
+
+        var imageStream: InputStream
+        when (curiosity[2]) {
+            "Storia" -> imageStream = context.resources.openRawResource(R.raw.storia)
+            "Tecnologia" -> imageStream = context.resources.openRawResource(R.raw.tecnologia)
+            "Sport" -> imageStream = context.resources.openRawResource(R.raw.sport)
+            "Cinema" -> imageStream = context.resources.openRawResource(R.raw.cinema)
+            "Cucina" -> imageStream = context.resources.openRawResource(R.raw.cucina)
+            else -> imageStream = context.resources.openRawResource(R.raw.cucina)
+        }
+
+
+//        imageStream = context.resources.(R.mipmap.ic_cinema_round)
+//        var bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.cinemadrawable)
+
+//        Bitmap.cre(R.mipmap.ic_cinema_round)
+
+
+//        val icon =
+//            BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_foreground)
+
+        val bitmap = BitmapFactory.decodeStream(imageStream)
+
+
         // creazione della notifica
-        val notification = NotificationCompat.Builder(context!!, channelid)
+        val notification = NotificationCompat.Builder(context, channelid)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(curiosity[0])
+            .setLargeIcon(bitmap)
+//            .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             //sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il
             //con il PendingIntent
             .addAction(R.mipmap.ic_launcher, "Lo sapevo", pIntentPositive)
             .addAction(R.mipmap.ic_launcher, "Non lo sapevo", pIntentNegative)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(curiosity[1])
+            )
             .build()
 
 
@@ -179,7 +214,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         }
 
         // genero un numero random contenuto nel range degli indici della lista
-        var rnd = (chosenFields.indices).random()
+        val rnd = (chosenFields.indices).random()
         // utilizzerò il valore appena generato per scegliere un campo tra le curiosità
         return chosenFields[rnd].topicName
     }
