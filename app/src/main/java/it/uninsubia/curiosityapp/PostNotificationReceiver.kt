@@ -177,7 +177,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setLargeIcon(bitmap)
 //            .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
