@@ -2,7 +2,9 @@ package it.uninsubia.curiosityapp
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -40,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         createNotificationchanel() // creazione del canale di notifica
 
         getNotificationStatus()
+
+        registerSettingsListener(this)
 
     }
 
@@ -96,6 +100,42 @@ class MainActivity : AppCompatActivity() {
                 it.write(jsonString)
             }
         }
+    }
+
+    private fun writeFile(time : Int, context : Context) {
+
+        val directory = File("${context.filesDir}/tmp") // path della directory
+        val filepath = File("$directory/settings.json") // path del filepath
+
+        try {
+            PrintWriter(FileWriter(filepath)).use {
+                val gson = Gson()
+                val jsonString = gson.toJson(SettingsData(time))
+                // scrive la classe contenente i settings in formato json sul file
+                it.write(jsonString)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun registerSettingsListener(context : Context) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if(key.equals("notification"))
+            {
+                val booleano = sharedPreferences.getBoolean("notification",false)
+                Log.e("flags",booleano.toString())
+                if(booleano)
+                    Utility.notificationLauncher(context)
+            }
+
+            if(key.equals("frequency")) {
+                val frequency = sharedPreferences.getString("frequency", "30")!!.toInt()
+                writeFile(frequency, context)
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
     }
 
 }
