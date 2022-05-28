@@ -37,8 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationchanel() // creazione del canale di notifica
 
-//        getNotificationStatus()
-
+       getNotificationStatus()
 
 
         val navdrawerIntent = Intent(this, nav_drawer::class.java)
@@ -91,20 +90,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerSettingsListener(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-//        val listener =
-            /*SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                if (key.equals("notification")) {
-                    val booleano = sharedPreferences.getBoolean("notification", false)
-                    Log.e("flags", booleano.toString())
-                    if (booleano)
-                        Utility.notificationLauncher(context)
-                }
-
-                if (key.equals("frequency")) {
-                    val frequency = sharedPreferences.getString("frequency", "30")!!.toInt()
-                    Utility.writeSettingsFile(SettingsData(frequency), context)
-                }
-            }*/
 
         listener = OnSharedPreferenceChangeListener { prefs, key ->
             // Implementation
