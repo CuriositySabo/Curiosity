@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import it.uninsubia.curiosityapp.R
@@ -31,17 +32,37 @@ class StatisticsFragment: Fragment() {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         fragmentContext = requireContext()
         //initialize view
-        initView()
+        initiView()
         //listener for radio buttons
         binding.radioGroup.setOnCheckedChangeListener { _, i ->
             radio = requireView().findViewById(i)
             statType = radio.contentDescription.toString()
-            initView()
+            resetView()
         }
+        //listener for drop down menu
+        setMenu()
+        return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        resetProgressBars()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        resetProgressBars()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setMenu() {
         val topics = resources.getStringArray(R.array.dropdown_menu_topics)
         val adapter = ArrayAdapter(fragmentContext,R.layout.dropdown_menu_item,topics)
         binding.dropdownMenu.adapter = adapter
-        //listener for drop down menu
         binding.dropdownMenu.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
             override  fun onNothingSelected(parent: AdapterView<*>?) {
                 //fill bar with cinema curiosities
@@ -51,38 +72,26 @@ class StatisticsFragment: Fragment() {
                 val topicSelected = topics[position]
                 getCuriosities()
                 getDoneCuriosities()
-                fillProgressBar(binding.progressTopic)
+                fillProgressBar(binding.progressTopic,binding.valuesTopic)
             }
         }
-        return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.progressTopic.progress = 0
-        binding.progressGeneral.progress = 0
+    private fun initiView() {
+        getCuriosities()
+        getDoneCuriosities()
+        fillProgressBar(binding.progressGeneral,binding.valuesGeneral)
     }
 
-    override fun onStop() {
-        super.onStop()
-        binding.progressTopic.progress = 0
-        binding.progressGeneral.progress = 0
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun initView() {
+    private fun resetView() {
         //set general bar
         getCuriosities()
         getDoneCuriosities()
-        fillProgressBar(binding.progressGeneral)
+        fillProgressBar(binding.progressGeneral,binding.valuesGeneral)
         //set topic bar
         getCuriosities()
         getDoneCuriosities()
-        fillProgressBar(binding.progressTopic)
+        fillProgressBar(binding.progressTopic,binding.valuesTopic)
     }
 
     private fun getDoneCuriosities() {
@@ -93,7 +102,10 @@ class StatisticsFragment: Fragment() {
         //get all curiosities from firebase -> return a list with all
     }
 
-    private fun fillProgressBar(progressBar: com.google.android.material.progressindicator.CircularProgressIndicator) {
+    private fun fillProgressBar(
+        progressBar: com.google.android.material.progressindicator.CircularProgressIndicator,
+        tv: TextView
+    ) {
         //deciding the color
         val loadingColor = ContextCompat.getColor(fragmentContext, R.color.teal_200)
         val color = when(statType){
@@ -102,18 +114,27 @@ class StatisticsFragment: Fragment() {
             "unknown" -> { ContextCompat.getColor(fragmentContext, android.R.color.holo_red_dark) }
             else ->{ ContextCompat.getColor(fragmentContext, R.color.primary_light) }
         }
+        //initialize tv value
         //fill the progress bar with the data retrieved
         ContextCompat.getMainExecutor(fragmentContext).execute{
+            progressBar.progress = 0
             countdown = object : CountDownTimer(1000, 100) {
                 override fun onTick(p0: Long) {//progress bar fills up
                     progressBar.progress += 1
                     progressBar.setIndicatorColor(loadingColor)
+                    tv.setTextColor(loadingColor)
+                    tv.text = "${progressBar.progress}/100"
                 }
                 override fun onFinish() {
                     progressBar.setIndicatorColor(color)
+                    tv.setTextColor(color)
                 }
             }.start()
         }
+    }
+    private fun resetProgressBars() {
+        binding.progressTopic.progress = 0
+        binding.progressGeneral.progress = 0
     }
 
 }

@@ -89,7 +89,7 @@
         app:trackThickness="12dp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/values_general"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -110,7 +110,7 @@
         app:layout_constraintHorizontal_bias="0.154"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/values_general" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_topic"
@@ -125,12 +125,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintStart_toEndOf="@+id/dropdown_menu"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/values_general"
         app:trackColor="#5A1E09"
         app:trackThickness="12dp" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/values_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
