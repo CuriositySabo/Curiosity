@@ -138,7 +138,7 @@ class Utility() {
             }
         }
 
-        private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
+        fun readKnownCuriosities(context: Context): KnownCuriositiesData {
             var jsonString = ""
             val directory = File("${context.filesDir}/tmp") // path della directory
             val filepath = File("$directory/knowncuriosities.json") // path del filepath
@@ -161,7 +161,6 @@ class Utility() {
         }
 
         //Bob stuff
-
         fun setErrorOnSearchView(editText: EditText, errorMessage: String, context: Context) {
             val errorColor = ContextCompat.getColor(context, R.color.white)
             //val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
@@ -173,20 +172,18 @@ class Utility() {
         }
 
         // scrive sul file topics partendo da un array list
-        fun writeTopicsFile(topicsList : ArrayList<TopicsModel>, context: Context?) {
+        fun writeTopicsFile(topicsList: ArrayList<TopicsModel>, context: Context?) {
             val directory = File("${context!!.filesDir}/tmp")
             val filepath = File("$directory/topics.json") // path del file
 
 
-            try{
-                PrintWriter(FileWriter(filepath)).use{
+            try {
+                PrintWriter(FileWriter(filepath)).use {
                     val gson = Gson()
                     val jsonString = gson.toJson(topicsList)
                     it.write(jsonString)
                 }
-            }
-            catch (e: java.lang.Exception)
-            {
+            } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
         }
@@ -210,8 +207,8 @@ class Utility() {
             return list
         }
 
-        fun initTopicList() : ArrayList<TopicsModel> {
-            val list : ArrayList<TopicsModel> = ArrayList()
+        fun initTopicList(): ArrayList<TopicsModel> {
+            val list: ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
                     "Cinema",
