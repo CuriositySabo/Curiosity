@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,8 +16,10 @@ import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
 import java.io.File
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
     private val tag = "MainActivity"
 
@@ -32,16 +35,18 @@ class MainActivity : AppCompatActivity() {
         initializeFiles(SettingsData(10))
         auth = FirebaseAuth.getInstance()
 
-        val intent = Intent(this, nav_drawer::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-
         createNotificationchanel() // creazione del canale di notifica
 
-        getNotificationStatus()
+//        getNotificationStatus()
+
+
+
+        val navdrawerIntent = Intent(this, nav_drawer::class.java)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(navdrawerIntent)
+
 
         registerSettingsListener(this)
-
     }
 
     // legge le sharedpreferences per capire se deve schedulare una notifica
@@ -77,14 +82,17 @@ class MainActivity : AppCompatActivity() {
 
         Utility.writeKnownCuriositiesFile(this)
 
-        val topicsList = Utility.initTopicList()
-        Utility.writeTopicsFile(topicsList, this)
+        if(!File("$directory/topics.json").exists()) {
+            val topicsList = Utility.initTopicList()
+            Utility.writeTopicsFile(topicsList, this)
+        }
+
     }
 
     private fun registerSettingsListener(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val listener =
-            SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+//        val listener =
+            /*SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
                 if (key.equals("notification")) {
                     val booleano = sharedPreferences.getBoolean("notification", false)
                     Log.e("flags", booleano.toString())
@@ -96,8 +104,24 @@ class MainActivity : AppCompatActivity() {
                     val frequency = sharedPreferences.getString("frequency", "30")!!.toInt()
                     Utility.writeSettingsFile(SettingsData(frequency), context)
                 }
+            }*/
+
+        listener = OnSharedPreferenceChangeListener { prefs, key ->
+            // Implementation
+            if (key.equals("notification")) {
+                val booleano = prefs.getBoolean("notification", false)
+                Log.e("flags", booleano.toString())
+                if (booleano)
+                    Utility.notificationLauncher(context)
             }
-        prefs.registerOnSharedPreferenceChangeListener(listener)
+
+            if (key.equals("frequency")) {
+                val frequency = prefs.getString("frequency", "30")!!.toInt()
+                Utility.writeSettingsFile(SettingsData(frequency), context)
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+
     }
 
 }

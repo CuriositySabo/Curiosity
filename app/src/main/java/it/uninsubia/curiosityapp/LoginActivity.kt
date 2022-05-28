@@ -31,6 +31,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         auth = Firebase.auth
         if (auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
             startActivity(Intent(this, MainActivity::class.java))
+            this.finish()
         }
 
         super.onCreate(savedInstanceState)
@@ -95,6 +96,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
     }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.loginbutton -> {
@@ -108,6 +110,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun showToast(message: String)
     {
         val inflater: LayoutInflater = layoutInflater

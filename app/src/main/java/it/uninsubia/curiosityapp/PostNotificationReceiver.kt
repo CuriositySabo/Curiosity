@@ -42,9 +42,13 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 Log.e(tag, knownCuriositiesmap.toString())
 
                 var randomIndex: Int
-                var chosenTopic: String
+                var chosenTopic: String?
                 do {
                     chosenTopic = chooseRandomTopic(context)
+                    if(chosenTopic == null){
+                        Log.e(tag, "looppo")
+                        // TODO: fix
+                    }
                     randomIndex = Random.nextInt(curiosityList.size)
                     val randitemcode =
                         "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}".hashCode()
@@ -63,23 +67,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
         })
     }
 
-    private fun readTopicsFile(context: Context): List<TopicsModel> {
-        var jsonString = ""
-        val list: List<TopicsModel>
-        val directory = File("${context.filesDir}/tmp")
-        val filePath = File("$directory/topics.json")
-        try {
-            jsonString = filePath.bufferedReader().use {
-                it.readText()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        val gson = Gson()
-        val dataType = object : TypeToken<List<TopicsModel>>() {}.type
-        list = gson.fromJson(jsonString, dataType)
-        return list
-    }
 
     private fun print(response: Response) {
         response.curiosities?.let { curiosities ->
@@ -197,21 +184,27 @@ class PostNotificationReceiver : BroadcastReceiver() {
         notificationManager.notify(200, notification)
     }
 
-    private fun chooseRandomTopic(context: Context): String {
+    private fun chooseRandomTopic(context: Context): String? {
         // leggo tutti i topics esistenti
-        val topics = readTopicsFile(context)
+        val topics = Utility.readTopicsFile(context)
 
         // in chosenfield  metto i topics checkati dall'utente
         val chosenFields = ArrayList<TopicsModel>()
+
         topics.forEach {
             if (it.checked)
                 chosenFields.add(it)
         }
 
         // genero un numero random contenuto nel range degli indici della lista
-        val rnd = (chosenFields.indices).random()
-        // utilizzerò il valore appena generato per scegliere un campo tra le curiosità
-        return chosenFields[rnd].topicName
+        if(chosenFields.size != 0 ) {
+            val rnd = (chosenFields.indices).random()
+            return chosenFields[rnd].topicName
+        }
+        else
+            return null
+        // utilizzerò il valore ritornato per scegliere un campo tra le curiosità
+
     }
 
     private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
