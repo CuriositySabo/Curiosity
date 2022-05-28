@@ -163,7 +163,7 @@ class StatisticsFragment : Fragment() {
         }
         //get percentage -> x:100 = doneCur:totalCur   0:10 000= done:total  add 1*100 per sec
         var perc = (doneCuriosities*100)/totalCuriosities.toFloat()
-        perc*=100f
+        perc*=10f
         Log.e("perc","$perc")
         //fill the progress bar with the data retrieved
         ContextCompat.getMainExecutor(fragmentContext).execute {
