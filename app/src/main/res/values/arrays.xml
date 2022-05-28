@@ -10,6 +10,7 @@
         <item>3 ore</item>
         <item>6 ore</item>
     </string-array>
+
     <string-array name="settings_notification_frequency_values">
         <item>5</item>
         <item>30</item>
@@ -20,5 +21,13 @@
         <item>3600</item>
         <item>10800</item>
         <item>21600</item>
+    </string-array>
+
+    <string-array name="dropdown_menu_topics">
+        <item>Cinema</item>
+        <item>Cucina</item>
+        <item>Storia</item>
+        <item>Tecnologia</item>
+        <item>Sport</item>
     </string-array>
 </resources>
