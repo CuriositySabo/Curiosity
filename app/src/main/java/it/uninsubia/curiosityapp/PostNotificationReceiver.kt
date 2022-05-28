@@ -13,7 +13,6 @@ import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 import kotlin.random.Random
 
 
@@ -152,14 +151,14 @@ class PostNotificationReceiver : BroadcastReceiver() {
         )
 
 
-        val imageStream: InputStream
-        when (curiosity[2]) {
-            "Storia" -> imageStream = context.resources.openRawResource(R.raw.storia)
-            "Tecnologia" -> imageStream = context.resources.openRawResource(R.raw.tecnologia)
-            "Sport" -> imageStream = context.resources.openRawResource(R.raw.sport)
-            "Cinema" -> imageStream = context.resources.openRawResource(R.raw.cinema)
-            "Cucina" -> imageStream = context.resources.openRawResource(R.raw.cucina)
-            else -> imageStream = context.resources.openRawResource(R.raw.cucina)
+
+        val imageStream = when (curiosity[2]) {
+            "Storia" -> context.resources.openRawResource(R.raw.storia)
+            "Tecnologia" -> context.resources.openRawResource(R.raw.tecnologia)
+            "Sport" -> context.resources.openRawResource(R.raw.sport)
+            "Cinema" -> context.resources.openRawResource(R.raw.cinema)
+            "Cucina" -> context.resources.openRawResource(R.raw.cucina)
+            else -> context.resources.openRawResource(R.raw.cucina)
         }
 
 
@@ -179,7 +178,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, channelid)
             .setSmallIcon(R.mipmap.ic_mars_foreground)
             .setLargeIcon(bitmap)
-//            .setContentTitle(curiosity[0])
+            .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
             .setPriority(NotificationCompat.PRIORITY_MIN)
             //sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il

@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
@@ -16,6 +18,8 @@ import java.io.PrintWriter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+
+    private val tag = "MainActivity"
 
     private lateinit var layout: ActivityMainBinding
     private val channelid = "notifyCuriosity"
@@ -34,8 +38,18 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
 
         createNotificationchanel() // creazione del canale di notifica
+
+        getNotificationStatus()
+
     }
 
+    private fun getNotificationStatus() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        Log.e(tag, prefs.all.toString())
+        if (prefs.getBoolean("notification", false)) {
+            Utility.notificationLauncher(this)
+        }
+    }
 
     // per creare il canale di notifica
     private fun createNotificationchanel() {
