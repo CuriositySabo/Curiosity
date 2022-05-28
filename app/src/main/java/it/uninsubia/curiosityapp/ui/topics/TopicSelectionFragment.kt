@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import it.uninsubia.curiosityapp.Utility
 import it.uninsubia.curiosityapp.databinding.FragmentTopicSelectionBinding
 
 class TopicSelectionFragment : Fragment() {
@@ -40,9 +41,10 @@ class TopicSelectionFragment : Fragment() {
         topicsAdapter = TopicsListAdapter()
         recyclerView?.adapter = topicsAdapter
     }
+
     private fun addDataSet()
     {
-        val data = DataSourceList.createData(this.context)
+        val data = Utility.readTopicsFile(requireContext())
         topicsAdapter.submitList(data)
     }
 }

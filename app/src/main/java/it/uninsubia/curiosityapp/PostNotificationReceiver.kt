@@ -63,7 +63,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         })
     }
 
-    private fun readTopics(context: Context): List<TopicsModel> {
+    private fun readTopicsFile(context: Context): List<TopicsModel> {
         var jsonString = ""
         val list: List<TopicsModel>
         val directory = File("${context.filesDir}/tmp")
@@ -199,7 +199,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     private fun chooseRandomTopic(context: Context): String {
         // leggo tutti i topics esistenti
-        val topics = readTopics(context)
+        val topics = readTopicsFile(context)
 
         // in chosenfield  metto i topics checkati dall'utente
         val chosenFields = ArrayList<TopicsModel>()

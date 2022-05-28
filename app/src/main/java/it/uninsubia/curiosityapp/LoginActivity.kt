@@ -55,25 +55,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun loginUser() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
-        val utility = UtilityFun()
+
 
         if (email.isEmpty()) {
-            utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
+            Utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
             etEmail.requestFocus()
             return
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
+            Utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
             etEmail.requestFocus()
             return
         }
         if (password.isEmpty()) {
-            utility.setErrorOnSearchView(etPassword,"É richiesta una password",this)
+            Utility.setErrorOnSearchView(etPassword,"É richiesta una password",this)
             etPassword.requestFocus()
             return
         }
         if (password.length < 6) {
-            utility.setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri",this)
+            Utility.setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri",this)
             etPassword.requestFocus()
             return
         }

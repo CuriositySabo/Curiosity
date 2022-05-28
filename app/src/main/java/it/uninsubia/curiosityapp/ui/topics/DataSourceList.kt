@@ -1,16 +1,7 @@
 package it.uninsubia.curiosityapp.ui.topics
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import java.io.PrintWriter
-import java.lang.Exception
-
 class DataSourceList {
-    companion object {
+/*    companion object {
         fun createData(context: Context?): List<TopicsModel> {
             fileCheck(context)
             return readFromFile(context)
@@ -99,6 +90,6 @@ class DataSourceList {
             )
             return list
         }
-    }
+    }*/
 }
 

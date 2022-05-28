@@ -1,13 +1,13 @@
 package it.uninsubia.curiosityapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -57,35 +57,34 @@ class RegisterActivity : AppCompatActivity() {
         val cognome = etcognome.text.toString().trim()
         val email = etemail.text.toString().trim()
         val password = etpassword.text.toString().trim()
-        val utility = UtilityFun()
 
         if (nome.isEmpty()) {
-            utility.setErrorOnSearchView(etnome, "É richiesto il tuo nome", this)
+            Utility.setErrorOnSearchView(etnome, "É richiesto il tuo nome", this)
             etnome.requestFocus()
             return
         }
         if (cognome.isEmpty()) {
-            utility.setErrorOnSearchView(etcognome, "É richiesto il tuo cognome", this)
+            Utility.setErrorOnSearchView(etcognome, "É richiesto il tuo cognome", this)
             etcognome.requestFocus()
             return
         }
         if (email.isEmpty()) {
-            utility.setErrorOnSearchView(etemail, "É richiesta la tua email", this)
+            Utility.setErrorOnSearchView(etemail, "É richiesta la tua email", this)
             etemail.requestFocus()
             return
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            utility.setErrorOnSearchView(etemail, "Inserisci una email esistente!", this)
+            Utility.setErrorOnSearchView(etemail, "Inserisci una email esistente!", this)
             etemail.requestFocus()
             return
         }
         if (password.isEmpty()) {
-            utility.setErrorOnSearchView(etpassword, "É richiesta la tua password", this)
+            Utility.setErrorOnSearchView(etpassword, "É richiesta la tua password", this)
             etpassword.requestFocus()
             return
         }
         if (password.length < 6) {
-            utility.setErrorOnSearchView(
+            Utility.setErrorOnSearchView(
                 etpassword,
                 "É richiesta una password di almeno 6 caratteri", this
             )

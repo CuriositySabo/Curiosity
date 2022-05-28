@@ -12,11 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.Gson
 import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
 import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -32,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(layout.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-        createFile(SettingsData(10))
+        initializeFiles(SettingsData(10))
         auth = FirebaseAuth.getInstance()
 
         val intent = Intent(this, nav_drawer::class.java)
@@ -47,9 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // legge le sharedpreferences per capire se deve schedulare una notifica
     private fun getNotificationStatus() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        Log.e(tag, prefs.all.toString())
+//        Log.e(tag, prefs.all.toString())
         if (prefs.getBoolean("notification", false)) {
             Utility.notificationLauncher(this)
         }
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     private fun createNotificationchanel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "CuriosityChannel"
-            val descr = "Channel for Curiosity"
+            val descr = "Mostra le curiosità nella barra delle notifiche!"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelid, name, importance)
             channel.description = descr
@@ -69,72 +67,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createFile(settingsData: SettingsData) {
+    private fun initializeFiles(settingsData: SettingsData) {
         val directory = File(this.filesDir, "tmp") // crea la directory tmp
-        if (!directory.exists()){
+        if (!directory.exists()) {
             directory.mkdirs()
         }
 
-        var filepath = File(directory, "settings.json")
+        Utility.writeSettingsFile(settingsData, this)
 
-        // crea il file setting se non esiste
-        try {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                val jsonString = gson.toJson(settingsData)
-                // scrive la classe contenente i settings in formato json sul file
-                it.write(jsonString)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        Utility.writeKnownCuriositiesFile(this)
 
-
-        filepath = File(directory, "knowncuriosities.json")
-        // creo il file knowncuriosity se non esiste
-        if (!filepath.exists()) {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                // inizializzo con la classe vuota il file
-                val jsonString = gson.toJson(KnownCuriositiesData())
-                it.write(jsonString)
-            }
-        }
+        val topicsList = Utility.initTopicList()
+        Utility.writeTopicsFile(topicsList, this)
     }
 
-    private fun writeFile(time : Int, context : Context) {
-
-        val directory = File("${context.filesDir}/tmp") // path della directory
-        val filepath = File("$directory/settings.json") // path del filepath
-
-        try {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                val jsonString = gson.toJson(SettingsData(time))
-                // scrive la classe contenente i settings in formato json sul file
-                it.write(jsonString)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun registerSettingsListener(context : Context) {
+    private fun registerSettingsListener(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if(key.equals("notification"))
-            {
-                val booleano = sharedPreferences.getBoolean("notification",false)
-                Log.e("flags",booleano.toString())
-                if(booleano)
-                    Utility.notificationLauncher(context)
-            }
+        val listener =
+            SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+                if (key.equals("notification")) {
+                    val booleano = sharedPreferences.getBoolean("notification", false)
+                    Log.e("flags", booleano.toString())
+                    if (booleano)
+                        Utility.notificationLauncher(context)
+                }
 
-            if(key.equals("frequency")) {
-                val frequency = sharedPreferences.getString("frequency", "30")!!.toInt()
-                writeFile(frequency, context)
+                if (key.equals("frequency")) {
+                    val frequency = sharedPreferences.getString("frequency", "30")!!.toInt()
+                    Utility.writeSettingsFile(SettingsData(frequency), context)
+                }
             }
-        }
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
 

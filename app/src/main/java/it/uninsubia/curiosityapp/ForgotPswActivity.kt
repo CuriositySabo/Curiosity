@@ -35,16 +35,15 @@ class ForgotPswActivity : AppCompatActivity() {
 
     private fun resetPassword() {
         val email = etEmail.text.toString().trim()
-        val utility = UtilityFun()
 
         if (email.isEmpty()) {
-            utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
+            Utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
             etEmail.requestFocus()
             return
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
+            Utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
             etEmail.requestFocus()
             return
         }
