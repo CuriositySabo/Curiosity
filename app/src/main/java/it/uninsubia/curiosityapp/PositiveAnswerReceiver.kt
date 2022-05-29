@@ -8,10 +8,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.File
-import java.io.IOException
+import androidx.preference.PreferenceManager
 
 class PositiveAnswerReceiver : BroadcastReceiver() {
     private val tag = "Positive answer"
@@ -21,28 +18,6 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         rescheduleNotification(context!!, intent!!)
     }
 
-    private fun getJsonDataFromSettings(context: Context): SettingsData {
-        val jsonString: String
-        val directory = File("${context.filesDir}/tmp")
-        val filepath = File("$directory/settings.json")
-
-        try {
-            jsonString = filepath.bufferedReader().use {
-                it.readText()
-            }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return SettingsData(0)
-        }
-
-        val gson = Gson()
-        val settingsDatatype = object : TypeToken<SettingsData>() {}.type
-        val settings: SettingsData = gson.fromJson(jsonString, settingsDatatype)
-        Log.e(tag, settings.toString())
-        return settings
-    }
-
-
     private fun rescheduleNotification(context: Context, intent: Intent) {
         val notificationData = intent.getStringArrayListExtra("notificationData")!!
         Log.e(tag, notificationData.toString())
@@ -50,7 +25,10 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
 
         Utility.writeKnownCuriositiesFile(context, notificationData, true)
 
-        val time = getJsonDataFromSettings(context).time
+//        val time = getJsonDataFromSettings(context).time
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        var time = prefs.getString("frequency", "30")!!.toInt()
+        time *= 1000
         Log.e(tag, time.toString())
 
         val notificationManager = NotificationManagerCompat.from(context)

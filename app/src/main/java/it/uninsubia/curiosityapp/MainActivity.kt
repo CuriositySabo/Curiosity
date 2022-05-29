@@ -94,9 +94,9 @@ class MainActivity : AppCompatActivity() {
         listener = OnSharedPreferenceChangeListener { prefs, key ->
             // Implementation
             if (key.equals("notification")) {
-                val booleano = prefs.getBoolean("notification", false)
-                Log.e("flags", booleano.toString())
-                if (booleano)
+                val flag = prefs.getBoolean("notification", false)
+                Log.e("flags", flag.toString())
+                if (flag)
                     Utility.notificationLauncher(context)
             }
 
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 Utility.writeSettingsFile(SettingsData(frequency), context)
             }
         }
-        prefs.registerOnSharedPreferenceChangeListener(listener);
+        prefs.registerOnSharedPreferenceChangeListener(listener)
 
     }
 
