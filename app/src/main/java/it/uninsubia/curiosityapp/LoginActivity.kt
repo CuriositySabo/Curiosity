@@ -1,11 +1,8 @@
 package it.uninsubia.curiosityapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -58,9 +55,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
-
         if (email.isEmpty()) {
-            //Utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
             etEmail.error = "Inserisci una mail"
             etEmail.requestFocus()
             return
@@ -86,25 +81,24 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 if (it.isSuccessful) {
                     val user = FirebaseAuth.getInstance().currentUser
                     if (user!!.isEmailVerified) {
-                        //showToast("Login effettuato con successo")
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                        Utility.createSnackbar(
+                        Toast.makeText(
+                            applicationContext,
                             "Login effettuato con successo!",
-                            this.findViewById(R.id.login_layout),
-                            applicationContext)
+                            Toast.LENGTH_LONG).show()
                         progressBar.visibility = View.VISIBLE
                     } else {
-                        Utility.createSnackbar(
+                        Toast.makeText(
+                            applicationContext,
                             "Controlla la tua email per verificare il tuo account",
-                            this.findViewById(R.id.login_layout),
-                            applicationContext)
+                            Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    Utility.createSnackbar(
+                    Toast.makeText(
+                        applicationContext,
                         "Email o password errate",
-                        this.findViewById(R.id.login_layout),
-                        applicationContext)
+                        Toast.LENGTH_LONG).show()
                 }
             }
     }

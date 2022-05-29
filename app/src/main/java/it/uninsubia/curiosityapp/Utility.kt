@@ -4,12 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -31,7 +27,6 @@ class Utility() {
 
             //creazione intent con il broadcast da inviare
             val intent = Intent(context, PostNotificationReceiver::class.java)
-
 
             val pendingIntent =
                 PendingIntent.getBroadcast(
@@ -112,7 +107,6 @@ class Utility() {
             val directory = File(context.filesDir, "tmp") // path directory tmp
             val filepath = File(directory, "knowncuriosities.json") // path del file
 
-
             val fileData = readKnownCuriosities(context)
             //creo una copia della mappa all'interno del file
             val knownCuriositiesModified = readKnownCuriosities(context).knowncuriosities
@@ -132,12 +126,10 @@ class Utility() {
 
             curiositytoadd[code] = known
 
-
             //modifico la mappa che contiene le curiosità di un determinato topic aggiungendo una entry
             knownCuriositiesModified[topic] = curiositytoadd
             //sovrascrivo la mappa del topic corrispondente con quella nuova o modificata
             fileData.knowncuriosities = knownCuriositiesModified
-
 
             //scrivo le modifiche effettuate sul file
             try {
@@ -174,29 +166,10 @@ class Utility() {
             return gson.fromJson(jsonString, dataType)
         }
 
-        //create a custom snackbar ===========================
-        fun createSnackbar(message: String, contextView: View, context: Context) {
-            Snackbar.make(contextView, message, Snackbar.LENGTH_LONG)
-                .setBackgroundTint(ContextCompat.getColor(context, R.color.primary_dark))
-                .setTextColor(Color.WHITE)
-                .show()
-            /*
-            val snackbar = Snackbar.make(contextView,message,Snackbar.LENGTH_LONG)
-            snackbar.setTextColor(Color.WHITE)
-            snackbar.setBackgroundTint(Color.TRANSPARENT)
-            val customSnackView: View = LayoutInflater.from(context).inflate(R.layout.custom_snackbar,null)
-            val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
-            customSnackView.findViewById<TextView>(R.id.tv_snackBar).text = message
-            customSnackView.setBackgroundColor(Color.TRANSPARENT)
-            snackbarLayout.addView(customSnackView, 0)
-            snackbar.show()*/
-        }
-
         // scrive sul file topics partendo da un array list
         fun writeTopicsFile(topicsList: ArrayList<TopicsModel>, context: Context?) {
             val directory = File("${context!!.filesDir}/tmp")
             val filepath = File("$directory/topics.json") // path del file
-
 
             try {
                 PrintWriter(FileWriter(filepath)).use {
@@ -281,7 +254,7 @@ class Utility() {
         }
 
         fun getTopicsOnDb(allcuriosities: ArrayList<CuriosityData>): ArrayList<String> {
-            var topicsonDb = arrayListOf<String>()
+            val topicsonDb = arrayListOf<String>()
             for (curiosity in allcuriosities) {
                 if(!topicsonDb.contains(curiosity.topic))
                     topicsonDb.add(curiosity.topic)
