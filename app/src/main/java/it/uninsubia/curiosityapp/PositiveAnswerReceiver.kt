@@ -27,7 +27,8 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
 
 //        val time = getJsonDataFromSettings(context).time
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val time = prefs.getString("frequency", "30")!!.toInt()
+        var time = prefs.getString("frequency", "30")!!.toInt()
+        time *= 1000
         Log.e(tag, time.toString())
 
         val notificationManager = NotificationManagerCompat.from(context)
