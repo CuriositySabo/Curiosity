@@ -50,15 +50,15 @@ class ForgotPswActivity : AppCompatActivity() {
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) {
-                Utility.createSnackbar(
+                Toast.makeText(
+                    applicationContext,
                     "Controlla la tua email per resettare la password!",
-                    this.findViewById(R.id.fgt_pass_layout),
-                    applicationContext)
+                    Toast.LENGTH_LONG).show()
             } else {
-                Utility.createSnackbar(
+                Toast.makeText(
+                    applicationContext,
                     "Qualcosa non è risucito. Riprova!",
-                    this.findViewById(R.id.fgt_pass_layout),
-                    applicationContext)
+                    Toast.LENGTH_LONG).show()
             }
         }
         progressBar.visibility = View.GONE
