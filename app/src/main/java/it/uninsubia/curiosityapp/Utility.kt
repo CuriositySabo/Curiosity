@@ -55,29 +55,13 @@ class Utility() {
         }
 
         // scrive sempre un nuovo oggetto quindi crea sempre il file
-        fun writeSettingsFile(settingsData: SettingsData, context: Context) {
-
-            val directory = File("${context.filesDir}/tmp") // path della directory
-            val filepath = File("$directory/settings.json") // path del filepath
-
-            try {
-                PrintWriter(FileWriter(filepath)).use {
-                    val gson = Gson()
-                    val jsonString = gson.toJson(settingsData)
-                    // scrive la classe contenente i settings in formato json sul file
-                    it.write(jsonString)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
 
         // scrive un oggetto vuoto solo se il file non esiste già
         fun writeKnownCuriositiesFile(context: Context) {
-            val map = KnownCuriositiesData().knowncuriosities
+            val map = KnownCuriositiesData()
             val topics = initTopicList()
             for (topic in topics) {
-                map[topic.topicName] = hashMapOf<Int, Boolean>()
+                map.knowncuriosities[topic.topicName] = hashMapOf<Int, Boolean>()
             }
             val directory = File(context.filesDir, "tmp") // path directory tmp
             val filepath = File(directory, "knowncuriosities.json") // path del file

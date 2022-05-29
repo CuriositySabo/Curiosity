@@ -77,8 +77,6 @@ class MainActivity : AppCompatActivity() {
             directory.mkdirs()
         }
 
-        Utility.writeSettingsFile(settingsData, this)
-
         Utility.writeKnownCuriositiesFile(this)
 
         if(!File("$directory/topics.json").exists()) {
@@ -98,11 +96,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e("flags", flag.toString())
                 if (flag)
                     Utility.notificationLauncher(context)
-            }
-
-            if (key.equals("frequency")) {
-                val frequency = prefs.getString("frequency", "30")!!.toInt()
-                Utility.writeSettingsFile(SettingsData(frequency), context)
             }
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
