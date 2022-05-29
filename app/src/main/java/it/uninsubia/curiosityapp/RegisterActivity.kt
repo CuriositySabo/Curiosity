@@ -17,10 +17,10 @@ import it.uninsubia.curiosityapp.databinding.ActivityRegisterBinding
 class RegisterActivity : AppCompatActivity() {
     private lateinit var layout: ActivityRegisterBinding
 
-    private lateinit var etnome: EditText
-    private lateinit var etcognome: EditText
-    private lateinit var etemail: EditText
-    private lateinit var etpassword: EditText
+    private lateinit var etnome: com.google.android.material.textfield.TextInputEditText
+    private lateinit var etcognome: com.google.android.material.textfield.TextInputEditText
+    private lateinit var etemail: com.google.android.material.textfield.TextInputEditText
+    private lateinit var etpassword: com.google.android.material.textfield.TextInputEditText
     private lateinit var button: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var tvLogin: TextView
@@ -59,35 +59,32 @@ class RegisterActivity : AppCompatActivity() {
         val password = etpassword.text.toString().trim()
 
         if (nome.isEmpty()) {
-            Utility.setErrorOnSearchView(etnome, "É richiesto il tuo nome", this)
+            etnome.error = "É richiesto il tuo nome"
             etnome.requestFocus()
             return
         }
         if (cognome.isEmpty()) {
-            Utility.setErrorOnSearchView(etcognome, "É richiesto il tuo cognome", this)
+            etcognome.error = "É richiesto il tuo cognome"
             etcognome.requestFocus()
             return
         }
         if (email.isEmpty()) {
-            Utility.setErrorOnSearchView(etemail, "É richiesta la tua email", this)
+            etemail.error = "É richiesta la tua email"
             etemail.requestFocus()
             return
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Utility.setErrorOnSearchView(etemail, "Inserisci una email esistente!", this)
+            etemail.error = "Inserisci una email esistente!"
             etemail.requestFocus()
             return
         }
         if (password.isEmpty()) {
-            Utility.setErrorOnSearchView(etpassword, "É richiesta la tua password", this)
+            etpassword.error = "É richiesta la tua password"
             etpassword.requestFocus()
             return
         }
         if (password.length < 6) {
-            Utility.setErrorOnSearchView(
-                etpassword,
-                "É richiesta una password di almeno 6 caratteri", this
-            )
+            etpassword.error = "É richiesta una password di almeno 6 caratteri"
             etpassword.requestFocus()
             return
         }
@@ -120,8 +117,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_toast, (findViewById(R.id.toast_root)))
-        val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
+        val layoutToast = inflater.inflate(R.layout.custom_snackbar, (findViewById(R.id.toast_root)))
+        val toastText = layoutToast.findViewById<TextView>(R.id.tv_snackBar)
         toastText.text = message
         val toast = Toast(applicationContext)
         toast.setGravity(Gravity.BOTTOM, 0, 0)

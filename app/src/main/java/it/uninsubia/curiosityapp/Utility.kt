@@ -1,15 +1,17 @@
 package it.uninsubia.curiosityapp
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.widget.EditText
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -143,7 +145,7 @@ class Utility() {
             val directory = File("${context.filesDir}/tmp") // path della directory
             val filepath = File("$directory/knowncuriosities.json") // path del filepath
 
-            // leggi tutto il testo presente sul file
+            //leggi tutto il testo presente sul file
             try {
                 jsonString = filepath.bufferedReader().use {
                     it.readText()
@@ -160,18 +162,25 @@ class Utility() {
             return gson.fromJson(jsonString, dataType)
         }
 
-        //Bob stuff
-        fun setErrorOnSearchView(editText: EditText, errorMessage: String, context: Context) {
-            val errorColor = ContextCompat.getColor(context, R.color.white)
-            //val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
-            val fgcspan = ForegroundColorSpan(errorColor)
-            //val bgcspan = BackgroundColorSpan(errorBackgroundColor)
-            val builder = SpannableStringBuilder(errorMessage)
-            builder.setSpan(fgcspan, 0, errorMessage.length, 4)
-            editText.error = builder
+        //create a custom snackbar
+        @SuppressLint("InflateParams", "ShowToast")
+        fun createSnackbar(message: String, contextView: View, context: Context) {
+
+
+            /*Snackbar.make(contextView, message, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(ContextCompat.getColor(context, R.color.primary_dark))
+                .show()*/
+            val snackbar = Snackbar.make(contextView,"",Snackbar.LENGTH_LONG)
+            val customSnackView: View = LayoutInflater.from(context).inflate(R.layout.custom_snackbar,null)
+            val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+            snackbarLayout.setPadding(0,0,0,0)
+            customSnackView.findViewById<TextView>(R.id.tv_snackBar).text = message
+            snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+            snackbarLayout.addView(customSnackView, 0)
+            snackbar.show()
         }
 
-        // scrive sul file topics partendo da un array list
+        //scrive sul file topics partendo da un array list
         fun writeTopicsFile(topicsList: ArrayList<TopicsModel>, context: Context?) {
             val directory = File("${context!!.filesDir}/tmp")
             val filepath = File("$directory/topics.json") // path del file
