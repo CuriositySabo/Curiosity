@@ -48,7 +48,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         Log.e(tag, notificationData.toString())
 
 
-        Utility.writeKnownCuriositiesFile(context, notificationData)
+        Utility.writeKnownCuriositiesFile(context, notificationData, true)
 
         val time = getJsonDataFromSettings(context).time
         Log.e(tag, time.toString())

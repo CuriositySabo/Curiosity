@@ -21,6 +21,7 @@ import java.io.PrintWriter
 class Utility() {
 
     companion object {
+
         fun notificationLauncher(context: Context) {
             var time = 1
             time *= 2000 // in realtà ce ne mette di più
@@ -79,6 +80,11 @@ class Utility() {
 
         // scrive un oggetto vuoto solo se il file non esiste già
         fun writeKnownCuriositiesFile(context: Context) {
+            val map = KnownCuriositiesData().knowncuriosities
+            val topics = initTopicList()
+            for (topic in topics) {
+                map[topic.topicName] = hashMapOf<Int, Boolean>()
+            }
             val directory = File(context.filesDir, "tmp") // path directory tmp
             val filepath = File(directory, "knowncuriosities.json") // path del file
 
@@ -87,7 +93,7 @@ class Utility() {
                 PrintWriter(FileWriter(filepath)).use {
                     val gson = Gson()
                     // inizializzo con la classe vuota il file
-                    val jsonString = gson.toJson(KnownCuriositiesData())
+                    val jsonString = gson.toJson(map)
                     it.write(jsonString)
                 }
             }
@@ -96,7 +102,8 @@ class Utility() {
         // scrive sul file partendo da un arraylist
         fun writeKnownCuriositiesFile(
             context: Context,
-            notificationData: ArrayList<String>
+            notificationData: ArrayList<String>,
+            known: Boolean
         ) {
 
             val title = notificationData[0]
@@ -114,13 +121,21 @@ class Utility() {
             //se il file contiene già la mappa col topic la copio e modifico quella
             //altrimenti ne creo una nuova
 
+            val curiositytoadd: HashMap<Int, Boolean> =
+                if (fileData.knowncuriosities[topic] != null) {
+                    fileData.knowncuriosities[topic]!!
+                } else {
+                    hashMapOf()
+                }
 
             //genero il codice della curiosità equivalente a quello del db
             val code = "$title $text $topic".hashCode()
 
+            curiositytoadd[code] = known
+
 
             //modifico la mappa che contiene le curiosità di un determinato topic aggiungendo una entry
-            knownCuriositiesModified[code] = true
+            knownCuriositiesModified[topic] = curiositytoadd
             //sovrascrivo la mappa del topic corrispondente con quella nuova o modificata
             fileData.knowncuriosities = knownCuriositiesModified
 
@@ -138,7 +153,7 @@ class Utility() {
             }
         }
 
-        private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
+        fun readKnownCuriosities(context: Context): KnownCuriositiesData {
             var jsonString = ""
             val directory = File("${context.filesDir}/tmp") // path della directory
             val filepath = File("$directory/knowncuriosities.json") // path del filepath
@@ -173,20 +188,18 @@ class Utility() {
         }
 
         // scrive sul file topics partendo da un array list
-        fun writeTopicsFile(topicsList : ArrayList<TopicsModel>, context: Context?) {
+        fun writeTopicsFile(topicsList: ArrayList<TopicsModel>, context: Context?) {
             val directory = File("${context!!.filesDir}/tmp")
             val filepath = File("$directory/topics.json") // path del file
 
 
-            try{
-                PrintWriter(FileWriter(filepath)).use{
+            try {
+                PrintWriter(FileWriter(filepath)).use {
                     val gson = Gson()
                     val jsonString = gson.toJson(topicsList)
                     it.write(jsonString)
                 }
-            }
-            catch (e: java.lang.Exception)
-            {
+            } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
         }
@@ -210,8 +223,8 @@ class Utility() {
             return list
         }
 
-        fun initTopicList() : ArrayList<TopicsModel> {
-            val list : ArrayList<TopicsModel> = ArrayList()
+        fun initTopicList(): ArrayList<TopicsModel> {
+            val list: ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
                     "Cinema",
@@ -248,6 +261,38 @@ class Utility() {
                 )
             )
             return list
+        }
+
+
+        // serve la response per forza!
+        fun getTopicCuriosites(topic: String, list: ArrayList<CuriosityData>): Int {
+            //get all curiosities from firebase -> return number of curiosities of that topic
+            var num = 0
+            for (curiosityData in list) {
+                if (curiosityData.topic == topic)
+                    num++
+            }
+            return num
+        }
+
+        fun getTopicsOnDb(allcuriosities: ArrayList<CuriosityData>): ArrayList<String> {
+            var topicsonDb = arrayListOf<String>()
+            for (curiosity in allcuriosities) {
+                if(!topicsonDb.contains(curiosity.topic))
+                    topicsonDb.add(curiosity.topic)
+            }
+
+            return  topicsonDb
+        }
+
+        fun getMapOfTopicsCuriosities(curiositiesList :ArrayList<CuriosityData> ) : HashMap<String, Int> {
+            // mappa che contiene il numero di curiosità totali per topic
+            val topicsCuriositiesMap = hashMapOf<String, Int>()
+            val topicsList = getTopicsOnDb(curiositiesList)
+            for(topic in topicsList) {
+                topicsCuriositiesMap[topic] = getTopicCuriosites(topic, curiositiesList)
+            }
+            return topicsCuriositiesMap
         }
     }
 

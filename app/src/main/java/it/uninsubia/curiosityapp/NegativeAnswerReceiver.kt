@@ -11,9 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
-import java.io.PrintWriter
 
 class NegativeAnswerReceiver : BroadcastReceiver() {
     private val tag = "Negative answer"
@@ -46,56 +44,14 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
     }
 
 
-    private fun writeKnownCuriosity(
-        context: Context,
-        notificationData: ArrayList<String>
-    ) {
 
-        val title = notificationData[0]
-        val text = notificationData[1]
-        val topic = notificationData[2]
-
-        val directory = File(context.filesDir, "tmp") // path directory tmp
-        val filepath = File(directory, "knowncuriosities.json") // path del file
-
-
-        val fileData = readKnownCuriosities(context)
-        //creo una copia della mappa all'interno del file
-        val knownCuriositiesModified = readKnownCuriosities(context).knowncuriosities
-
-        //se il file contiene già la mappa col topic la copio e modifico quella
-        //altrimenti ne creo una nuova
-
-
-        //genero il codice della curiosità equivalente a quello del db
-        val code = "$title $text $topic".hashCode()
-
-
-        //modifico la mappa che contiene le curiosità di un determinato topic aggiungendo una entry
-        knownCuriositiesModified[code] = false
-        //sovrascrivo la mappa del topic corrispondente con quella nuova o modificata
-        fileData.knowncuriosities = knownCuriositiesModified
-
-
-        //scrivo le modifiche effettuate sul file
-        try {
-            PrintWriter(FileWriter(filepath)).use {
-                val gson = Gson()
-                val jsonString = gson.toJson(fileData)
-                // scrive la classe in formato json sul file
-                it.write(jsonString)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
     private fun rescheduleNotification(context: Context, intent: Intent) {
         val notificationData = intent.getStringArrayListExtra("notificationData")!!
         Log.e(tag, notificationData.toString())
 
 
-        writeKnownCuriosity(context, notificationData)
+        Utility.writeKnownCuriositiesFile(context, notificationData, false)
 
         val time = getJsonDataFromSettings(context).time
         Log.e(tag, time.toString())
