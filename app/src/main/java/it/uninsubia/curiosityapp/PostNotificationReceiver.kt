@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
 import kotlin.random.Random
 
 
@@ -40,7 +41,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 Log.e(tag, totalcuriositiesMap.toString())
 
                 // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
-                var alreadyInKnownCounterMap = hashMapOf<String, Int>()
+                val alreadyInKnownCounterMap = hashMapOf<String, Int>()
                 for (topic in Utility.getTopicsOnDb(curiositiesList)) {
                     alreadyInKnownCounterMap[topic] =
                         if (!knownCuriositiesmap[topic].isNullOrEmpty()) knownCuriositiesmap[topic]!!.count()
@@ -63,13 +64,17 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 // init variabili per selezionare una curiosità random dalla lista con le curiosità
                 var randomIndex: Int
                 var chosenTopic: String?
-                var randitemcode = 0
+                var randitemcode: Int
                 var chosenCuriosity: CuriosityData
 
                 // se vi sono topic che hanno curiosità non già inviate cerco una tra esse
                 if (possibleTopics.size == 0) {
                     // inizializzo un dato per dopo
                     chosenCuriosity = CuriosityData()
+                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                    val prefEditor = prefs.edit()
+                    prefEditor.putBoolean("notification", false)
+                    prefEditor.apply()
                 } else {
                     do {
                         do {
@@ -164,17 +169,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
             else -> context.resources.openRawResource(R.raw.cucina)
         }
 
-//        imageStream = context.resources.(R.mipmap.ic_cinema_round)
-//        var bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.cinemadrawable)
-
-//        Bitmap.cre(R.mipmap.ic_cinema_round)
-
-
-//        val icon =
-//            BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_foreground)
-
         val bitmap = BitmapFactory.decodeStream(imageStream)
-
 
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
@@ -208,7 +203,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("Sono finite le curiosità! Scegli un altro topic oppure Cancella pure questa notifica!")
+                    .bigText("Sono finite le curiosità! Scegli un altro topic oppure cancella pure questa notifica!")
             )
             .build()
 
