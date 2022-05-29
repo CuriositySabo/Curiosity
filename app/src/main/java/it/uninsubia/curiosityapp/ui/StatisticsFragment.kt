@@ -14,9 +14,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import it.uninsubia.curiosityapp.*
+import it.uninsubia.curiosityapp.Utility.Companion.getTopicsOnDb
 import it.uninsubia.curiosityapp.Utility.Companion.readKnownCuriosities
 import it.uninsubia.curiosityapp.databinding.FragmentStatisticsBinding
 import kotlin.math.nextUp
+import kotlin.math.roundToInt
 
 class StatisticsFragment : Fragment() {
 
@@ -33,6 +35,7 @@ class StatisticsFragment : Fragment() {
     private lateinit var knownCuriositiesmap: HashMap<String,HashMap<Int, Boolean> >
     private var currentTopic = ""
 
+    private lateinit var curiosityList: ArrayList<CuriosityData>
     private val repository: CuriositiesRepository = CuriositiesRepository()
 
     override fun onCreateView(
@@ -51,22 +54,19 @@ class StatisticsFragment : Fragment() {
         }
         getResponseUsingCallback(object : FirebaseCallback {
             override fun onResponse(response: Response) {
-                val curiosityList = convertResponse(response)
+                curiosityList = convertResponse(response)
                 //numero di curiosità per topic sul DATABASE
                 curiositiesForEachTopic = Utility.getMapOfTopicsCuriosities(curiosityList)
                 numCuriosityGeneral = curiosityList.size
                 //numero di curiosità ricevute sul FILE locale
                 knownCuriositiesmap = readKnownCuriosities(fragmentContext).knowncuriosities
-
                 receivedCuriosities = hashMapOf()
-                for(topic in Utility.getTopicsOnDb(curiosityList)) {
+                for(topic in getTopicsOnDb(curiosityList)) {
                     if(knownCuriositiesmap[topic] != null)
                         receivedCuriosities[topic] = knownCuriositiesmap[topic]!!.count()
                     else
                         receivedCuriosities[topic] = 0
                 }
-                Log.e("received curiosities",receivedCuriosities.toString())
-
                 //initialize view
                 initView()
                 //listener for drop down menu
@@ -102,11 +102,10 @@ class StatisticsFragment : Fragment() {
             override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 //fill bar with selected topic
                 currentTopic = topics[position]
-                val doneCuriosities = getDoneCuriosities(currentTopic)
                 fillProgressBar(
                     binding.progressTopic,
                     binding.valuesTopic,
-                    receivedCuriosities[currentTopic]!!,
+                    getDoneCuriositiesTopic(statType,currentTopic),
                     curiositiesForEachTopic[currentTopic]!!
                 )
             }
@@ -114,29 +113,77 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun initView() {
-        val doneCuriosities = getDoneCuriosities("general")
-        fillProgressBar(binding.progressGeneral, binding.valuesGeneral, doneCuriosities, numCuriosityGeneral)
+        fillProgressBar(binding.progressGeneral, binding.valuesGeneral,
+            getDoneCuriositiesGeneral(statType), numCuriosityGeneral)
     }
 
     private fun resetView() {
         //set general bar
-        var doneCuriosities = getDoneCuriosities("general")
-        fillProgressBar(binding.progressGeneral, binding.valuesGeneral, doneCuriosities, numCuriosityGeneral)
+        fillProgressBar(binding.progressGeneral, binding.valuesGeneral,
+            getDoneCuriositiesGeneral(statType), numCuriosityGeneral)
         //set topic bar
-        doneCuriosities = getDoneCuriosities(currentTopic)
-        fillProgressBar(binding.progressTopic, binding.valuesTopic, receivedCuriosities[currentTopic]!!, curiositiesForEachTopic[currentTopic]!!)
+        fillProgressBar(binding.progressTopic, binding.valuesTopic,
+            getDoneCuriositiesTopic(statType,currentTopic), curiositiesForEachTopic[currentTopic]!!)
     }
 
-    private fun getDoneCuriosities(type: String):Int {
-        //get known curiosities from its file -> return a list with all
-        when(type){
-            "general" -> {
+    private fun calculateTotalReceivedCuriosities(receivedCuriosities: HashMap<String, Int>): Int{
+        //ottengo il numero totale di curiosità a cui si ha già risposto
+        var i = 0
+        for(topic in Utility.getTopicsOnDb(curiosityList))
+        {
+            i += receivedCuriosities[topic]!!
+        }
+        return i
+    }
 
+    private fun getDoneCuriositiesGeneral(type: String):Int {
+        //get known curiosities from its file -> return a list with all
+        var bool = 1
+        when(type){
+            "general" -> {bool = 1}
+            "known" -> { bool = 2 }
+            "unknown" -> { bool = 3 }
+        }
+        var t = 0
+        var f = 0
+        for(topic in getTopicsOnDb(curiosityList)) {
+            knownCuriositiesmap[topic]!!.forEach {
+                if(knownCuriositiesmap[topic] != null){
+                    if(it.value) t++
+                    else if (!it.value) f++
+                }
             }
         }
-        val knownCuriositiesData = readKnownCuriosities(fragmentContext)
+        if(bool == 2)
+            return t + f
+        else if(bool == 3)
+            return f
+        else
+            return t + f
+    }
 
-        return 0
+    private fun getDoneCuriositiesTopic(type: String, topic: String):Int {
+        //get known curiosities from its file -> return a list with all
+        var bool = 1
+        when(type){
+            "general" -> {bool = 1}
+            "known" -> { bool = 2 }
+            "unknown" -> { bool = 3 }
+        }
+        var t = 0
+        var f = 0
+        for(topic in getTopicsOnDb(curiosityList)) {
+            knownCuriositiesmap[topic]!!.forEach {
+                if(it.value) t++
+                else if (!it.value) f++
+            }
+        }
+        if(bool == 2)
+            return t + f
+        else if(bool == 3)
+            return f
+        else
+            return t + f
     }
 
     private fun fillProgressBar(
@@ -175,7 +222,7 @@ class StatisticsFragment : Fragment() {
                     progressBar.progress += perc.toInt()
                     progressBar.setIndicatorColor(loadingColor)
                     tv.setTextColor(loadingColor)
-                    tv.text = "${perc/10f} => $doneCuriosities/$totalCuriosities"
+                    tv.text = "${(perc/10f).roundToInt()}% - $doneCuriosities/$totalCuriosities"
                 }
 
                 override fun onFinish() {
