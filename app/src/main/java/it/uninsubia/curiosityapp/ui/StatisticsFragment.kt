@@ -3,7 +3,6 @@ package it.uninsubia.curiosityapp.ui
 import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +16,13 @@ import it.uninsubia.curiosityapp.*
 import it.uninsubia.curiosityapp.Utility.Companion.getTopicsOnDb
 import it.uninsubia.curiosityapp.Utility.Companion.readKnownCuriosities
 import it.uninsubia.curiosityapp.databinding.FragmentStatisticsBinding
-import kotlin.math.nextUp
 import kotlin.math.roundToInt
 
 class StatisticsFragment : Fragment() {
 
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
-    private var statType = ""
+    private var statType = "general"
     private lateinit var radio: RadioButton
     private lateinit var countdown: CountDownTimer
     private lateinit var fragmentContext: Context
@@ -106,7 +104,7 @@ class StatisticsFragment : Fragment() {
                     binding.progressTopic,
                     binding.valuesTopic,
                     getDoneCuriositiesTopic(statType,currentTopic),
-                    curiositiesForEachTopic[currentTopic]!!
+                    getMaxNumberTopic()
                 )
             }
         }
@@ -114,49 +112,40 @@ class StatisticsFragment : Fragment() {
 
     private fun initView() {
         fillProgressBar(binding.progressGeneral, binding.valuesGeneral,
-            getDoneCuriositiesGeneral(statType), numCuriosityGeneral)
+            getDoneCuriositiesGeneral(statType), getMaxNumberGeneral())
     }
 
     private fun resetView() {
         //set general bar
         fillProgressBar(binding.progressGeneral, binding.valuesGeneral,
-            getDoneCuriositiesGeneral(statType), numCuriosityGeneral)
+            getDoneCuriositiesGeneral(statType), getMaxNumberGeneral())
         //set topic bar
         fillProgressBar(binding.progressTopic, binding.valuesTopic,
-            getDoneCuriositiesTopic(statType,currentTopic), curiositiesForEachTopic[currentTopic]!!)
-    }
-
-    private fun calculateTotalReceivedCuriosities(receivedCuriosities: HashMap<String, Int>): Int{
-        //ottengo il numero totale di curiosità a cui si ha già risposto
-        var i = 0
-        for(topic in Utility.getTopicsOnDb(curiosityList))
-        {
-            i += receivedCuriosities[topic]!!
-        }
-        return i
+            getDoneCuriositiesTopic(statType,currentTopic), getMaxNumberTopic())
     }
 
     private fun getDoneCuriositiesGeneral(type: String):Int {
         //get known curiosities from its file -> return a list with all
-        var bool = 1
+        var flag = 1
         when(type){
-            "general" -> {bool = 1}
-            "known" -> { bool = 2 }
-            "unknown" -> { bool = 3 }
+            "general" -> {flag = 1}
+            "known" -> { flag = 2 }
+            "unknown" -> { flag = 3 }
         }
         var t = 0
         var f = 0
         for(topic in getTopicsOnDb(curiosityList)) {
-            knownCuriositiesmap[topic]!!.forEach {
-                if(knownCuriositiesmap[topic] != null){
-                    if(it.value) t++
-                    else if (!it.value) f++
+            if(knownCuriositiesmap[topic] != null) {
+                knownCuriositiesmap[topic]!!.forEach {
+                    if (knownCuriositiesmap[topic] != null)
+                        if (it.value) t++
+                        else if (!it.value) f++
                 }
             }
         }
-        if(bool == 2)
-            return t + f
-        else if(bool == 3)
+        if(flag == 2)
+            return t
+        else if(flag == 3)
             return f
         else
             return t + f
@@ -164,27 +153,58 @@ class StatisticsFragment : Fragment() {
 
     private fun getDoneCuriositiesTopic(type: String, topic: String):Int {
         //get known curiosities from its file -> return a list with all
-        var bool = 1
+        var flag = 1
         when(type){
-            "general" -> {bool = 1}
-            "known" -> { bool = 2 }
-            "unknown" -> { bool = 3 }
+            "general" -> {flag = 1}
+            "known" -> { flag = 2 }
+            "unknown" -> { flag = 3 }
         }
         var t = 0
         var f = 0
-        for(topic in getTopicsOnDb(curiosityList)) {
+        if(knownCuriositiesmap[topic] != null) {
             knownCuriositiesmap[topic]!!.forEach {
-                if(it.value) t++
+                if (it.value) t++
                 else if (!it.value) f++
             }
         }
-        if(bool == 2)
-            return t + f
-        else if(bool == 3)
+        if(flag == 2)
+            return t
+        else if(flag == 3)
             return f
         else
             return t + f
     }
+
+    private fun getMaxNumberGeneral(): Int{
+        if(statType == "general")
+            return numCuriosityGeneral
+        var t = 0
+        var f = 0
+        for(topic in getTopicsOnDb(curiosityList)) {
+            if(!knownCuriositiesmap[topic].isNullOrEmpty()) {
+                knownCuriositiesmap[topic]!!.forEach {
+                    if (it.value) t++
+                    else if (!it.value) f++
+                }
+            }
+        }
+        return f+t
+    }
+
+    private fun getMaxNumberTopic(): Int{
+        if(statType == "general")
+            return curiositiesForEachTopic[currentTopic]!!
+        var t = 0
+        var f = 0
+        if(!knownCuriositiesmap[currentTopic].isNullOrEmpty()) {
+            knownCuriositiesmap[currentTopic]!!.forEach {
+                if (it.value) t++
+                else if (!it.value) f++
+            }
+        }
+        return f+t
+    }
+
 
     private fun fillProgressBar(
         progressBar: com.google.android.material.progressindicator.CircularProgressIndicator,
@@ -209,9 +229,13 @@ class StatisticsFragment : Fragment() {
             }
         }
         //get percentage -> x:100 = doneCur:totalCur   0:10 000= done:total  add 1*100 per sec
-        var perc = (doneCuriosities*100)/totalCuriosities.toFloat()
-        perc*=10f.nextUp()
-        Log.e("perc","$perc")
+        var perc = 1f
+        if(totalCuriosities != 0)
+        {
+            perc = ((doneCuriosities*100)/totalCuriosities).toFloat()
+            perc*=10f
+        }
+        var percInt = 0f
         //fill the progress bar with the data retrieved
         ContextCompat.getMainExecutor(fragmentContext).execute {
             progressBar.progress = 0
@@ -222,7 +246,9 @@ class StatisticsFragment : Fragment() {
                     progressBar.progress += perc.toInt()
                     progressBar.setIndicatorColor(loadingColor)
                     tv.setTextColor(loadingColor)
-                    tv.text = "${(perc/10f).roundToInt()}% - $doneCuriosities/$totalCuriosities"
+                    if(perc!=0f)
+                        percInt = perc/10f
+                    tv.text = "${percInt.roundToInt()}% - $doneCuriosities/$totalCuriosities"
                 }
 
                 override fun onFinish() {
@@ -254,7 +280,6 @@ class StatisticsFragment : Fragment() {
 
         response.exception?.let { exception ->
             exception.message?.let {
-                Log.e(tag, it)
             }
         }
         return curiosityList
