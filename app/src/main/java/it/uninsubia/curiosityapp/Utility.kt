@@ -241,7 +241,6 @@ class Utility() {
             return list
         }
 
-
         // serve la response per forza!
         fun getTopicCuriosites(topic: String, list: ArrayList<CuriosityData>): Int {
             //get all curiosities from firebase -> return number of curiosities of that topic

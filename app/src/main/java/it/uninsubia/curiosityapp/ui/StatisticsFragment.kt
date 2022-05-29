@@ -14,7 +14,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import it.uninsubia.curiosityapp.*
+import it.uninsubia.curiosityapp.Utility.Companion.readKnownCuriosities
 import it.uninsubia.curiosityapp.databinding.FragmentStatisticsBinding
+import kotlin.math.nextUp
 
 class StatisticsFragment : Fragment() {
 
@@ -26,12 +28,9 @@ class StatisticsFragment : Fragment() {
     private lateinit var fragmentContext: Context
 
     private var numCuriosityGeneral = 0
-    private var numCuriosityCinema = 0
-    private var numCuriosityCucina = 0
-    private var numCuriositySport = 0
-    private var numCuriosityTecnologia = 0
-    private var numCuriosityStoria = 0
-
+    private lateinit var curiositiesForEachTopic: HashMap<String, Int>
+    private lateinit var receivedCuriosities: HashMap<String, Int>
+    private lateinit var knownCuriositiesmap: HashMap<String,HashMap<Int, Boolean> >
     private var currentTopic = ""
 
     private val repository: CuriositiesRepository = CuriositiesRepository()
@@ -53,12 +52,21 @@ class StatisticsFragment : Fragment() {
         getResponseUsingCallback(object : FirebaseCallback {
             override fun onResponse(response: Response) {
                 val curiosityList = convertResponse(response)
+                //numero di curiosità per topic sul DATABASE
+                curiositiesForEachTopic = Utility.getMapOfTopicsCuriosities(curiosityList)
                 numCuriosityGeneral = curiosityList.size
-                numCuriosityCinema = getCuriosities("Cinema", curiosityList)
-                numCuriosityCucina = getCuriosities("Cucina", curiosityList)
-                numCuriositySport = getCuriosities("Sport", curiosityList)
-                numCuriosityTecnologia = getCuriosities("Tecnologia", curiosityList)
-                numCuriosityStoria = getCuriosities("Storia", curiosityList)
+                //numero di curiosità ricevute sul FILE locale
+                knownCuriositiesmap = readKnownCuriosities(fragmentContext).knowncuriosities
+
+                receivedCuriosities = hashMapOf()
+                for(topic in Utility.getTopicsOnDb(curiosityList)) {
+                    if(knownCuriositiesmap[topic] != null)
+                        receivedCuriosities[topic] = knownCuriositiesmap[topic]!!.count()
+                    else
+                        receivedCuriosities[topic] = 0
+                }
+                Log.e("received curiosities",receivedCuriosities.toString())
+
                 //initialize view
                 initView()
                 //listener for drop down menu
@@ -89,9 +97,8 @@ class StatisticsFragment : Fragment() {
         binding.dropdownMenu.adapter = adapter
         binding.dropdownMenu.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                //fill bar with cinema curiosities
+                binding.progressTopic.progress = 0
             }
-
             override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 //fill bar with selected topic
                 currentTopic = topics[position]
@@ -99,8 +106,8 @@ class StatisticsFragment : Fragment() {
                 fillProgressBar(
                     binding.progressTopic,
                     binding.valuesTopic,
-                    doneCuriosities,
-                    findTopicVariable(currentTopic)
+                    receivedCuriosities[currentTopic]!!,
+                    curiositiesForEachTopic[currentTopic]!!
                 )
             }
         }
@@ -117,26 +124,19 @@ class StatisticsFragment : Fragment() {
         fillProgressBar(binding.progressGeneral, binding.valuesGeneral, doneCuriosities, numCuriosityGeneral)
         //set topic bar
         doneCuriosities = getDoneCuriosities(currentTopic)
-        fillProgressBar(binding.progressTopic, binding.valuesTopic, doneCuriosities, findTopicVariable(currentTopic))
+        fillProgressBar(binding.progressTopic, binding.valuesTopic, receivedCuriosities[currentTopic]!!, curiositiesForEachTopic[currentTopic]!!)
     }
 
-    private fun getDoneCuriosities(topic: String):Int {
-        if(topic == "general"){
-            //return list.size  -> knownCuriositiesData.getSize()
-        }
+    private fun getDoneCuriosities(type: String):Int {
         //get known curiosities from its file -> return a list with all
-        val knownCuriositiesData = Utility.readKnownCuriosities(fragmentContext)
-        return knownCuriositiesData.getSize()
-    }
+        when(type){
+            "general" -> {
 
-    private fun getCuriosities(topic: String, list: ArrayList<CuriosityData>): Int {
-        //get all curiosities from firebase -> return number of curiosities of that topic
-        var num = 0
-        for (curiosityData in list) {
-            if (curiosityData.topic == topic)
-                num++
+            }
         }
-        return num
+        val knownCuriositiesData = readKnownCuriosities(fragmentContext)
+
+        return 0
     }
 
     private fun fillProgressBar(
@@ -163,7 +163,7 @@ class StatisticsFragment : Fragment() {
         }
         //get percentage -> x:100 = doneCur:totalCur   0:10 000= done:total  add 1*100 per sec
         var perc = (doneCuriosities*100)/totalCuriosities.toFloat()
-        perc*=10f
+        perc*=10f.nextUp()
         Log.e("perc","$perc")
         //fill the progress bar with the data retrieved
         ContextCompat.getMainExecutor(fragmentContext).execute {
@@ -175,7 +175,7 @@ class StatisticsFragment : Fragment() {
                     progressBar.progress += perc.toInt()
                     progressBar.setIndicatorColor(loadingColor)
                     tv.setTextColor(loadingColor)
-                    tv.text = "$doneCuriosities/$totalCuriosities"
+                    tv.text = "${perc/10f} => $doneCuriosities/$totalCuriosities"
                 }
 
                 override fun onFinish() {
@@ -196,7 +196,7 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun convertResponse(response: Response): ArrayList<CuriosityData> {
-        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        //Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
         val curiosityList = arrayListOf<CuriosityData>()
 
         response.curiosities?.let { curiosities ->
@@ -210,19 +210,7 @@ class StatisticsFragment : Fragment() {
                 Log.e(tag, it)
             }
         }
-
         return curiosityList
-    }
-
-    private fun findTopicVariable(topic: String): Int {
-        return when (topic) {
-            "Cinema" -> numCuriosityCinema
-            "Cucina" -> numCuriosityCucina
-            "Tecnologia" -> numCuriosityTecnologia
-            "Sport" -> numCuriositySport
-            "Storia" -> numCuriosityStoria
-            else -> 0
-        }
     }
 
 }
