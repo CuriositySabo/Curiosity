@@ -1,6 +1,5 @@
 package it.uninsubia.curiosityapp
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -11,6 +10,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -162,22 +162,22 @@ class Utility() {
             return gson.fromJson(jsonString, dataType)
         }
 
-        //create a custom snackbar
-        @SuppressLint("InflateParams", "ShowToast")
+        //create a custom snackbar ===========================
         fun createSnackbar(message: String, contextView: View, context: Context) {
-
-
-            /*Snackbar.make(contextView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(contextView, message, Snackbar.LENGTH_LONG)
                 .setBackgroundTint(ContextCompat.getColor(context, R.color.primary_dark))
-                .show()*/
-            val snackbar = Snackbar.make(contextView,"",Snackbar.LENGTH_LONG)
+                .setTextColor(Color.WHITE)
+                .show()
+            /*
+            val snackbar = Snackbar.make(contextView,message,Snackbar.LENGTH_LONG)
+            snackbar.setTextColor(Color.WHITE)
+            snackbar.setBackgroundTint(Color.TRANSPARENT)
             val customSnackView: View = LayoutInflater.from(context).inflate(R.layout.custom_snackbar,null)
             val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
-            snackbarLayout.setPadding(0,0,0,0)
             customSnackView.findViewById<TextView>(R.id.tv_snackBar).text = message
-            snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+            customSnackView.setBackgroundColor(Color.TRANSPARENT)
             snackbarLayout.addView(customSnackView, 0)
-            snackbar.show()
+            snackbar.show()*/
         }
 
         //scrive sul file topics partendo da un array list

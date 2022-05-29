@@ -87,18 +87,24 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     val user = FirebaseAuth.getInstance().currentUser
                     if (user!!.isEmailVerified) {
                         //showToast("Login effettuato con successo")
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
                         Utility.createSnackbar(
                             "Login effettuato con successo!",
                             this.findViewById(R.id.login_layout),
-                            applicationContext) // ->
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
+                            applicationContext)
                         progressBar.visibility = View.VISIBLE
                     } else {
-                        showToast("Controlla la tua email per verificare il tuo account")
+                        Utility.createSnackbar(
+                            "Controlla la tua email per verificare il tuo account",
+                            this.findViewById(R.id.login_layout),
+                            applicationContext)
                     }
                 } else {
-                    showToast("Email o password errate")
+                    Utility.createSnackbar(
+                        "Email o password errate",
+                        this.findViewById(R.id.login_layout),
+                        applicationContext)
                 }
             }
     }
@@ -115,18 +121,5 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(Intent(this, ForgotPswActivity::class.java))
             }
         }
-    }
-
-    private fun showToast(message: String)
-    {
-        val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_snackbar,(findViewById(R.id.toast_root)))
-        val toastText = layoutToast.findViewById<TextView>(R.id.tv_snackBar)
-        toastText.text = message
-        val toast = Toast(applicationContext)
-        toast.setGravity(Gravity.BOTTOM,0,0)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = layoutToast
-        toast.show()
     }
 }

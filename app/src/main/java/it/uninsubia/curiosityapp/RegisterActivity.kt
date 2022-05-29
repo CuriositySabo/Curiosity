@@ -3,8 +3,6 @@ package it.uninsubia.curiosityapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -101,29 +99,25 @@ class RegisterActivity : AppCompatActivity() {
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                         .setValue(user).addOnCompleteListener(this) {
                             if (it.isSuccessful) {
-                                showToast("Utente registrato con successo!")
                                 progressBar.visibility = View.VISIBLE
-                                Thread.sleep(1000)
                                 startActivity(Intent(this, LoginActivity::class.java))
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Utente registrato con successo!",
+                                    Toast.LENGTH_LONG).show()
                             } else {
-                                showToast("Errore nel registrare l'utente! Riprova!")
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Errore nel registrare l'utente! Riprova!",
+                                    Toast.LENGTH_LONG).show()
                             }
                         }
                 } else {
-                    showToast("Errore nel registrare l'utente!")
+                    Toast.makeText(
+                        applicationContext,
+                        "Errore nel registrare l'utente!",
+                        Toast.LENGTH_LONG).show()
                 }
             }
-    }
-
-    private fun showToast(message: String) {
-        val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_snackbar, (findViewById(R.id.toast_root)))
-        val toastText = layoutToast.findViewById<TextView>(R.id.tv_snackBar)
-        toastText.text = message
-        val toast = Toast(applicationContext)
-        toast.setGravity(Gravity.BOTTOM, 0, 0)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = layoutToast
-        toast.show()
     }
 }

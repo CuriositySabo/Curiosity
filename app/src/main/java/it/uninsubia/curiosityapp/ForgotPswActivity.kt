@@ -2,8 +2,6 @@ package it.uninsubia.curiosityapp
 
 import android.os.Bundle
 import android.util.Patterns
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -52,23 +50,17 @@ class ForgotPswActivity : AppCompatActivity() {
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) {
-                showToast("Controlla la tua email per resettare la password!")
+                Utility.createSnackbar(
+                    "Controlla la tua email per resettare la password!",
+                    this.findViewById(R.id.fgt_pass_layout),
+                    applicationContext)
             } else {
-                showToast("Qualcosa non è risucito. Riprova!")
+                Utility.createSnackbar(
+                    "Qualcosa non è risucito. Riprova!",
+                    this.findViewById(R.id.fgt_pass_layout),
+                    applicationContext)
             }
         }
         progressBar.visibility = View.GONE
-    }
-    private fun showToast(message: String)
-    {
-        val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_snackbar,(findViewById(R.id.toast_root)))
-        val toastText = layoutToast.findViewById<TextView>(R.id.tv_snackBar)
-        toastText.text = message
-        val toast = Toast(applicationContext)
-        toast.setGravity(Gravity.BOTTOM,0,0)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = layoutToast
-        toast.show()
     }
 }
