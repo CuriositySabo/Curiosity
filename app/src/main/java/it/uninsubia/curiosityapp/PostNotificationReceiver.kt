@@ -8,11 +8,6 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import it.uninsubia.curiosityapp.ui.topics.TopicsModel
-import java.io.File
-import java.io.IOException
 import kotlin.random.Random
 
 
@@ -34,24 +29,18 @@ class PostNotificationReceiver : BroadcastReceiver() {
         // altrimenti il programma proseguirebbe e riporterebbe i dati solo successivamente
         getResponseUsingCallback(object : FirebaseCallback {
             override fun onResponse(response: Response) {
-//                print(response)
                 //trasformo la risposta da parte del db in un lista di curiosità
                 val curiositiesList = convertResponse(response)
 
-                val knownCuriositiesmap = readKnownCuriosities(context).knowncuriosities
+                // leggo le curiosità ricevute
+                val knownCuriositiesmap = Utility.readKnownCuriosities(context).knowncuriosities
 
-                Log.e(tag, Utility.getMapOfTopicsCuriosities(curiositiesList).toString())
-
+                // scarico dal db la mappa con il numero massimo di curiosità per ogni topic
                 val totalcuriositiesMap = Utility.getMapOfTopicsCuriosities(curiositiesList)
+                Log.e(tag, totalcuriositiesMap.toString())
 
-                var randomIndex: Int
-                var chosenTopic: String?
-                chosenTopic = chooseRandomTopic(context)
-
-                // stessa mappa ma azzerata la utilizzo per contare
-                var alreadyInKnownCounterMap = Utility.getMapOfTopicsCuriosities(curiositiesList)
-
-
+                // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
+                var alreadyInKnownCounterMap = hashMapOf<String, Int>()
                 for (topic in Utility.getTopicsOnDb(curiositiesList)) {
                     alreadyInKnownCounterMap[topic] =
                         if (!knownCuriositiesmap[topic].isNullOrEmpty()) knownCuriositiesmap[topic]!!.count()
@@ -60,131 +49,57 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 Log.e(tag, alreadyInKnownCounterMap.toString())
 
 
-                var flag = true
-//                var chosenCuriosity = CuriosityData("Sai tutto", "Sono finite le curiosità!", "")
-                var chosenCuriosity = CuriosityData()
-
-                while (flag && !(alreadyInKnownCounterMap == totalcuriositiesMap)) {
-                    randomIndex = Random.nextInt(curiositiesList.size)
-                    chosenCuriosity = curiositiesList[randomIndex]
-                    chosenTopic = chosenCuriosity.topic
-                    val randitemcode =
-                        "${chosenCuriosity.title} ${chosenCuriosity.text} ${chosenCuriosity.topic}".hashCode()
-                    if (alreadyInKnownCounterMap[chosenTopic] == totalcuriositiesMap[chosenTopic] ||
-                        (!knownCuriositiesmap[chosenTopic].isNullOrEmpty() && knownCuriositiesmap[chosenTopic]!!.contains(
-                            randitemcode
-                        ))
-                    ) {
-                        alreadyInKnownCounterMap[chosenTopic] =
-                            alreadyInKnownCounterMap[chosenTopic]!!.plus(1)
-                    } else {
-                        Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
-                        flag = false
+                // creo la lista con i topic selezionati dall'utente
+                val possibleTopics = listChosenTopics(context)
+                // per ognuno di essi controllo che non siano già state ricevute tutte le curiosità
+                // se sono già state ricevute tutte levo il topic dai topic possibili
+                totalcuriositiesMap.forEach() {
+                    val key = it.key
+                    if (it.value == alreadyInKnownCounterMap[key]) {
+                        possibleTopics.remove(key)
                     }
                 }
+
+                // init variabili per selezionare una curiosità random dalla lista con le curiosità
+                var randomIndex: Int
+                var chosenTopic: String?
+                var randitemcode = 0
+                var chosenCuriosity: CuriosityData
+
+                // se vi sono topic che hanno curiosità non già inviate cerco una tra esse
+                if (possibleTopics.size == 0) {
+                    // inizializzo un dato per dopo
+                    chosenCuriosity = CuriosityData()
+                } else {
+                    do {
+                        do {
+                            randomIndex = Random.nextInt(curiositiesList.size)
+                            chosenCuriosity = curiositiesList[randomIndex]
+                            chosenTopic = chosenCuriosity.topic
+                            // ripeto la generazione finchè non trovo la curiosià di un topic possibile
+                        } while (!possibleTopics.contains(chosenTopic))
+                        // genero il codice della curiosità
+                        randitemcode =
+                            "${chosenCuriosity.title} ${chosenCuriosity.text} ${chosenCuriosity.topic}".hashCode()
+                        // se vi sono curiosità sul file e tra le curiosità già ricevute non vi è quella generata posso andare avanti
+                    } while (!knownCuriositiesmap[chosenTopic].isNullOrEmpty() &&
+                        knownCuriositiesmap[chosenTopic]!!.contains(randitemcode)
+                    )
+                }
+
+                Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
+
                 Log.e(tag, "POSTO")
-                if(chosenCuriosity.title == "" && chosenCuriosity.text == "" && chosenCuriosity.topic == "")
+
+                // se chosenCuriosity è inizializzato vuoto faccio una notifica senza bottoni e con un testo statico
+                // altrimenti la creo con la curiosità presa dal db
+                if (chosenCuriosity == CuriosityData())
                     notificationCreator(context)
                 else
                     notificationwithButtonCreator(context, chosenCuriosity)
 
-
-                /*
-                var randomIndex: Int
-                var chosenTopic: String?
-                chosenTopic = chooseRandomTopic(context)
-
-                while (chosenTopic != null) {
-
-
-                    *//*if (curiositiesList.size != 0)
-                        randomIndex = Random.nextInt(curiositiesList.size)
-                    else
-                        break
-
-                    val chosenCuriosity = curiositiesList[randomIndex]*//*
-                    var counter = 0
-                    while(counter == ) {
-                        randomIndex = Random.nextInt(curiositiesList.size)
-                        val chosenCuriosity = curiositiesList[randomIndex]
-                        counter++
-                    }
-
-
-
-                    val randitemcode = "${chosenCuriosity.title} ${chosenCuriosity.text} ${chosenCuriosity.topic}".hashCode()
-
-                    if(knownCuriositiesmap[])
-
-
-                    *//*for (curiosity in curiositiesList) {
-                        val curiositycode = "${curiosity.title} ${curiosity.text} ${curiosity.topic}".hashCode()
-                        if(curiositycode == randitemcode){
-                            Log.e(tag, "Curiosità già presente")
-
-                        }
-                    }*//*
-                        chosenTopic = chooseRandomTopic(context)
-                }
-
-
-                *//*do {
-                    chosenTopic = chooseRandomTopic(context)
-                    if (chosenTopic == null) {
-                        Log.e(tag, "looppo")
-                        // TODO: fix
-                        break
-                    } else {
-                        randomIndex = Random.nextInt(curiosityList.size)
-                        val randitemcode =
-                            "${curiosityList[randomIndex].title} ${curiosityList[randomIndex].text} ${curiosityList[randomIndex].topic}".hashCode()
-                    }
-                } while (curiosityList[randomIndex].topic != chosenTopic || knownCuriositiesmap[chosenTopic]!!.contains(
-                        randitemcode
-                    )
-                )*//*
-
-                // estraggo un valore random contenuto nel range formato da tutti gli indici possibili nella lista
-                val chosenCuriosity = curiositiesList[randomIndex]
-                Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
-                // estraggo la curiosità random con un foreach particolare che per ogni campo disponibile
-                // restituiscce posizione e valore
-                // creo la notifica e la posto
-                notificationCreator(context, chosenCuriosity)*/
             }
         })
-    }
-
-    private fun notificationCreator(context: Context) {
-        // creazione della notifica
-        val notification = NotificationCompat.Builder(context, channelid)
-            .setSmallIcon(R.mipmap.ic_mars_foreground)
-            .setContentTitle("Sai tutto oramai!")
-            .setContentText("Sono finite le curiosità!\nCancella pure questa notifica!")
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .build()
-
-
-        // il notification manager permette di postare la notifica
-        val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.notify(200, notification)
-    }
-
-
-    private fun print(response: Response) {
-        response.curiosities?.let { curiosities ->
-            curiosities.forEach { curiosity ->
-                curiosity.title.let {
-                    Log.i(tag, it)
-                }
-            }
-        }
-
-        response.exception?.let { exception ->
-            exception.message?.let {
-                Log.e(tag, it)
-            }
-        }
     }
 
     private fun convertResponse(response: Response): ArrayList<CuriosityData> {
@@ -240,7 +155,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_MUTABLE
         )
 
-
         val imageStream = when (curiosity[2]) {
             "Storia" -> context.resources.openRawResource(R.raw.storia)
             "Tecnologia" -> context.resources.openRawResource(R.raw.tecnologia)
@@ -249,7 +163,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
             "Cucina" -> context.resources.openRawResource(R.raw.cucina)
             else -> context.resources.openRawResource(R.raw.cucina)
         }
-
 
 //        imageStream = context.resources.(R.mipmap.ic_cinema_round)
 //        var bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.cinemadrawable)
@@ -286,47 +199,54 @@ class PostNotificationReceiver : BroadcastReceiver() {
         notificationManager.notify(200, notification)
     }
 
-    private fun chooseRandomTopic(context: Context): String? {
+    private fun notificationCreator(context: Context) {
+        // creazione della notifica
+        val notification = NotificationCompat.Builder(context, channelid)
+            .setSmallIcon(R.mipmap.ic_mars_foreground)
+            .setContentTitle("Sai tutto oramai!")
+            .setContentText("Sono finite le curiosità!")
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("Sono finite le curiosità! Scegli un altro topic oppure Cancella pure questa notifica!")
+            )
+            .build()
+
+
+        // il notification manager permette di postare la notifica
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.notify(200, notification)
+    }
+
+    private fun listChosenTopics(context: Context): ArrayList<String> {
         // leggo tutti i topics esistenti
         val topics = Utility.readTopicsFile(context)
 
         // in chosenfield  metto i topics checkati dall'utente
-        val chosenFields = ArrayList<TopicsModel>()
+        val chosenFields = ArrayList<String>()
 
+        // controllo quali sono checkati
         topics.forEach {
             if (it.checked)
-                chosenFields.add(it)
+                chosenFields.add(it.topicName)
         }
 
-        // genero un numero random contenuto nel range degli indici della lista
-        if (chosenFields.size != 0) {
-            val rnd = (chosenFields.indices).random()
-            return chosenFields[rnd].topicName
-        } else
-            return null
-        // utilizzerò il valore ritornato per scegliere un campo tra le curiosità
-
+        return chosenFields
     }
 
-    private fun readKnownCuriosities(context: Context): KnownCuriositiesData {
-        var jsonString = ""
-        val directory = File("${context.filesDir}/tmp") // path della directory
-        val filepath = File("$directory/knowncuriosities.json") // path del filepath
-
-        // leggi tutto il testo presente sul file
-        try {
-            jsonString = filepath.bufferedReader().use {
-                it.readText()
+    /*private fun print(response: Response) {
+        response.curiosities?.let { curiosities ->
+            curiosities.forEach { curiosity ->
+                curiosity.title.let {
+                    Log.i(tag, it)
+                }
             }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
         }
 
-        val gson = Gson()
-        //salvo il tipo dell'oggetto scritto sul file
-        val dataType = object : TypeToken<KnownCuriositiesData>() {}.type
-        //trasformo la stringa letta la quale sarà in formato JSON nella classe utilizzata
-
-        return gson.fromJson(jsonString, dataType)
-    }
+        response.exception?.let { exception ->
+            exception.message?.let {
+                Log.e(tag, it)
+            }
+        }
+    }*/
 }
