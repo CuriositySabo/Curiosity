@@ -62,4 +62,5 @@
     <string name="stats_unknown">Non sapute</string>
     <string name="stats_unknown_description">unknown</string>
     <string name="stats_general_tv">Completamento:</string>
+    <string name="stats_val_default">val/val</string>
 </resources>

@@ -1,5 +1,6 @@
 package it.uninsubia.curiosityapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -21,8 +22,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var button: Button
     private lateinit var tvRegistrati: TextView
     private lateinit var progressBar: ProgressBar
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: EditText
+    private lateinit var etEmail: com.google.android.material.textfield.TextInputEditText
+    private lateinit var etPassword: com.google.android.material.textfield.TextInputEditText
 
     private lateinit var auth: FirebaseAuth
 
@@ -59,22 +60,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
 
         if (email.isEmpty()) {
-            Utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
+            //Utility.setErrorOnSearchView(etEmail,"Inserisci una mail",this)
+            etEmail.error = "Inserisci una mail"
             etEmail.requestFocus()
             return
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Utility.setErrorOnSearchView(etEmail,"É necessario inserire una email esistente",this)
+            etEmail.error = "É necessario inserire una email esistente"
             etEmail.requestFocus()
             return
         }
         if (password.isEmpty()) {
-            Utility.setErrorOnSearchView(etPassword,"É richiesta una password",this)
+            etPassword.error = "É richiesta una password"
             etPassword.requestFocus()
             return
         }
         if (password.length < 6) {
-            Utility.setErrorOnSearchView(etPassword,"É richiesta una password di più di 6 caratteri",this)
+            etPassword.error = "É richiesta una password di più di 6 caratteri"
             etPassword.requestFocus()
             return
         }
@@ -84,15 +86,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 if (it.isSuccessful) {
                     val user = FirebaseAuth.getInstance().currentUser
                     if (user!!.isEmailVerified) {
+                        //showToast("Login effettuato con successo")
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                        showToast("Login effettuato con successo")
+                        Utility.createSnackbar(
+                            "Login effettuato con successo!",
+                            this.findViewById(R.id.login_layout),
+                            applicationContext)
                         progressBar.visibility = View.VISIBLE
                     } else {
-                        showToast("Controlla la tua email per verificare il tuo account")
+                        Utility.createSnackbar(
+                            "Controlla la tua email per verificare il tuo account",
+                            this.findViewById(R.id.login_layout),
+                            applicationContext)
                     }
                 } else {
-                    showToast("Email o password errate")
+                    Utility.createSnackbar(
+                        "Email o password errate",
+                        this.findViewById(R.id.login_layout),
+                        applicationContext)
                 }
             }
     }
@@ -109,18 +121,5 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(Intent(this, ForgotPswActivity::class.java))
             }
         }
-    }
-
-    private fun showToast(message: String)
-    {
-        val inflater: LayoutInflater = layoutInflater
-        val layoutToast = inflater.inflate(R.layout.custom_toast,(findViewById(R.id.toast_root)))
-        val toastText = layoutToast.findViewById<TextView>(R.id.toast_text)
-        toastText.text = message
-        val toast = Toast(applicationContext)
-        toast.setGravity(Gravity.BOTTOM,0,0)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = layoutToast
-        toast.show()
     }
 }

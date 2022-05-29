@@ -4,12 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.widget.EditText
+import android.graphics.Color
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -21,7 +21,6 @@ import java.io.PrintWriter
 class Utility() {
 
     companion object {
-
         fun notificationLauncher(context: Context) {
             var time = 1
             time *= 2000 // in realtà ce ne mette di più
@@ -175,16 +174,22 @@ class Utility() {
             return gson.fromJson(jsonString, dataType)
         }
 
-        //Bob stuff
-
-        fun setErrorOnSearchView(editText: EditText, errorMessage: String, context: Context) {
-            val errorColor = ContextCompat.getColor(context, R.color.white)
-            //val errorBackgroundColor = ContextCompat.getColor(this,R.color.white)
-            val fgcspan = ForegroundColorSpan(errorColor)
-            //val bgcspan = BackgroundColorSpan(errorBackgroundColor)
-            val builder = SpannableStringBuilder(errorMessage)
-            builder.setSpan(fgcspan, 0, errorMessage.length, 4)
-            editText.error = builder
+        //create a custom snackbar ===========================
+        fun createSnackbar(message: String, contextView: View, context: Context) {
+            Snackbar.make(contextView, message, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(ContextCompat.getColor(context, R.color.primary_dark))
+                .setTextColor(Color.WHITE)
+                .show()
+            /*
+            val snackbar = Snackbar.make(contextView,message,Snackbar.LENGTH_LONG)
+            snackbar.setTextColor(Color.WHITE)
+            snackbar.setBackgroundTint(Color.TRANSPARENT)
+            val customSnackView: View = LayoutInflater.from(context).inflate(R.layout.custom_snackbar,null)
+            val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+            customSnackView.findViewById<TextView>(R.id.tv_snackBar).text = message
+            customSnackView.setBackgroundColor(Color.TRANSPARENT)
+            snackbarLayout.addView(customSnackView, 0)
+            snackbar.show()*/
         }
 
         // scrive sul file topics partendo da un array list
@@ -223,8 +228,8 @@ class Utility() {
             return list
         }
 
-        fun initTopicList(): ArrayList<TopicsModel> {
-            val list: ArrayList<TopicsModel> = ArrayList()
+        fun initTopicList() : ArrayList<TopicsModel> {
+            val list : ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
                     "Cinema",
