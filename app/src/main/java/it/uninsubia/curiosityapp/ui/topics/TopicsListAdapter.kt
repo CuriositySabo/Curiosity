@@ -55,8 +55,8 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 
         fun bind(topic: TopicsModel) {
             val requestOptions = RequestOptions()
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.color.bg_dark)
+                .error(R.color.bg_dark)
             Glide.with(itemView.context)
                 .applyDefaultRequestOptions(requestOptions)
                 .load(topic.image)

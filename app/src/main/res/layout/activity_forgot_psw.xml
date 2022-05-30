@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="36dp"
+    android:paddingTop="48dp"
     android:orientation="vertical"
     tools:context=".RegisterActivity">
 
@@ -12,10 +13,10 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:text="@string/forgot_title"
+        android:fontFamily="sans-serif-medium"
         android:textSize="32sp" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -25,11 +26,11 @@
         android:drawableStart="@drawable/ic_mail"
         android:drawablePadding="10dp"
         android:layout_marginTop="48dp"
-        android:layout_marginHorizontal="10dp"
-        android:ems="10"
         android:hint="@string/register_email"
+        android:fontFamily="sans-serif-light"
         android:inputType="textEmailAddress"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        android:layout_marginHorizontal="12dp"/>
 
     <Button
         android:id="@+id/resetBtn"
@@ -37,9 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="48dp"
-        android:layout_marginHorizontal="10dp"
         android:text="@string/forgot_button"
-        tools:ignore="DuplicateSpeakableTextCheck" />
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginHorizontal="12dp"/>
 
     <ProgressBar
         android:id="@+id/progressbar"
