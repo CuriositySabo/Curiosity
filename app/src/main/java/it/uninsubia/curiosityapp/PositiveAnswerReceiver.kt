@@ -55,7 +55,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         //esegui il broadcast dopo i millisecondi passati
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.set(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
         Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
 
     }
