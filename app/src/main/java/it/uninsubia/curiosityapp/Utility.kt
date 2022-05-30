@@ -185,8 +185,8 @@ class Utility() {
             return list
         }
 
-        fun initTopicList() : ArrayList<TopicsModel> {
-            val list : ArrayList<TopicsModel> = ArrayList()
+        fun initTopicList(): ArrayList<TopicsModel> {
+            val list: ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
                     "Cinema",
@@ -239,18 +239,18 @@ class Utility() {
         fun getTopicsOnDb(allcuriosities: ArrayList<CuriosityData>): ArrayList<String> {
             val topicsonDb = arrayListOf<String>()
             for (curiosity in allcuriosities) {
-                if(!topicsonDb.contains(curiosity.topic))
+                if (!topicsonDb.contains(curiosity.topic))
                     topicsonDb.add(curiosity.topic)
             }
 
-            return  topicsonDb
+            return topicsonDb
         }
 
-        fun getMapOfTopicsCuriosities(curiositiesList :ArrayList<CuriosityData> ) : HashMap<String, Int> {
+        fun getMapOfTopicsCuriosities(curiositiesList: ArrayList<CuriosityData>): HashMap<String, Int> {
             // mappa che contiene il numero di curiosità totali per topic
             val topicsCuriositiesMap = hashMapOf<String, Int>()
             val topicsList = getTopicsOnDb(curiositiesList)
-            for(topic in topicsList) {
+            for (topic in topicsList) {
                 topicsCuriositiesMap[topic] = getTopicCuriosites(topic, curiositiesList)
             }
             return topicsCuriositiesMap

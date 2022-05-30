@@ -33,64 +33,12 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 //trasformo la risposta da parte del db in un lista di curiosità
                 val curiositiesList = convertResponse(response)
 
-                // leggo le curiosità ricevute
-                val knownCuriositiesmap = Utility.readKnownCuriosities(context).knowncuriosities
-
                 // scarico dal db la mappa con il numero massimo di curiosità per ogni topic
                 val totalcuriositiesMap = Utility.getMapOfTopicsCuriosities(curiositiesList)
-                Log.e(tag, totalcuriositiesMap.toString())
 
-                // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
-                val alreadyInKnownCounterMap = hashMapOf<String, Int>()
-                for (topic in Utility.getTopicsOnDb(curiositiesList)) {
-                    alreadyInKnownCounterMap[topic] =
-                        if (!knownCuriositiesmap[topic].isNullOrEmpty()) knownCuriositiesmap[topic]!!.count()
-                        else 0
-                }
-                Log.e(tag, alreadyInKnownCounterMap.toString())
-
-
-                // creo la lista con i topic selezionati dall'utente
-                val possibleTopics = listChosenTopics(context)
-                // per ognuno di essi controllo che non siano già state ricevute tutte le curiosità
-                // se sono già state ricevute tutte levo il topic dai topic possibili
-                totalcuriositiesMap.forEach() {
-                    val key = it.key
-                    if (it.value == alreadyInKnownCounterMap[key]) {
-                        possibleTopics.remove(key)
-                    }
-                }
-
-                // init variabili per selezionare una curiosità random dalla lista con le curiosità
-                var randomIndex: Int
-                var chosenTopic: String?
-                var randitemcode: Int
-                var chosenCuriosity: CuriosityData
-
-                // se vi sono topic che hanno curiosità non già inviate cerco una tra esse
-                if (possibleTopics.size == 0) {
-                    // inizializzo un dato per dopo
-                    chosenCuriosity = CuriosityData()
-                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                    val prefEditor = prefs.edit()
-                    prefEditor.putBoolean("notification", false)
-                    prefEditor.apply()
-                } else {
-                    do {
-                        do {
-                            randomIndex = Random.nextInt(curiositiesList.size)
-                            chosenCuriosity = curiositiesList[randomIndex]
-                            chosenTopic = chosenCuriosity.topic
-                            // ripeto la generazione finchè non trovo la curiosià di un topic possibile
-                        } while (!possibleTopics.contains(chosenTopic))
-                        // genero il codice della curiosità
-                        randitemcode =
-                            "${chosenCuriosity.title} ${chosenCuriosity.text} ${chosenCuriosity.topic}".hashCode()
-                        // se vi sono curiosità sul file e tra le curiosità già ricevute non vi è quella generata posso andare avanti
-                    } while (!knownCuriositiesmap[chosenTopic].isNullOrEmpty() &&
-                        knownCuriositiesmap[chosenTopic]!!.contains(randitemcode)
-                    )
-                }
+                // sceglie una curiosità casuale che non sia stata già ricevuta e che faccia parte dei topic scelti
+                val chosenCuriosity =
+                    generateCuriosity(context, curiositiesList, totalcuriositiesMap)
 
                 Log.e(tag, "${chosenCuriosity.title} ${chosenCuriosity.topic}")
 
@@ -102,9 +50,73 @@ class PostNotificationReceiver : BroadcastReceiver() {
                     notificationCreator(context)
                 else
                     notificationwithButtonCreator(context, chosenCuriosity)
-
             }
         })
+    }
+
+    private fun generateCuriosity(
+        context: Context,
+        curiositiesList: ArrayList<CuriosityData>,
+        totalcuriositiesMap: HashMap<String, Int>
+    ): CuriosityData {
+
+        // leggo le curiosità già ricevute
+        val receivedCuriositiesmap = Utility.readKnownCuriosities(context).knowncuriosities
+
+        Log.e(tag, totalcuriositiesMap.toString())
+
+        // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
+        val alreadyInReceivedCounter = hashMapOf<String, Int>()
+        for (topic in Utility.getTopicsOnDb(curiositiesList)) {
+            alreadyInReceivedCounter[topic] =
+                if (!receivedCuriositiesmap[topic].isNullOrEmpty()) receivedCuriositiesmap[topic]!!.count()
+                else 0
+        }
+        Log.e(tag, alreadyInReceivedCounter.toString())
+
+
+        // creo la lista con i topic selezionati dall'utente
+        val possibleTopics = listChosenTopics(context)
+        // per ognuno di essi controllo che non siano già state ricevute tutte le curiosità
+        // se sono già state ricevute tutte levo il topic dai topic possibili
+        totalcuriositiesMap.forEach() {
+            val key = it.key
+            if (it.value == alreadyInReceivedCounter[key]) {
+                possibleTopics.remove(key)
+            }
+        }
+
+        // init variabili per selezionare una curiosità random dalla lista con le curiosità
+        var randomIndex: Int
+        var chosenTopic: String?
+        var randitemcode: Int
+        var chosenCuriosity: CuriosityData
+
+        // se vi sono topic che hanno curiosità non già inviate cerco una tra esse
+        if (possibleTopics.size == 0) {
+            // inizializzo un dato per dopo
+            chosenCuriosity = CuriosityData()
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val prefEditor = prefs.edit()
+            prefEditor.putBoolean("notification", false)
+            prefEditor.apply()
+        } else {
+            do {
+                do {
+                    randomIndex = Random.nextInt(curiositiesList.size)
+                    chosenCuriosity = curiositiesList[randomIndex]
+                    chosenTopic = chosenCuriosity.topic
+                    // ripeto la generazione finchè non trovo la curiosià di un topic possibile
+                } while (!possibleTopics.contains(chosenTopic))
+                // genero il codice della curiosità
+                randitemcode =
+                    "${chosenCuriosity.title} ${chosenCuriosity.text} ${chosenCuriosity.topic}".hashCode()
+                // se vi sono curiosità sul file e tra le curiosità già ricevute non vi è quella generata posso andare avanti
+            } while (!receivedCuriositiesmap[chosenTopic].isNullOrEmpty() &&
+                receivedCuriositiesmap[chosenTopic]!!.contains(randitemcode)
+            )
+        }
+        return chosenCuriosity
     }
 
     private fun convertResponse(response: Response): ArrayList<CuriosityData> {

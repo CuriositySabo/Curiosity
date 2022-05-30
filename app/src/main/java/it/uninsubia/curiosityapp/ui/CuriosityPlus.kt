@@ -1,18 +1,23 @@
 package it.uninsubia.curiosityapp.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import it.uninsubia.curiosityapp.R
+import it.uninsubia.curiosityapp.*
 import it.uninsubia.curiosityapp.databinding.ActivityCuriosityPlusBinding
-import it.uninsubia.curiosityapp.nav_drawer
 
 class CuriosityPlus : AppCompatActivity() {
     private lateinit var binding: ActivityCuriosityPlusBinding
     private lateinit var countdown: CountDownTimer
+
+    private val tag = "Curiosity Plus"
+
+    private val repository: CuriositiesRepository = CuriositiesRepository()
+    private lateinit var curiositiesList : ArrayList<CuriosityData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +28,13 @@ class CuriosityPlus : AppCompatActivity() {
             //if play_imageView is clicked then progress bar starts
             binding.startLayout.visibility = View.GONE
             binding.progressBarLayout.visibility = View.VISIBLE
+
+            getResponseUsingCallback(object : FirebaseCallback {
+                override fun onResponse(response: Response) {
+                    val curiositiesList = convertResponse(response)
+                }
+            })
+
             countdown = object : CountDownTimer(1000, 20) {
                 override fun onTick(p0: Long) {//progress bar fills up
                     binding.progressBar.progress += 2
@@ -93,7 +105,12 @@ class CuriosityPlus : AppCompatActivity() {
     }
 
     private fun fetchNextCuriosity() {
-        //fetch a random curiosity from firebase
+        // scarico dal db la mappa con il numero massimo di curiosità per ogni topic
+        val totalcuriositiesMap = Utility.getMapOfTopicsCuriosities(curiositiesList)
+
+        // sceglie una curiosità casuale che non sia stata già ricevuta e che faccia parte dei topic scelti
+        /*val chosenCuriosity =
+            generateCuriosity(context, curiositiesList, totalcuriositiesMap)*/
     }
     private fun saveOnFile(known: Boolean) {
         //save curiosity known or unknown on local file
@@ -101,6 +118,31 @@ class CuriosityPlus : AppCompatActivity() {
     private fun getRandomString():String{
         val stringList = listOf("Bravo!", "Genio!", "Ne sai eh!", "Continua così!", "Vai!","Wow!")
         return stringList[(stringList.indices).random()]
+    }
+
+    private fun getResponseUsingCallback(callback: FirebaseCallback) {
+        repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
+    }
+
+    private fun convertResponse(response: Response): ArrayList<CuriosityData> {
+        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        val curiosityList = arrayListOf<CuriosityData>()
+
+        response.curiosities?.let { curiosities ->
+            curiosities.forEach { curiosity ->
+                curiosityList.add(curiosity)
+            }
+        }
+
+
+        response.exception?.let { exception ->
+            exception.message?.let {
+                Log.e(tag, it)
+            }
+        }
+
+        return curiosityList
+
     }
 }
 
