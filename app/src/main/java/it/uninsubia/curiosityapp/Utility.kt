@@ -26,8 +26,6 @@ class Utility() {
             time *= 1000 // in realtà ce ne mette di più
             Log.e("Utility", time.toString())
 
-            SettingsData(time)
-
             //creazione intent con il broadcast da inviare
             val intent = Intent(context, PostNotificationReceiver::class.java)
 
