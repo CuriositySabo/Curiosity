@@ -185,7 +185,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
-            .setSmallIcon(R.mipmap.ic_mars_foreground)
+            .setSmallIcon(R.drawable.ic_stat_name)
             .setLargeIcon(bitmap)
             .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
@@ -209,7 +209,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
     private fun notificationCreator(context: Context) {
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
-            .setSmallIcon(R.mipmap.ic_mars_foreground)
+            .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle("Sai tutto oramai!")
             .setContentText("Sono finite le curiosità!")
             .setPriority(NotificationCompat.PRIORITY_MIN)

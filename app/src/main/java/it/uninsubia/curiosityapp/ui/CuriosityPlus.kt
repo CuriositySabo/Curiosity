@@ -260,10 +260,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 binding.gameTitle.text = resources.getString(R.string.game_title)
             }.start()
         }
-
-        //save on local file
-
-        //fetch next curiosity
     }
 
     private fun nonLoSapevoListener() {
