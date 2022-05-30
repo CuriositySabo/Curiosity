@@ -1,14 +1,10 @@
 package it.uninsubia.curiosityapp
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
-import androidx.preference.PreferenceManager
 
 class PositiveAnswerReceiver : BroadcastReceiver() {
     private val tag = "Positive answer"
@@ -22,17 +18,19 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         val notificationData = intent.getStringArrayListExtra("notificationData")!!
         Log.e(tag, notificationData.toString())
 
-
         Utility.writeKnownCuriositiesFile(context, notificationData, true)
 
-//        val time = getJsonDataFromSettings(context).time
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.cancel(200)
+
+        Utility.notificationLauncher(context)
+
+/*        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         var time = prefs.getString("frequency", "30")!!.toInt()
         time *= 1000
         Log.e(tag, time.toString())
 
-        val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.cancel(200)
+
 
 
         Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
@@ -55,8 +53,7 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         //esegui il broadcast dopo i millisecondi passati
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
-        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)*/
 
     }
 

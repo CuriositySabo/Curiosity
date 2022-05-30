@@ -4,8 +4,10 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
@@ -17,13 +19,14 @@ import java.io.PrintWriter
 class Utility() {
 
     companion object {
+
         fun notificationLauncher(context: Context) {
-            var time = 1
-            time *= 2000 // in realtà ce ne mette di più
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            var time = prefs.getString("frequency", "30")!!.toInt()
+            time *= 1000 // in realtà ce ne mette di più
+            Log.e("Utility", time.toString())
 
             SettingsData(time)
-
-            Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
 
             //creazione intent con il broadcast da inviare
             val intent = Intent(context, PostNotificationReceiver::class.java)
@@ -47,11 +50,12 @@ class Utility() {
              device è in sleep. Quando la sveglia "suona" viene lanciato il pending intent ovvero il
              in broadcast
              */
-            alarmManager.set(
+            alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 momentTime + time,
                 pendingIntent
             )
+            Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
         }
 
         // scrive sempre un nuovo oggetto quindi crea sempre il file
