@@ -1,9 +1,10 @@
-<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <PreferenceCategory app:title="@string/notification_header"
+    <PreferenceCategory
         android:layout="@layout/preference_category"
+        app:title="@string/notification_header"
         tools:ignore="PrivateResource">
 
         <!--EditTextPreference
@@ -20,14 +21,15 @@
             app:entries="@array/settings_notification_frequency_entries"
             app:entryValues="@array/settings_notification_frequency_values"
             app:key="frequency"
-            app:title="@string/notification_frequency"
             app:negativeButtonText="Annulla"
+            app:title="@string/notification_frequency"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/curiosity_header"
+    <PreferenceCategory
         android:layout="@layout/preference_category"
+        app:title="@string/curiosity_header"
         tools:ignore="PrivateResource">
 
         <!--SwitchPreferenceCompat
@@ -41,11 +43,11 @@
             app:summaryOn="@string/attachment_summary_on"
             app:title="@string/attachment_title" /-->
 
+
         <Preference
-            android:title="@string/curiosity_header">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="LogoutFragment.kt" />
-        </Preference>
+            android:key="resetBtn"
+            android:title="Reset"
+            android:summary="Resetta le curiosità ricevute"/>
 
     </PreferenceCategory>
 
