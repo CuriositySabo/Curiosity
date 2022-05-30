@@ -1,14 +1,10 @@
 package it.uninsubia.curiosityapp
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
-import androidx.preference.PreferenceManager
 
 class NegativeAnswerReceiver : BroadcastReceiver() {
     private val tag = "Negative answer"
@@ -24,6 +20,12 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
 
         Utility.writeKnownCuriositiesFile(context, notificationData, false)
 
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.cancel(200)
+
+        Utility.notificationLauncher(context)
+
+/*
 //        val time = getJsonDataFromSettings(context).time
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         var time = prefs.getString("frequency", "30")!!.toInt()
@@ -53,8 +55,7 @@ class NegativeAnswerReceiver : BroadcastReceiver() {
         //esegui il broadcast dopo i millisecondi passati
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)
-        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)*/
 
     }
 }
