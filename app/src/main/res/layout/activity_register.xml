@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/register_layout"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/register_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="36dp"
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
+        android:fontFamily="sans-serif-medium"
         android:text="@string/register_title"
         android:textSize="32sp" />
 
@@ -23,10 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginHorizontal="12dp"
         android:drawableStart="@drawable/ic_person"
         android:drawablePadding="10dp"
-        android:ems="15"
+        android:fontFamily="sans-serif-light"
         android:hint="@string/register_name"
         android:inputType="textPersonName"
         android:minHeight="48dp"/>
@@ -35,12 +36,12 @@
         android:id="@+id/editTextCognome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="12dp"
         android:drawableStart="@drawable/ic_person"
         android:drawablePadding="10dp"
-        android:ems="15"
         android:hint="@string/register_cognome"
+        android:fontFamily="sans-serif-light"
         android:inputType="textPersonName"
         android:minHeight="48dp" />
 
@@ -48,12 +49,12 @@
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="12dp"
         android:drawableStart="@drawable/ic_mail"
         android:drawablePadding="10dp"
-        android:ems="15"
         android:hint="@string/register_email"
+        android:fontFamily="sans-serif-light"
         android:inputType="textEmailAddress"
         android:minHeight="48dp" />
 
@@ -61,12 +62,12 @@
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:drawableStart="@drawable/ic_password"
         android:drawablePadding="10dp"
-        android:layout_marginHorizontal="10dp"
-        android:ems="15"
+        android:layout_marginHorizontal="12dp"
         android:hint="@string/register_password"
+        android:fontFamily="sans-serif-light"
         android:inputType="textPassword"
         android:minHeight="48dp" />
 
@@ -75,9 +76,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginHorizontal="12dp"
         android:layout_marginTop="30dp"
         android:text="@string/register_button"
+        android:fontFamily="sans-serif-medium"
         tools:ignore="DuplicateSpeakableTextCheck"/>
 
     <ProgressBar
@@ -87,30 +89,35 @@
         android:visibility="invisible"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
         <TextView
             android:id="@+id/login_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:gravity="end"
             android:layout_weight="1"
             android:text="@string/register_already"
+            android:fontFamily="sans-serif-light"
             android:textSize="17sp" />
+
         <TextView
             android:id="@+id/loginTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="20dp"
             android:textColor="@color/primary"
             android:layout_weight="1"
             android:text="@string/register_login"
+            android:fontFamily="sans-serif-light"
             android:textSize="20sp" />
+
     </LinearLayout>
 
 </LinearLayout>

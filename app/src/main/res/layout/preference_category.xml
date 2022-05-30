@@ -10,6 +10,6 @@
         android:layout_marginHorizontal="56dp"
         android:gravity="start"
         android:textSize="22sp"
-        android:textStyle="normal"
+        android:fontFamily="sans-serif-medium"
         android:textAllCaps="false"/>
 </FrameLayout>
