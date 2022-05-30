@@ -76,7 +76,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         }
 
         return curiosityList
-
     }
 
     private fun generateCuriosity(
@@ -170,14 +169,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun playListener() {
-        currentCuriosity = generateCuriosity(this, curiositiesList, totalcuriositiesMap)
-        if (currentCuriosity != CuriosityData()) {
-            binding.tvGame.text = currentCuriosity.text
-        } else {
-            binding.tvGame.text = defaulttext
-            binding.buttonSapevo.visibility = View.GONE
-            binding.buttonNonSapevo.visibility = View.GONE
-        }
+
 
         //if play_imageView is clicked then progress bar starts
         binding.startLayout.visibility = View.GONE
@@ -193,6 +185,15 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 binding.progressBarLayout.visibility = View.GONE
                 binding.gameProgressBar.visibility = View.VISIBLE
                 binding.gameContainer.visibility = View.VISIBLE
+
+                currentCuriosity = generateCuriosity(baseContext, curiositiesList, totalcuriositiesMap)
+                if (currentCuriosity != CuriosityData()) {
+                    binding.tvGame.text = currentCuriosity.text
+                } else {
+                    binding.tvGame.text = defaulttext
+                    binding.buttonSapevo.visibility = View.GONE
+                    binding.buttonNonSapevo.visibility = View.GONE
+                }
             }
         }.start()
     }
