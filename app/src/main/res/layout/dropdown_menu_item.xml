@@ -4,5 +4,6 @@
     android:id="@+id/menu_item"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:textSize="18sp"
-    android:padding="10dp" />
+    android:textSize="17sp"
+    android:padding="10dp"
+    android:fontFamily="sans-serif-light" />
