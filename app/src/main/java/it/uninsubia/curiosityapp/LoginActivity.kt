@@ -16,7 +16,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 
+// Activity realizzata per gestire la form di Login mostrata all'utente
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
+
     private lateinit var tvForgot: TextView
     private lateinit var layout: ActivityLoginBinding
     private lateinit var button: Button
@@ -27,7 +29,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Se l'app è già stata utilizzata e l'accesso è già stato effettuato almeno un volta loggo automaticamente l'utente e non creo l'activity
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         FirebaseApp.initializeApp(this)
         auth = Firebase.auth
         if (auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
@@ -35,8 +40,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             this.finish()
         }
 
+        // Inizializzo componenti utili e setto alcuni Listener
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         layout = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(layout.root)
         etEmail = layout.editTextEmail
@@ -51,9 +56,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         tvRegistrati = layout.registerTv
         tvRegistrati.setOnClickListener(this)
-
     }
 
+    // Checko i campi inseriti se rispettano gli standard (come password o email di un certo tipo)
     private fun loginUser() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
@@ -79,6 +84,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
+        // effettuo il log in e reindirizzo l'utente alla MainActivity se il login ha successo
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -89,23 +95,27 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(
                             applicationContext,
                             "Login effettuato con successo!",
-                            Toast.LENGTH_LONG).show()
+                            Toast.LENGTH_LONG
+                        ).show()
                         progressBar.visibility = View.VISIBLE
                     } else {
                         Toast.makeText(
                             applicationContext,
                             "Controlla la tua email per verificare il tuo account",
-                            Toast.LENGTH_LONG).show()
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 } else {
                     Toast.makeText(
                         applicationContext,
                         "Email o password errate",
-                        Toast.LENGTH_LONG).show()
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
     }
 
+    // metodo che effettua un operazione a seconda del bottone cliccato
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.loginbutton -> {

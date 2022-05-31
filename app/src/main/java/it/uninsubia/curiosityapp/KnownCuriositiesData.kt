@@ -1,5 +1,6 @@
 package it.uninsubia.curiosityapp
 
+// Formato dei dati utilizzatto per le operazioni di I/O sul file
 data class KnownCuriositiesData(var knowncuriosities: HashMap<String, HashMap<Int, Boolean>>) {
 
     constructor() : this(hashMapOf<String, HashMap<Int, Boolean>>())
@@ -13,6 +14,3 @@ data class KnownCuriositiesData(var knowncuriosities: HashMap<String, HashMap<In
     }
 }
 
-//map <code, boolean>
-
-//var code = "$title $text topic".hashCode()

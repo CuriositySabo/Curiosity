@@ -3,11 +3,14 @@ package it.uninsubia.curiosityapp
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityForgotPswBinding
 
+// activity che gestisce il reset password di un account già registrato
 class ForgotPswActivity : AppCompatActivity() {
     private lateinit var layout: ActivityForgotPswBinding
     private lateinit var resetBtn: Button
@@ -16,6 +19,7 @@ class ForgotPswActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    // inizializzo alcuni oggetti utili
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = ActivityForgotPswBinding.inflate(layoutInflater)
@@ -28,9 +32,9 @@ class ForgotPswActivity : AppCompatActivity() {
         resetBtn.setOnClickListener {
             resetPassword()
         }
-
     }
 
+    // il bottone invia alla email dell'utente registrato una mail contente il link per modificare la password
     private fun resetPassword() {
         val email = etEmail.text.toString().trim()
 
@@ -48,17 +52,20 @@ class ForgotPswActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
+        // Metodo della librearia di firebase che fa tutto in automatico
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(
                     applicationContext,
                     "Controlla la tua email per resettare la password!",
-                    Toast.LENGTH_LONG).show()
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
                 Toast.makeText(
                     applicationContext,
                     "Qualcosa non è risucito. Riprova!",
-                    Toast.LENGTH_LONG).show()
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         progressBar.visibility = View.GONE

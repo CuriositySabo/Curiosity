@@ -2,8 +2,10 @@ package it.uninsubia.curiosityapp
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +22,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityNavDrawerBinding
 import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         initOperations()
     }
 
+    // Setta il nav drawer creando quindi il menù laterale nella home page
     private fun setNavDrawer() {
         //action bar
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
@@ -54,8 +58,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_topics,
                 R.id.nav_statistics,
                 R.id.nav_settings,
-                R.id.nav_logout),
-            drawerLayout)
+                R.id.nav_logout
+            ),
+            drawerLayout
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -73,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         registerSettingsListener(this)
     }
 
-    // legge le sharedpreferences per capire se deve schedulare una notifica
+    // Legge le sharedpreferences per capire se deve schedulare una notifica
     private fun getNotificationStatus() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 //        Log.e(tag, prefs.all.toString())
@@ -82,8 +88,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // per creare il canale di notifica
+    // Per creare il canale di notifica
     private fun createNotificationchanel() {
+        // Da dopo android 8.0 sono diventati standard i canali di notifica e quindi per poter
+        // inviare una notifica la tua app ne deve possedere almeno un
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "CuriosityChannel"
             val descr = "Mostra le curiosità nella barra delle notifiche!"
@@ -99,12 +107,16 @@ class MainActivity : AppCompatActivity() {
     // inizializza i file da utilizzare se non esistono già
     private fun initializeFiles() {
         val directory = File(this.filesDir, "tmp") // crea la directory tmp
+
+        // Controlla se esite la cartella tmp
         if (!directory.exists()) {
             directory.mkdirs()
         }
 
+        // Scrive la clsse KnownCuriositiesData vuota sul file se non esiste già
         Utility.writeKnownCuriositiesFile(this)
 
+        // Se topics.json non esiste lo scrive sul file
         if (!File("$directory/topics.json").exists()) {
             val topicsList = Utility.initTopicList()
             Utility.writeTopicsFile(topicsList, this)
@@ -112,20 +124,31 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    // aggiungo i listener per le impostazioni
+    // Aggiungo i listener per le impostazioni
     private fun registerSettingsListener(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val component = ComponentName(context, PostNotificationReceiver::class.java)
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            // Implementation
+            // Toggle che serve per attivare/disattivare la reicezione di notifiche
             if (key.equals("notification")) {
                 val flag = prefs.getBoolean("notification", false)
                 Log.e("flags", flag.toString())
-                if (flag)
+                if (flag) {
+                    // Se lo attivi lancia la prima notifica
+                    // Abilita il receiver
+                    context.packageManager.setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED , PackageManager.DONT_KILL_APP);
                     Utility.notificationLauncher(context)
-                else {
+                } else {
+                    // Se lo disattivi cancella la notifica corrente
                     val notificationManager = NotificationManagerCompat.from(context)
                     notificationManager.cancel(200)
+                    // Disabilita receiver
+                    context.packageManager.setComponentEnabledSetting(
+                        component,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                    );
                 }
             }
         }
