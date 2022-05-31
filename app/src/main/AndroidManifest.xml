@@ -27,17 +27,17 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ForgotPswActivity"
+            android:name="it.uninsubia.curiosityapp.ui.user.ForgotPswActivity"
             android:exported="false"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".RegisterActivity"
+            android:name="it.uninsubia.curiosityapp.ui.user.RegisterActivity"
             android:exported="false"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".LoginActivity"
+            android:name="it.uninsubia.curiosityapp.ui.user.LoginActivity"
             android:exported="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
@@ -49,7 +49,7 @@
         </activity>
 
         <receiver
-            android:name=".PostNotificationReceiver"
+            android:name=".notification.PostNotificationReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_SENT" />
@@ -57,7 +57,7 @@
         </receiver>
 
         <receiver
-            android:name=".PositiveAnswerReceiver"
+            android:name=".notification.PositiveAnswerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_KNEW" />
@@ -65,7 +65,7 @@
         </receiver>
 
         <receiver
-            android:name=".NegativeAnswerReceiver"
+            android:name=".notification.NegativeAnswerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="NOTI_KNEW" />

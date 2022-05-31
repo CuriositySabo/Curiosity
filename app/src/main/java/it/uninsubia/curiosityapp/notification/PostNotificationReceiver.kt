@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp
+package it.uninsubia.curiosityapp.notification
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
+import it.uninsubia.curiosityapp.*
 import kotlin.random.Random
 
 // Riceve il broadcast e posta la notifica

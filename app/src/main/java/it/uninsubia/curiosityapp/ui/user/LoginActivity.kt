@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp
+package it.uninsubia.curiosityapp.ui.user
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +14,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import it.uninsubia.curiosityapp.MainActivity
+import it.uninsubia.curiosityapp.R
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
 
 // Activity realizzata per gestire la form di Login mostrata all'utente

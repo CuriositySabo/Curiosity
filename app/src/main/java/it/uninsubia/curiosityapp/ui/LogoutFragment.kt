@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import it.uninsubia.curiosityapp.LoginActivity
+import it.uninsubia.curiosityapp.ui.user.LoginActivity
 import it.uninsubia.curiosityapp.databinding.FragmentLogoutBinding
 
 class LogoutFragment : Fragment() {

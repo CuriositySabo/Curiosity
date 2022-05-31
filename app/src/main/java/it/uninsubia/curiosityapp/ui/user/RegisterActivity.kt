@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp
+package it.uninsubia.curiosityapp.ui.user
 
 import android.content.Intent
 import android.os.Bundle

@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import it.uninsubia.curiosityapp.databinding.ActivityNavDrawerBinding
+import it.uninsubia.curiosityapp.notification.PostNotificationReceiver
 import java.io.File
 
 
