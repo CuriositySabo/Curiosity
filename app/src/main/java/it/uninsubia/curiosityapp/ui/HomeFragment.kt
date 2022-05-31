@@ -25,6 +25,7 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        //listener per il pulsante
         curiosityPlusButton = _binding!!.play
         curiosityPlusButton.setOnClickListener{
             val intent = Intent(context,CuriosityPlus::class.java)

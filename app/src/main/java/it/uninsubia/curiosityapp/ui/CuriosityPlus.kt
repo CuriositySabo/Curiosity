@@ -15,14 +15,14 @@ import kotlin.random.Random
 
 class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityCuriosityPlusBinding
-    private lateinit var countdown: CountDownTimer
+    private lateinit var countdown: CountDownTimer //timer per animare la progres bar di caricamento
 
     private val tag = "Curiosity Plus"
 
-    private val defaulttext = "Hai finito le curiosità!\nSeleziona un altro topic!"
-    private val repository: CuriositiesRepository = CuriositiesRepository()
-    private lateinit var curiositiesList: ArrayList<CuriosityData>
-    private lateinit var totalcuriositiesMap: HashMap<String, Int>
+    private val defaultText = "Hai finito le curiosità!\nSeleziona un altro topic!" //mostrata al termine delle curiosità
+    private val repository: CuriositiesRepository = CuriositiesRepository() //per contenere i dati dal db
+    private lateinit var curiositiesList: ArrayList<CuriosityData> //lista contenente le varie curiosità
+    private lateinit var totalcuriositiesMap: HashMap<String, Int> //mappa con tutte le curiosità
 
     private lateinit var currentCuriosity: CuriosityData
 
@@ -30,6 +30,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityCuriosityPlusBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //ottenimento dei dati dal db
         getResponseUsingCallback(object : FirebaseCallback {
             override fun onResponse(response: Response) {
                 curiositiesList = convertResponse(response)
@@ -38,23 +39,21 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 Log.e(tag, "PRIMA")
             }
         })
-
+        //set onclick listeners
         binding.imageViewPlay.setOnClickListener(this)
-
         binding.buttonExit.setOnClickListener(this)
-
         binding.buttonSapevo.setOnClickListener(this)
-
         binding.buttonNonSapevo.setOnClickListener(this)
-
     }
 
     private fun getRandomString(): String {
+        //returna una stringa tra quelle della lista
         val stringList = listOf("Bravo!", "Genio!", "Ne sai eh!", "Continua così!", "Vai!", "Wow!")
         return stringList[(stringList.indices).random()]
     }
 
     private fun getResponseUsingCallback(callback: FirebaseCallback) {
+        //mette i valori dal db in repository
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 
@@ -68,7 +67,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-
         response.exception?.let { exception ->
             exception.message?.let {
                 Log.e(tag, it)
@@ -79,6 +77,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun generateCuriosity(
+        //restituisce una curiosità
         context: Context,
         curiositiesList: ArrayList<CuriosityData>,
         totalcuriositiesMap: HashMap<String, Int>
@@ -86,7 +85,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
 
         // leggo le curiosità già ricevute
         val receivedCuriositiesmap = Utility.readKnownCuriosities(context).knowncuriosities
-
         Log.e(tag, totalcuriositiesMap.toString())
 
         // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
@@ -97,7 +95,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 else 0
         }
         Log.e(tag, alreadyInReceivedCounter.toString())
-
 
         // creo la lista con i topic selezionati dall'utente
         val possibleTopics = listChosenTopics(context)
@@ -169,12 +166,9 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun playListener() {
-
-
         //if play_imageView is clicked then progress bar starts
         binding.startLayout.visibility = View.GONE
         binding.progressBarLayout.visibility = View.VISIBLE
-
 
         countdown = object : CountDownTimer(1000, 20) {
             override fun onTick(p0: Long) {//progress bar fills up
@@ -190,7 +184,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 if (currentCuriosity != CuriosityData()) {
                     binding.tvGame.text = currentCuriosity.text
                 } else {
-                    binding.tvGame.text = defaulttext
+                    binding.tvGame.text = defaultText
                     binding.buttonSapevo.visibility = View.GONE
                     binding.buttonNonSapevo.visibility = View.GONE
                 }
@@ -207,6 +201,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loSapevoListener() {
+        //comportamento dell'activity quando viene premuto questo pulsante
         Utility.writeKnownCuriositiesFile(
             this,
             arrayListOf(currentCuriosity.title, currentCuriosity.text, currentCuriosity.topic),
@@ -217,12 +212,10 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         if (currentCuriosity != CuriosityData()) {
             binding.tvGame.text = currentCuriosity.text
         } else {
-            binding.tvGame.text = defaulttext
+            binding.tvGame.text = defaultText
             binding.buttonSapevo.visibility = View.GONE
             binding.buttonNonSapevo.visibility = View.GONE
         }
-
-
         /*if (currentCuriosity != CuriosityData()) {
             Utility.writeKnownCuriositiesFile(
                 this,
@@ -263,22 +256,20 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun nonLoSapevoListener() {
-
+        //comportamento dell'activity quando viene premuto questo pulsante
         Utility.writeKnownCuriositiesFile(
             this,
             arrayListOf(currentCuriosity.title, currentCuriosity.text, currentCuriosity.topic),
             false
         )
-
         currentCuriosity = generateCuriosity(this, curiositiesList, totalcuriositiesMap)
         if (currentCuriosity != CuriosityData()) {
             binding.tvGame.text = currentCuriosity.text
         } else {
-            binding.tvGame.text = defaulttext
+            binding.tvGame.text = defaultText
             binding.buttonSapevo.visibility = View.GONE
             binding.buttonNonSapevo.visibility = View.GONE
         }
-
 
         //set unknown curiosity
         if (binding.gameProgressBar.progress > 0) {
@@ -291,7 +282,6 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
             binding.gameProgressBar.progress -= 1
         }
     }
-
 }
 
 /* Items IDs

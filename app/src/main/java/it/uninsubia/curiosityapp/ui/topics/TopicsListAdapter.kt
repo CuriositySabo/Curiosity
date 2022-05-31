@@ -18,7 +18,7 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.PrintWriter
 import java.lang.Exception
-
+//per riempire il recycler view con le card view
 class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
     private var items : List<TopicsModel> = ArrayList()
@@ -42,11 +42,13 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         return items.size
     }
 
+    //riempio la lista
     fun submitList(topicList: List<TopicsModel>)
     {
         items = topicList
     }
 
+    //definisco il viewholder
     class TopicsViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView)
     {
         private val topicsImage: ImageView = itemView.findViewById(R.id.iv_topic_image)
@@ -57,12 +59,15 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
             val requestOptions = RequestOptions()
                 .placeholder(R.color.bg_dark)
                 .error(R.color.bg_dark)
+            //scarico le immagini da internet
             Glide.with(itemView.context)
                 .applyDefaultRequestOptions(requestOptions)
                 .load(topic.image)
                 .into(topicsImage)
+            //riempio i campi
             topicsName.text = topic.topicName
             topicsCheck.isChecked = topic.checked
+            //aggiungo i listener
             topicsImage.setOnClickListener {
                 onClick(topicsImage, context)
             }

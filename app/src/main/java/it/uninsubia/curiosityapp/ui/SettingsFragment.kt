@@ -14,9 +14,10 @@ import java.io.FileWriter
 import java.io.PrintWriter
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
+    //le preferences sono le impostazioni dell'applicazione.
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        //serve per resettare il file contenente le curiosità sapute e non sapute
         val resetPreference: Preference? = findPreference("resetBtn") as Preference?
         resetPreference!!.setOnPreferenceClickListener() {
             resetReceivedCuriosities(requireContext())
@@ -28,7 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
     }
-
+    //funzione che resetta il file
     private fun resetReceivedCuriosities(context: Context) {
         val map = KnownCuriositiesData()
         val topics = Utility.initTopicList()
