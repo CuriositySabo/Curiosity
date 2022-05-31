@@ -198,6 +198,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 NotificationCompat.BigTextStyle()
                     .bigText(curiosity[1])
             )
+            .setOngoing(true)
             .build()
 
 

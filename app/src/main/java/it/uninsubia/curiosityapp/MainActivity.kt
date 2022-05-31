@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -122,6 +123,10 @@ class MainActivity : AppCompatActivity() {
                 Log.e("flags", flag.toString())
                 if (flag)
                     Utility.notificationLauncher(context)
+                else {
+                    val notificationManager = NotificationManagerCompat.from(context)
+                    notificationManager.cancel(200)
+                }
             }
         }
 
