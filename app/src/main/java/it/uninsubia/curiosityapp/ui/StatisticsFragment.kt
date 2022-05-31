@@ -33,7 +33,6 @@ class StatisticsFragment : Fragment() {
     private var currentTopic = "" //contiene il topic scelto dall'utente
     private lateinit var curiosityList: ArrayList<CuriosityData> //contiene tutte le curiosità sul db
     private val repository: CuriositiesRepository = CuriositiesRepository() //contiene il db
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
