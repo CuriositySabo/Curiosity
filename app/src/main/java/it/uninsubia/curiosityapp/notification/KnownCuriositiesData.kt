@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp
+package it.uninsubia.curiosityapp.notification
 
 // Formato dei dati utilizzatto per le operazioni di I/O sul file
 data class KnownCuriositiesData(var knowncuriosities: HashMap<String, HashMap<Int, Boolean>>) {

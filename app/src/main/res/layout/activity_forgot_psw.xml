@@ -7,7 +7,7 @@
     android:layout_margin="36dp"
     android:paddingTop="48dp"
     android:orientation="vertical"
-    tools:context=".ui.user.RegisterActivity">
+    tools:context=".ui.authentication.RegisterActivity">
 
     <TextView
         android:id="@+id/textView"

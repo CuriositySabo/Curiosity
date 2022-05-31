@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import it.uninsubia.curiosityapp.database.CuriosityData
+import it.uninsubia.curiosityapp.notification.KnownCuriositiesData
 import it.uninsubia.curiosityapp.notification.PostNotificationReceiver
 import it.uninsubia.curiosityapp.ui.topics.TopicsModel
 import java.io.File

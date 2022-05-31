@@ -15,6 +15,10 @@ import androidx.fragment.app.Fragment
 import it.uninsubia.curiosityapp.*
 import it.uninsubia.curiosityapp.Utility.Companion.getTopicsOnDb
 import it.uninsubia.curiosityapp.Utility.Companion.readKnownCuriosities
+import it.uninsubia.curiosityapp.database.CuriositiesRepository
+import it.uninsubia.curiosityapp.database.CuriosityData
+import it.uninsubia.curiosityapp.database.FirebaseCallback
+import it.uninsubia.curiosityapp.database.Response
 import it.uninsubia.curiosityapp.databinding.FragmentStatisticsBinding
 import kotlin.math.roundToInt
 

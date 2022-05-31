@@ -10,6 +10,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import it.uninsubia.curiosityapp.*
+import it.uninsubia.curiosityapp.database.CuriositiesRepository
+import it.uninsubia.curiosityapp.database.CuriosityData
+import it.uninsubia.curiosityapp.database.FirebaseCallback
+import it.uninsubia.curiosityapp.database.Response
 import kotlin.random.Random
 
 // Riceve il broadcast e posta la notifica

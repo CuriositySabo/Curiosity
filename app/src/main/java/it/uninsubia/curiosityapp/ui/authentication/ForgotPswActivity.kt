@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp.ui.user
+package it.uninsubia.curiosityapp.ui.authentication
 
 import android.os.Bundle
 import android.util.Patterns

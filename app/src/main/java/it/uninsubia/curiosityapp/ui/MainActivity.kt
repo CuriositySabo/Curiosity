@@ -1,4 +1,4 @@
-package it.uninsubia.curiosityapp
+package it.uninsubia.curiosityapp.ui
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -20,6 +20,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import it.uninsubia.curiosityapp.R
+import it.uninsubia.curiosityapp.Utility
 import it.uninsubia.curiosityapp.databinding.ActivityNavDrawerBinding
 import it.uninsubia.curiosityapp.notification.PostNotificationReceiver
 import java.io.File

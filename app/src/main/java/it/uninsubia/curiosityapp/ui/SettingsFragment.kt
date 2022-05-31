@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.gson.Gson
-import it.uninsubia.curiosityapp.KnownCuriositiesData
+import it.uninsubia.curiosityapp.notification.KnownCuriositiesData
 import it.uninsubia.curiosityapp.R
 import it.uninsubia.curiosityapp.Utility
 import java.io.File

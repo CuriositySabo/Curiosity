@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import it.uninsubia.curiosityapp.*
+import it.uninsubia.curiosityapp.database.CuriositiesRepository
+import it.uninsubia.curiosityapp.database.CuriosityData
+import it.uninsubia.curiosityapp.database.FirebaseCallback
+import it.uninsubia.curiosityapp.database.Response
 import it.uninsubia.curiosityapp.databinding.ActivityCuriosityPlusBinding
 import kotlin.random.Random
 
