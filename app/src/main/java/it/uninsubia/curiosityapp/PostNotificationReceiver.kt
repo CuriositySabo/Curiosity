@@ -11,18 +11,20 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import kotlin.random.Random
 
-
+// Riceve il broadcast e posta la notifica
 class PostNotificationReceiver : BroadcastReceiver() {
     private val channelid = "notifyCuriosity"
     private val tag = "PostNotification"
 
-    // inizializzo piccola repository in locale
+    // Inizializzo piccola repository in locale
     private val repository: CuriositiesRepository = CuriositiesRepository()
 
+    // Ricevuto il broadcast, ovvero la notifica di un dato evento al sistema, l'applicazione si comporterà nel modo seguente:
     override fun onReceive(context: Context?, intent: Intent?) {
         notifyCuriosity(context!!)
     }
 
+    // Ricevute le informazioni dal db posta la notifica nuova
     private fun notifyCuriosity(context: Context) {
         // il context non è mai null
 
@@ -54,6 +56,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         })
     }
 
+    // Genera la curiosità casuale da inviare controllando quelle gia ricevute e i topic scelti
     private fun generateCuriosity(
         context: Context,
         curiositiesList: ArrayList<CuriosityData>,
@@ -65,7 +68,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         Log.e(tag, totalcuriositiesMap.toString())
 
-        // stessa mappa ma con quante curiosità sono già state ricevute  la utilizzo per fare il confronto con quella precedente
+        // stessa mappa ma con quante curiosità sono già state ricevute la utilizzo per fare il confronto con quella precedente
         val alreadyInReceivedCounter = hashMapOf<String, Int>()
         for (topic in Utility.getTopicsOnDb(curiositiesList)) {
             alreadyInReceivedCounter[topic] =
@@ -76,7 +79,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
 
         // creo la lista con i topic selezionati dall'utente
-        val possibleTopics = listChosenTopics(context)
+        val possibleTopics = Utility.listChosenTopics(context)
         // per ognuno di essi controllo che non siano già state ricevute tutte le curiosità
         // se sono già state ricevute tutte levo il topic dai topic possibili
         totalcuriositiesMap.forEach() {
@@ -119,8 +122,9 @@ class PostNotificationReceiver : BroadcastReceiver() {
         return chosenCuriosity
     }
 
+    // Trasforma le curiosità in una lista
     private fun convertResponse(response: Response): ArrayList<CuriosityData> {
-        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità di un topic
+        // Inizializzo una lista di Curiosity Data verrà usata per memorizzare tutte le curiosità
         val curiosityList = arrayListOf<CuriosityData>()
 
         response.curiosities?.let { curiosities ->
@@ -128,7 +132,6 @@ class PostNotificationReceiver : BroadcastReceiver() {
                 curiosityList.add(curiosity)
             }
         }
-
 
         response.exception?.let { exception ->
             exception.message?.let {
@@ -140,10 +143,12 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
     }
 
+    // Meccanismo per sapere quando il download dal db ha finito
     private fun getResponseUsingCallback(callback: FirebaseCallback) {
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 
+    // Crea la notifica standard coi bottoni per permettere l'interazione con l'utente e la posta
     private fun notificationwithButtonCreator(context: Context, chosenCuriosity: CuriosityData) {
         val curiosity = arrayListOf(
             chosenCuriosity.title,
@@ -153,60 +158,68 @@ class PostNotificationReceiver : BroadcastReceiver() {
 
         val requestcode = "${curiosity[0]} ${curiosity[1]} ${curiosity[2]}".hashCode()
 
-        // creazione del broadcast per la risposta
+        // Creazione del broadcast lo sapevo per la risposta data dall'utente
         var actionIntent = Intent(context, PositiveAnswerReceiver::class.java)
 
+        // Passo i dati della notifica che visualizzo mi serviranno poi
         actionIntent.putExtra("notificationData", curiosity)
 
+        // Uso un wrapper perchè i bottoni richedono un intent di questo tipo
         val pIntentPositive = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
         )
 
+        // Creazione del broadcast lo sapevo per la risposta data dall'utente
         actionIntent = Intent(context, NegativeAnswerReceiver::class.java)
 
+        // Passo i dati della notifica che visualizzo mi serviranno poi
         actionIntent.putExtra("notificationData", curiosity)
 
+        // Uso un wrapper perchè i bottoni richedono un intent di questo tipo
         val pIntentNegative = PendingIntent.getBroadcast(
             context, requestcode, actionIntent,
             PendingIntent.FLAG_MUTABLE
         )
 
+        // Scelgo l'immagine del topic corrispondente da visualizzare nella notifica
         val imageStream = when (curiosity[2]) {
             "Storia" -> context.resources.openRawResource(R.raw.storia)
             "Tecnologia" -> context.resources.openRawResource(R.raw.tecnologia)
             "Sport" -> context.resources.openRawResource(R.raw.sport)
             "Cinema" -> context.resources.openRawResource(R.raw.cinema)
             "Cucina" -> context.resources.openRawResource(R.raw.cucina)
-            else -> context.resources.openRawResource(R.raw.cucina)
+            else -> context.resources.openRawResource(R.raw.mars_planet)
         }
 
+        // La faccio diventare una bitmap
         val bitmap = BitmapFactory.decodeStream(imageStream)
 
-        // creazione della notifica
+        // Creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
             .setSmallIcon(R.drawable.ic_stat_name)
             .setLargeIcon(bitmap)
             .setContentTitle(curiosity[0])
             .setContentText(curiosity[1])
             .setPriority(NotificationCompat.PRIORITY_MIN)
-            //sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il
-            //con il PendingIntent
+//          sui due bottoni mostrati dalla notifica viene assegnata un azione da eseguire con il
+//          con il PendingIntent
             .addAction(R.drawable.ic_sapevo, "Lo sapevo", pIntentPositive)
             .addAction(R.drawable.ic_non_sapevo, "Non lo sapevo", pIntentNegative)
-            .setStyle(
+            .setStyle( // Stile della notifica settato così senò non mostrava la
                 NotificationCompat.BigTextStyle()
                     .bigText(curiosity[1])
             )
-            .setOngoing(true)
+            .setOngoing(true) // Rende la notifica non cancellabile
             .build()
 
 
-        // il notification manager permette di postare la notifica
+        // Il notification manager permette di postare la notifica
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(200, notification)
     }
 
+    // Crea la notifica per quando sono finite le curiosità. Senza bottoni e intent
     private fun notificationCreator(context: Context) {
         // creazione della notifica
         val notification = NotificationCompat.Builder(context, channelid)
@@ -226,35 +239,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         notificationManager.notify(200, notification)
     }
 
-    private fun listChosenTopics(context: Context): ArrayList<String> {
-        // leggo tutti i topics esistenti
-        val topics = Utility.readTopicsFile(context)
 
-        // in chosenfield  metto i topics checkati dall'utente
-        val chosenFields = ArrayList<String>()
 
-        // controllo quali sono checkati
-        topics.forEach {
-            if (it.checked)
-                chosenFields.add(it.topicName)
-        }
 
-        return chosenFields
-    }
-
-    /*private fun print(response: Response) {
-        response.curiosities?.let { curiosities ->
-            curiosities.forEach { curiosity ->
-                curiosity.title.let {
-                    Log.i(tag, it)
-                }
-            }
-        }
-
-        response.exception?.let { exception ->
-            exception.message?.let {
-                Log.e(tag, it)
-            }
-        }
-    }*/
 }

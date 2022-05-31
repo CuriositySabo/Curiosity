@@ -20,7 +20,9 @@ class Utility() {
 
     companion object {
 
+        // Utilizza il timer di sistema per settare una sveglia che lancia il broadcast per postare una notifica
         fun notificationLauncher(context: Context) {
+            // Prendo il tempo dai settings
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
             var time = prefs.getString("frequency", "30")!!.toInt()
             time *= 1000 // in realtà ce ne mette di più
@@ -39,9 +41,9 @@ class Utility() {
 
             val momentTime = System.currentTimeMillis() // per salvare l'orario in quel dato momento
 
-
+            //servizio di sistema per impostare un comportamento in un dato momento
             val alarmManager =
-                context.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
+                context.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager
 
             /*
              setto una sveglia, secondo il tempo prestabilito, che viene lanciate anche a se il
@@ -56,9 +58,7 @@ class Utility() {
             Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
         }
 
-        // scrive sempre un nuovo oggetto quindi crea sempre il file
-
-        // scrive un oggetto vuoto solo se il file non esiste già
+        // Scrive un oggetto vuoto solo se il file non esiste già
         fun writeKnownCuriositiesFile(context: Context) {
             val map = KnownCuriositiesData()
             val topics = initTopicList()
@@ -79,7 +79,7 @@ class Utility() {
             }
         }
 
-        // scrive sul file partendo da un arraylist
+        // Scrive sul file partendo da un arraylist
         fun writeKnownCuriositiesFile(
             context: Context,
             notificationData: ArrayList<String>,
@@ -130,6 +130,7 @@ class Utility() {
             }
         }
 
+        // Legge dal file le curiosità ricevute
         fun readKnownCuriosities(context: Context): KnownCuriositiesData {
             var jsonString = ""
             val directory = File("${context.filesDir}/tmp") // path della directory
@@ -152,7 +153,7 @@ class Utility() {
             return gson.fromJson(jsonString, dataType)
         }
 
-        // scrive sul file topics partendo da un array list
+        // Scrive sul file topics partendo da un array list
         fun writeTopicsFile(topicsList: ArrayList<TopicsModel>, context: Context?) {
             val directory = File("${context!!.filesDir}/tmp")
             val filepath = File("$directory/topics.json") // path del file
@@ -168,7 +169,7 @@ class Utility() {
             }
         }
 
-        // legge dal file topics
+        // Legge dal file topics
         fun readTopicsFile(context: Context): List<TopicsModel> {
             var jsonString = ""
             val list: List<TopicsModel>
@@ -187,6 +188,7 @@ class Utility() {
             return list
         }
 
+        // Inizializza la lista dei topics
         fun initTopicList(): ArrayList<TopicsModel> {
             val list: ArrayList<TopicsModel> = ArrayList()
             list.add(
@@ -227,7 +229,7 @@ class Utility() {
             return list
         }
 
-        // serve la response per forza!
+        // Serve la response per forza!
         fun getTopicCuriosites(topic: String, list: ArrayList<CuriosityData>): Int {
             //get all curiosities from firebase -> return number of curiosities of that topic
             var num = 0
@@ -238,6 +240,7 @@ class Utility() {
             return num
         }
 
+        // Restituisce una lista con tutti i topic presenti sul db
         fun getTopicsOnDb(allcuriosities: ArrayList<CuriosityData>): ArrayList<String> {
             val topicsonDb = arrayListOf<String>()
             for (curiosity in allcuriosities) {
@@ -248,6 +251,7 @@ class Utility() {
             return topicsonDb
         }
 
+        // Restituisce la mappa che contiene il numero di curiosità totali per topic
         fun getMapOfTopicsCuriosities(curiositiesList: ArrayList<CuriosityData>): HashMap<String, Int> {
             // mappa che contiene il numero di curiosità totali per topic
             val topicsCuriositiesMap = hashMapOf<String, Int>()
@@ -256,6 +260,23 @@ class Utility() {
                 topicsCuriositiesMap[topic] = getTopicCuriosites(topic, curiositiesList)
             }
             return topicsCuriositiesMap
+        }
+
+        // Crea una lista con tutti i topic esistenti sul db
+        fun listChosenTopics(context: Context): ArrayList<String> {
+            // leggo tutti i topics esistenti
+            val topics = Utility.readTopicsFile(context)
+
+            // in chosenfield  metto i topics checkati dall'utente
+            val chosenFields = ArrayList<String>()
+
+            // controllo quali sono checkati
+            topics.forEach {
+                if (it.checked)
+                    chosenFields.add(it.topicName)
+            }
+
+            return chosenFields
         }
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 
+// Riceve se è stato premuto il bottone lo sapevo sulla notifica
 class PositiveAnswerReceiver : BroadcastReceiver() {
     private val tag = "Positive answer"
 
@@ -14,49 +15,22 @@ class PositiveAnswerReceiver : BroadcastReceiver() {
         rescheduleNotification(context!!, intent!!)
     }
 
+    // Rischedulo la notifica secondo le impostazioni settate
     private fun rescheduleNotification(context: Context, intent: Intent) {
+        // Prendo il testo della notifica che lancia il broadcast
         val notificationData = intent.getStringArrayListExtra("notificationData")!!
         Log.e(tag, notificationData.toString())
 
+        // Scrive la notifica sul file specificando che l'utente la conosceva
         Utility.writeKnownCuriositiesFile(context, notificationData, true)
 
+        // Cancella la notifica che lancia il broadcast
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.cancel(200)
 
+        // Rischedula un altra notifica
         Utility.notificationLauncher(context)
 
-/*        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        var time = prefs.getString("frequency", "30")!!.toInt()
-        time *= 1000
-        Log.e(tag, time.toString())
-
-
-
-
-        Toast.makeText(context, "Notifica Settata", Toast.LENGTH_LONG).show()
-
-        val actionIntent = Intent(context, PostNotificationReceiver::class.java)
-        actionIntent.putExtra("notificationData", notificationData)
-
-        val requestcode = notificationData.hashCode()
-
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                requestcode,
-                actionIntent,
-                PendingIntent.FLAG_MUTABLE
-            )
-
-        val momentTime = System.currentTimeMillis()
-
-        //esegui il broadcast dopo i millisecondi passati
-        val alarmManager =
-            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager //servizio di sistema per impostare un comportamento in un dato momento
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, momentTime + time, pendingIntent)*/
-
     }
-
-
 
 }

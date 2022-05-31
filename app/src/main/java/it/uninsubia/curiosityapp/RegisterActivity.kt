@@ -4,7 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -12,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import it.uninsubia.curiosityapp.databinding.ActivityRegisterBinding
 
+// Activity realizzata per gestire la form di registrazione mostrata all'utente
 class RegisterActivity : AppCompatActivity() {
     private lateinit var layout: ActivityRegisterBinding
 
@@ -27,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private val dbUrl = "https://curiosity-db178-default-rtdb.firebaseio.com"
 
+    // Inizializzo componenti utili e setto alcuni Listener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = ActivityRegisterBinding.inflate(layoutInflater)
@@ -50,6 +55,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    // Checko i campi inseriti dall'utente se sono tutti ok registro l'utente sul db
     private fun registerUser() {
         val nome = etnome.text.toString().trim()
         val cognome = etcognome.text.toString().trim()
