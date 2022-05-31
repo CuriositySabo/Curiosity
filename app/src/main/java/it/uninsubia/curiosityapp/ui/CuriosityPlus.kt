@@ -210,7 +210,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         Utility.writeKnownCuriositiesFile(
             this,
             arrayListOf(currentCuriosity.title, currentCuriosity.text, currentCuriosity.topic),
-            false
+            true
         )
 
         currentCuriosity = generateCuriosity(this, curiositiesList, totalcuriositiesMap)
