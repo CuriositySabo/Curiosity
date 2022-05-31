@@ -42,6 +42,7 @@ class StatisticsFragment : Fragment() {
         fragmentContext = requireContext()
 
         //listener for radio buttons
+        //binding.radioGroup.isClickable = false
         binding.radioGroup.setOnCheckedChangeListener { _, i ->
             radio = requireView().findViewById(i)
             statType = radio.contentDescription.toString()
@@ -227,6 +228,9 @@ class StatisticsFragment : Fragment() {
             "unknown" -> { ContextCompat.getColor(fragmentContext, android.R.color.holo_red_dark) }
             else -> { ContextCompat.getColor(fragmentContext, R.color.primary_light) }
         }
+        binding.radioGeneral.isClickable = false
+        binding.radioKnown.isClickable = false
+        binding.radioUnknown.isClickable = false
         //get percentage -> x:100 = doneCur:totalCur   0:10 000= done:total  add 1*100 per sec
         var perc = 1f
         if(totalCuriosities != 0)
@@ -260,6 +264,9 @@ class StatisticsFragment : Fragment() {
                     //resetto i colori
                     progressBar.setIndicatorColor(color)
                     tv.setTextColor(color)
+                    binding.radioGeneral.isClickable = true
+                    binding.radioKnown.isClickable = true
+                    binding.radioUnknown.isClickable = true
                 }
             }.start() //avvio il timer che disegna le bars
         }

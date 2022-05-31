@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.uninsubia.curiosityapp">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="it.uninsubia.curiosityapp"
+    tools:ignore="LockedOrientationActivity">
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -14,21 +16,31 @@
         android:theme="@style/Theme.CuriosityApp">
         <activity
             android:name=".ui.CuriosityPlus"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/title_activity_nav_drawer"
-            android:theme="@style/Theme.CuriosityApp.NoActionBar" />
+            android:theme="@style/Theme.CuriosityApp.NoActionBar"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ForgotPswActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
