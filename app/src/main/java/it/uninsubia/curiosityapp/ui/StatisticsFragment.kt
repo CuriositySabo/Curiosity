@@ -40,7 +40,10 @@ class StatisticsFragment : Fragment() {
     ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         fragmentContext = requireContext()
-
+        //rendo non cliccabili i pulsanti all'inizio poichè l'app potrebbe non aver caricato ancora i dati dal db
+        binding.radioGeneral.isClickable = false
+        binding.radioKnown.isClickable = false
+        binding.radioUnknown.isClickable = false
         //listener for radio buttons
         //binding.radioGroup.isClickable = false
         binding.radioGroup.setOnCheckedChangeListener { _, i ->
@@ -69,6 +72,9 @@ class StatisticsFragment : Fragment() {
                 initView()
                 //listener for drop down menu
                 setMenu()
+                binding.radioGeneral.isClickable = true
+                binding.radioKnown.isClickable = true
+                binding.radioUnknown.isClickable = true
             }
         })
         return binding.root
