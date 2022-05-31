@@ -22,19 +22,17 @@ class StatisticsFragment : Fragment() {
 
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
-    private var statType = "general"
+    private var statType = "general" //variabile che contiene la tipologia di statistica scelta
     private lateinit var radio: RadioButton
-    private lateinit var countdown: CountDownTimer
-    private lateinit var fragmentContext: Context
-
-    private var numCuriosityGeneral = 0
-    private lateinit var curiositiesForEachTopic: HashMap<String, Int>
-    private lateinit var receivedCuriosities: HashMap<String, Int>
-    private lateinit var knownCuriositiesmap: HashMap<String,HashMap<Int, Boolean> >
-    private var currentTopic = ""
-
-    private lateinit var curiosityList: ArrayList<CuriosityData>
-    private val repository: CuriositiesRepository = CuriositiesRepository()
+    private lateinit var countdown: CountDownTimer //usato per animare le progress bar
+    private lateinit var fragmentContext: Context //contiene il context del fragment
+    private var numCuriosityGeneral = 0 //numero di curiosità in generale presenti sul db
+    private lateinit var curiositiesForEachTopic: HashMap<String, Int> //contiene la mappa di "topic, numero"
+    private lateinit var receivedCuriosities: HashMap<String, Int> //contiene la mappa precedente presente su file
+    private lateinit var knownCuriositiesmap: HashMap<String,HashMap<Int, Boolean> > //contiene la mappa : "topic, "id, boolean"
+    private var currentTopic = "" //contiene il topic scelto dall'utente
+    private lateinit var curiosityList: ArrayList<CuriosityData> //contiene tutte le curiosità sul db
+    private val repository: CuriositiesRepository = CuriositiesRepository() //contiene il db
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +48,10 @@ class StatisticsFragment : Fragment() {
             statType = radio.contentDescription.toString()
             resetView()
         }
+        //salvataggio delle curiosità dal db
         getResponseUsingCallback(object : FirebaseCallback {
             override fun onResponse(response: Response) {
+                //salvataggio nella lista ->
                 curiosityList = convertResponse(response)
                 //numero di curiosità per topic sul DATABASE
                 curiositiesForEachTopic = Utility.getMapOfTopicsCuriosities(curiosityList)
@@ -90,9 +90,12 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun setMenu() {
+        //prendo i valori da mettere dentro il menu
         val topics = resources.getStringArray(R.array.dropdown_menu_topics)
+        //creo l'adapter
         val adapter = ArrayAdapter(fragmentContext, R.layout.dropdown_menu_item, topics)
         binding.dropdownMenu.adapter = adapter
+        //aggiungo il listener
         binding.dropdownMenu.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 binding.progressTopic.progress = 0
@@ -111,6 +114,7 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun initView() {
+        //inizializzo la view: disegno solo la prima progress bar, la seconda viene disegnata dal menu
         fillProgressBar(binding.progressGeneral, binding.valuesGeneral,
             getDoneCuriositiesGeneral(statType), getMaxNumberGeneral())
     }
@@ -125,7 +129,9 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun getDoneCuriositiesGeneral(type: String):Int {
-        //get known curiosities from its file -> return a list with all
+        //usata per ottenere il numero di curiosità a cui si ha risposto e perciò quelle che si trovano sul file
+        //viene fatta distinzione per quelle sapute e quelle non sapute
+        //vengono prese in considerazione le curiosità di tutti i topic
         var flag = 1
         when(type){
             "general" -> {flag = 1}
@@ -134,15 +140,19 @@ class StatisticsFragment : Fragment() {
         }
         var t = 0
         var f = 0
+        //scorro ogni topic presente sul db
         for(topic in getTopicsOnDb(curiosityList)) {
             if(knownCuriositiesmap[topic] != null) {
+                //scorro tutte le curiosità ricavate dal file per singolo topic
                 knownCuriositiesmap[topic]!!.forEach {
+                    //incremento la variabile t se la curiosità era saputa, f altrimenti
                     if (knownCuriositiesmap[topic] != null)
                         if (it.value) t++
                         else if (!it.value) f++
                 }
             }
         }
+        //restituisco la variabile in base alle scelte dell'utente
         if(flag == 2)
             return t
         else if(flag == 3)
@@ -152,7 +162,8 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun getDoneCuriositiesTopic(type: String, topic: String):Int {
-        //get known curiosities from its file -> return a list with all
+        //usata per ottenere il numero di curiosità a cui si ha risposto
+        //vengono prese in considerazione solo le curiosità del topic desiderato
         var flag = 1
         when(type){
             "general" -> {flag = 1}
@@ -161,6 +172,7 @@ class StatisticsFragment : Fragment() {
         }
         var t = 0
         var f = 0
+        //scorro la mappa del topic selezionato
         if(knownCuriositiesmap[topic] != null) {
             knownCuriositiesmap[topic]!!.forEach {
                 if (it.value) t++
@@ -176,35 +188,30 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun getMaxNumberGeneral(): Int{
+        //ritorna il numero totale di curiosità
+        //se statType=general allora abbiamo già il numero
         if(statType == "general")
             return numCuriosityGeneral
-        var t = 0
-        var f = 0
+        var i = 0
+        //per ogni topic incremento la variabile
         for(topic in getTopicsOnDb(curiosityList)) {
             if(!knownCuriositiesmap[topic].isNullOrEmpty()) {
-                knownCuriositiesmap[topic]!!.forEach {
-                    if (it.value) t++
-                    else if (!it.value) f++
-                }
+                i+=knownCuriositiesmap[topic]!!.count()
             }
         }
-        return f+t
+        return i
     }
 
     private fun getMaxNumberTopic(): Int{
+        //ritorna il numero totale di curiosità del topic scelto
         if(statType == "general")
             return curiositiesForEachTopic[currentTopic]!!
-        var t = 0
-        var f = 0
+        var i = 0
         if(!knownCuriositiesmap[currentTopic].isNullOrEmpty()) {
-            knownCuriositiesmap[currentTopic]!!.forEach {
-                if (it.value) t++
-                else if (!it.value) f++
-            }
+            i+=knownCuriositiesmap[currentTopic]!!.count()
         }
-        return f+t
+        return i
     }
-
 
     private fun fillProgressBar(
         progressBar: com.google.android.material.progressindicator.CircularProgressIndicator,
@@ -212,21 +219,14 @@ class StatisticsFragment : Fragment() {
         doneCuriosities:Int,
         totalCuriosities: Int
     ) {
-        //deciding the color
-        val loadingColor = ContextCompat.getColor(fragmentContext, R.color.teal_200)
+        //funzione per riempire la progress bar in modo animato di una certa percentuale
+        //decisione del colore
+        val loadingColor = ContextCompat.getColor(fragmentContext, R.color.teal_200) //colore di caricamento della progress bar
         val color = when (statType) {
-            "general" -> {
-                ContextCompat.getColor(fragmentContext, R.color.primary_light)
-            }
-            "known" -> {
-                ContextCompat.getColor(fragmentContext, R.color.teal_700)
-            }
-            "unknown" -> {
-                ContextCompat.getColor(fragmentContext, android.R.color.holo_red_dark)
-            }
-            else -> {
-                ContextCompat.getColor(fragmentContext, R.color.primary_light)
-            }
+            "general" -> { ContextCompat.getColor(fragmentContext, R.color.primary_light) }
+            "known" -> { ContextCompat.getColor(fragmentContext, R.color.teal_700) }
+            "unknown" -> { ContextCompat.getColor(fragmentContext, android.R.color.holo_red_dark) }
+            else -> { ContextCompat.getColor(fragmentContext, R.color.primary_light) }
         }
         //get percentage -> x:100 = doneCur:totalCur   0:10 000= done:total  add 1*100 per sec
         var perc = 1f
@@ -236,35 +236,44 @@ class StatisticsFragment : Fragment() {
             perc*=10f
         }
         var percInt = 0f
-        //fill the progress bar with the data retrieved
+        //setting del timer
         ContextCompat.getMainExecutor(fragmentContext).execute {
             progressBar.progress = 0
             countdown = object : CountDownTimer(
-                1000,
+                1000,  //->1 secondo
                 100) {
                 override fun onTick(millisUntilFinished: Long) {//progress bar fills up
-                    progressBar.progress += perc.toInt()
+                    progressBar.progress += perc.toInt() //incremento
                     progressBar.setIndicatorColor(loadingColor)
                     tv.setTextColor(loadingColor)
                     if(perc!=0f)
                         percInt = perc/10f
-                    tv.text = "${percInt.roundToInt()}% - $doneCuriosities/$totalCuriosities"
+                    //tv.text = "${percInt.roundToInt()}% - $doneCuriosities/$totalCuriosities"
+                    tv.text = getString(
+                        R.string.string_with_placeholders,
+                        "${percInt.roundToInt()}%",
+                        doneCuriosities,
+                        totalCuriosities
+                    )
                 }
 
                 override fun onFinish() {
+                    //resetto i colori
                     progressBar.setIndicatorColor(color)
                     tv.setTextColor(color)
                 }
-            }.start()
+            }.start() //avvio il timer che disegna le bars
         }
     }
 
     private fun resetProgressBars() {
+        //usata per resettare il progresso di ogni bar
         binding.progressTopic.progress = 0
         binding.progressGeneral.progress = 0
     }
 
     private fun getResponseUsingCallback(callback: FirebaseCallback) {
+        //mette i valori dal db in repository
         repository.getResponseFromRealtimeDatabaseUsingCallback(callback)
     }
 

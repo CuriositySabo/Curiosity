@@ -63,4 +63,5 @@
     <string name="stats_unknown_description">unknown</string>
     <string name="stats_general_tv">Completamento:</string>
     <string name="stats_val_default">val/val</string>
+    <string name="string_with_placeholders">%1$s - %2$d/%3$d</string>
 </resources>

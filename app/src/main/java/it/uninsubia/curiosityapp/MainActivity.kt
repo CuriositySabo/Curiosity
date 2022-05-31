@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 if (flag) {
                     // Se lo attivi lancia la prima notifica
                     // Abilita il receiver
-                    context.packageManager.setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED , PackageManager.DONT_KILL_APP);
+                    context.packageManager.setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED , PackageManager.DONT_KILL_APP)
                     Utility.notificationLauncher(context)
                 } else {
                     // Se lo disattivi cancella la notifica corrente
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                         component,
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                         PackageManager.DONT_KILL_APP
-                    );
+                    )
                 }
             }
         }

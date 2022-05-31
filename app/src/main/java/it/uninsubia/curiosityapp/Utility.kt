@@ -188,6 +188,7 @@ class Utility() {
         }
 
         fun initTopicList(): ArrayList<TopicsModel> {
+            //inizializza la lista che cnterrà le informazioni di ogni topic: nome, immagine e un booleano
             val list: ArrayList<TopicsModel> = ArrayList()
             list.add(
                 TopicsModel(
