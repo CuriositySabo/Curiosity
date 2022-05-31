@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun filldb() {
         val child = "curiosities"
+
         // TECNOLOGIA
         var topic = "Tecnologia"
 
@@ -43,6 +44,34 @@ class MainActivity : AppCompatActivity() {
             "La Biblioteca pubblica di New York ha installato dei piccoli treni per poter consegnare i libri. Questi trenini corrono dal magazzino fino al terzo piano"
         var code = "$title $text $topic".hashCode()
         var curiosityData = CuriosityData(title, text, topic)
+        db.child(child).child(code.toString()).setValue(curiosityData)
+
+        title = "Micro computer"
+        text =
+            "Le schede SIM sono computer autonomi dotati di una propria CPU da 30 mhz, 64 kb di RAM e un po ‘di spazio di archiviazione"
+        code = "$title $text $topic".hashCode()
+        curiosityData = CuriosityData(title, text, topic)
+        db.child(child).child(code.toString()).setValue(curiosityData)
+
+        title = "Computer Deterministici"
+        text =
+            "Per definizione, un computer non può produrre risultati casuali, quindi i generatori di numeri casuali sono basati su un valore fisso e non veramente casuali"
+        code = "$title $text $topic".hashCode()
+        curiosityData = CuriosityData(title, text, topic)
+        db.child(child).child(code.toString()).setValue(curiosityData)
+
+        title = "Walkman Mania"
+        text =
+            "Tra il 1979 ed il 2010, la Sony ha venduto circa 385 milioni di lettori di cassette portatili Walkman"
+        code = "$title $text $topic".hashCode()
+        curiosityData = CuriosityData(title, text, topic)
+        db.child(child).child(code.toString()).setValue(curiosityData)
+
+        title = "Brain Charger"
+        text =
+            "Secondo le stime, utilizzando l’elettricità generata dal tuo cervello, potresti caricare la batteria di un iPhone in poco meno di 70 ore"
+        code = "$title $text $topic".hashCode()
+        curiosityData = CuriosityData(title, text, topic)
         db.child(child).child(code.toString()).setValue(curiosityData)
 
         title = "AI Halo"
@@ -147,13 +176,6 @@ class MainActivity : AppCompatActivity() {
 
         //CUCINA
         topic = "Cucina"
-
-        title = "Prima Pizza"
-        text =
-            "La pizza ha comunque origine antichissime, addirittura si pensa che già gli Etruschi ne facessero delle grandi scorpacciate. Il termine pizza deriverebbe da pinsa, participio passato del verbo latino pinsare che significa pestare, schiacciare, riferito dunque alla forma. La primissima attestazione del vocabolo pizza è datata prima dell'anno Mille, come \"pizza de pane\": una focaccia che accompagnava carne, pesce o verdure, citata da parecchi autori cinquecenteschi."
-        code = "$title $text $topic".hashCode()
-        curiosityData = CuriosityData(title, text, topic)
-        db.child(child).child(code.toString()).setValue(curiosityData)
 
         title = "Nostra Pizza"
         text =
