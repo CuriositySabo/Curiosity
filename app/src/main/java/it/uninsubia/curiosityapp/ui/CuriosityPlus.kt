@@ -6,15 +6,19 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import it.uninsubia.curiosityapp.*
 import it.uninsubia.curiosityapp.database.CuriositiesRepository
 import it.uninsubia.curiosityapp.database.CuriosityData
 import it.uninsubia.curiosityapp.database.FirebaseCallback
 import it.uninsubia.curiosityapp.database.Response
 import it.uninsubia.curiosityapp.databinding.ActivityCuriosityPlusBinding
+import it.uninsubia.curiosityapp.ui.topics.TopicsModel
 import kotlin.random.Random
 
 class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
@@ -29,6 +33,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     private lateinit var totalcuriositiesMap: HashMap<String, Int> //mappa con tutte le curiosità
 
     private lateinit var currentCuriosity: CuriosityData
+    private lateinit var listOfImages: ArrayList<TopicsModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +45,8 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 curiositiesList = convertResponse(response)
                 // scarico dal db la mappa con il numero massimo di curiosità per ogni topic
                 totalcuriositiesMap = Utility.getMapOfTopicsCuriosities(curiositiesList)
+                //ottengo la lista di immagini da mostrare
+                listOfImages = Utility.initTopicList()
                 Log.e(tag, "PRIMA")
             }
         })
@@ -187,8 +194,10 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 currentCuriosity = generateCuriosity(baseContext, curiositiesList, totalcuriositiesMap)
                 if (currentCuriosity != CuriosityData()) {
                     binding.tvGame.text = currentCuriosity.text
+                    showImage(true)
                 } else {
                     binding.tvGame.text = defaultText
+                    showImage(false)
                     binding.buttonSapevo.visibility = View.GONE
                     binding.buttonNonSapevo.visibility = View.GONE
                 }
@@ -215,8 +224,10 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         currentCuriosity = generateCuriosity(this, curiositiesList, totalcuriositiesMap)
         if (currentCuriosity != CuriosityData()) {
             binding.tvGame.text = currentCuriosity.text
+            showImage(true)
         } else {
             binding.tvGame.text = defaultText
+            showImage(false)
             binding.buttonSapevo.visibility = View.GONE
             binding.buttonNonSapevo.visibility = View.GONE
         }
@@ -269,8 +280,10 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
         currentCuriosity = generateCuriosity(this, curiositiesList, totalcuriositiesMap)
         if (currentCuriosity != CuriosityData()) {
             binding.tvGame.text = currentCuriosity.text
+            showImage(true)
         } else {
             binding.tvGame.text = defaultText
+            showImage(false)
             binding.buttonSapevo.visibility = View.GONE
             binding.buttonNonSapevo.visibility = View.GONE
         }
@@ -284,6 +297,47 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
                 )
             )
             binding.gameProgressBar.progress -= 1
+        }
+    }
+
+    private fun showImage(flag: Boolean)
+    {
+        val requestOptions = RequestOptions()
+            .placeholder(R.color.bg_dark)
+            .error(R.color.bg_dark)
+        if (flag) {
+            //carico l'immagine
+            var indexElement =0
+            when(currentCuriosity.topic) {
+                "Cinema" -> {
+                    indexElement = 0
+                }
+                "Cucina" -> {
+                    indexElement = 1
+                }
+                "Storia" -> {
+                    indexElement = 2
+                }
+                "Tecnologia" -> {
+                    indexElement = 3
+                }
+                "Sport" -> {
+                    indexElement = 4
+                }
+                else -> {}
+            }
+            binding.ivGame.scaleType = ImageView.ScaleType.FIT_XY
+            Glide.with(this)
+                .applyDefaultRequestOptions(requestOptions)
+                .load(listOfImages[indexElement].image)
+                .into(binding.ivGame)
+        }
+        else {
+            binding.ivGame.scaleType = ImageView.ScaleType.CENTER
+            Glide.with(this)
+                .applyDefaultRequestOptions(requestOptions)
+                .load(R.mipmap.ic_launcher_foreground)
+                .into(binding.ivGame)
         }
     }
 }
