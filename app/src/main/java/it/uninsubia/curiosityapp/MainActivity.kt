@@ -3,50 +3,73 @@ package it.uninsubia.curiosityapp
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import it.uninsubia.curiosityapp.databinding.ActivityMainBinding
+import it.uninsubia.curiosityapp.databinding.ActivityNavDrawerBinding
 import java.io.File
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var listener: OnSharedPreferenceChangeListener
+    private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
-    private val tag = "MainActivity"
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityNavDrawerBinding
 
-    private lateinit var layout: ActivityMainBinding
     private val channelid = "notifyCuriosity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layout = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(layout.root)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        binding = ActivityNavDrawerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        setNavDrawer()
+
+        initOperations()
+    }
+
+    private fun setNavDrawer() {
+        //action bar
+        setSupportActionBar(binding.appBarNavDrawer.toolbar)
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home,
+                R.id.nav_topics,
+                R.id.nav_statistics,
+                R.id.nav_settings,
+                R.id.nav_logout),
+            drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun initOperations() {
         initializeFiles()
         auth = FirebaseAuth.getInstance()
-
         createNotificationchanel() // creazione del canale di notifica
-
-        getNotificationStatus()
-
-
-        val navdrawerIntent = Intent(this, nav_drawer::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(navdrawerIntent)
-
-
+        //getNotificationStatus()
         registerSettingsListener(this)
-
-
     }
 
     // legge le sharedpreferences per capire se deve schedulare una notifica
@@ -72,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // inizializza i file da utilizzare se non esistono già
     private fun initializeFiles() {
         val directory = File(this.filesDir, "tmp") // crea la directory tmp
         if (!directory.exists()) {
@@ -87,10 +111,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // aggiungo i listener per le impostazioni
     private fun registerSettingsListener(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
-        listener = OnSharedPreferenceChangeListener { prefs, key ->
+        listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             // Implementation
             if (key.equals("notification")) {
                 val flag = prefs.getBoolean("notification", false)
@@ -102,5 +127,4 @@ class MainActivity : AppCompatActivity() {
 
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
-
 }

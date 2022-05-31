@@ -201,7 +201,7 @@ class CuriosityPlus : AppCompatActivity(), View.OnClickListener {
     private fun exitListener() {
         //return to home fragment
         startActivity(
-            Intent(this, nav_drawer::class.java)
+            Intent(this, MainActivity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
