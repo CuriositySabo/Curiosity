@@ -7,7 +7,7 @@ data class KnownCuriositiesData(var knowncuriosities: HashMap<String, HashMap<In
 
     fun getSize(): Int {
         var count = 0
-        knowncuriosities.forEach() {
+        knowncuriosities.forEach {
             count += it.value.size
         }
         return count

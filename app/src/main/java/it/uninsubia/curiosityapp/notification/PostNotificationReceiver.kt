@@ -87,7 +87,7 @@ class PostNotificationReceiver : BroadcastReceiver() {
         val possibleTopics = Utility.listChosenTopics(context)
         // per ognuno di essi controllo che non siano già state ricevute tutte le curiosità
         // se sono già state ricevute tutte levo il topic dai topic possibili
-        totalcuriositiesMap.forEach() {
+        totalcuriositiesMap.forEach {
             val key = it.key
             if (it.value == alreadyInReceivedCounter[key]) {
                 possibleTopics.remove(key)

@@ -19,7 +19,7 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.PrintWriter
 
-class Utility() {
+class Utility {
 
     companion object {
 
@@ -66,7 +66,7 @@ class Utility() {
             val map = KnownCuriositiesData()
             val topics = initTopicList()
             for (topic in topics) {
-                map.knowncuriosities[topic.topicName] = hashMapOf<Int, Boolean>()
+                map.knowncuriosities[topic.topicName] = hashMapOf()
             }
             val directory = File(context.filesDir, "tmp") // path directory tmp
             val filepath = File(directory, "knowncuriosities.json") // path del file
@@ -198,35 +198,35 @@ class Utility() {
             list.add(
                 TopicsModel(
                     "Cinema",
-                    "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/cinema.jpg",
+                    "https://raw.githubusercontent.com/CuriositySabo/images/master/topics/cinema.jpg",
                     true
                 )
             )
             list.add(
                 TopicsModel(
                     "Cucina",
-                    "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/cucina.jpg",
+                    "https://raw.githubusercontent.com/CuriositySabo/images/master/topics/cucina.jpg",
                     true
                 )
             )
             list.add(
                 TopicsModel(
                     "Storia",
-                    "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/storia2.jpg",
+                    "https://raw.githubusercontent.com/CuriositySabo/images/master/topics/storia2.jpg",
                     true
                 )
             )
             list.add(
                 TopicsModel(
                     "Tecnologia",
-                    "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/tecnologia.jpg",
+                    "https://raw.githubusercontent.com/CuriositySabo/images/master/topics/tecnologia.jpg",
                     true
                 )
             )
             list.add(
                 TopicsModel(
                     "Sport",
-                    "https://raw.githubusercontent.com/shishioTsukasa/Immagini/master/topics/sport.jpg",
+                    "https://raw.githubusercontent.com/CuriositySabo/images/master/topics/sport.jpg",
                     true
                 )
             )
@@ -269,7 +269,7 @@ class Utility() {
         // Crea una lista con tutti i topic esistenti sul db
         fun listChosenTopics(context: Context): ArrayList<String> {
             // leggo tutti i topics esistenti
-            val topics = Utility.readTopicsFile(context)
+            val topics = readTopicsFile(context)
 
             // in chosenfield  metto i topics checkati dall'utente
             val chosenFields = ArrayList<String>()

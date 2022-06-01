@@ -19,7 +19,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         //serve per resettare il file contenente le curiosità sapute e non sapute
         val resetPreference: Preference? = findPreference("resetBtn") as Preference?
-        resetPreference!!.setOnPreferenceClickListener() {
+        resetPreference!!.setOnPreferenceClickListener {
             resetReceivedCuriosities(requireContext())
             Toast.makeText(
                 requireContext(),
@@ -34,7 +34,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val map = KnownCuriositiesData()
         val topics = Utility.initTopicList()
         for (topic in topics) {
-            map.knowncuriosities[topic.topicName] = hashMapOf<Int, Boolean>()
+            map.knowncuriosities[topic.topicName] = hashMapOf()
         }
         val directory = File(context.filesDir, "tmp") // path directory tmp
         val filepath = File(directory, "knowncuriosities.json") // path del file
