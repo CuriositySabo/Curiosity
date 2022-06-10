@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import it.uninsubia.curiosityapp.ui.authentication.LoginActivity
 import it.uninsubia.curiosityapp.databinding.FragmentLogoutBinding
+import it.uninsubia.curiosityapp.ui.authentication.LoginActivity
 
 class LogoutFragment : Fragment() {
 
@@ -19,13 +19,20 @@ class LogoutFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentLogoutBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val auth = FirebaseAuth.getInstance()
-        auth.signOut()
-        startActivity(Intent(context, LoginActivity::class.java))
         return root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val auth = FirebaseAuth.getInstance()
+        auth.signOut()
+        val intent = Intent(context, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        this.onDestroyView()
     }
 
     override fun onDestroyView() {

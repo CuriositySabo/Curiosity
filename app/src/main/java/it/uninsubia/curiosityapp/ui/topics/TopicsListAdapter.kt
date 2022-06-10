@@ -17,21 +17,20 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.io.PrintWriter
-import java.lang.Exception
+
 //per riempire il recycler view con le card view
-class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
-{
-    private var items : List<TopicsModel> = ArrayList()
+class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var items: List<TopicsModel> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return TopicsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.card_layout,parent,false), parent.context
+            LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false),
+            parent.context
         )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder)
-        {
+        when (holder) {
             is TopicsViewHolder -> {
                 holder.bind(items[position])
             }
@@ -43,14 +42,13 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
 
     //riempio la lista
-    fun submitList(topicList: List<TopicsModel>)
-    {
+    fun submitList(topicList: List<TopicsModel>) {
         items = topicList
     }
 
     //definisco il viewholder
-    class TopicsViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView)
-    {
+    class TopicsViewHolder(itemView: View, val context: Context) :
+        RecyclerView.ViewHolder(itemView) {
         private val topicsImage: ImageView = itemView.findViewById(R.id.iv_topic_image)
         private val topicsName: TextView = itemView.findViewById(R.id.topic_name)
         private val topicsCheck: CheckBox = itemView.findViewById(R.id.selected)
@@ -80,12 +78,11 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         }
 
         private fun onClick(v: View, context: Context) {
-            if(v !is CheckBox)
-            {
+            if (v !is CheckBox) {
                 topicsCheck.isChecked = !topicsCheck.isChecked
             }
             //recupero la lista
-            var jsonString= ""
+            var jsonString = ""
             val list: List<TopicsModel>
             val directory = File("${context.filesDir}/tmp")
             val filePath = File("$directory/topics.json")
@@ -101,8 +98,7 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
             list = gson.fromJson(jsonString, dataType)
             //accedo alla lista
             var indexElement = 0
-            when(topicsName.text)
-            {
+            when (topicsName.text) {
                 "Cinema" -> {
                     indexElement = 0
                 }
@@ -121,14 +117,12 @@ class TopicsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
             }
             list[indexElement].checked = topicsCheck.isChecked
             //scrivo la lista su file
-            try{
-                PrintWriter(FileWriter(filePath)).use{
+            try {
+                PrintWriter(FileWriter(filePath)).use {
                     jsonString = gson.toJson(list)
                     it.write(jsonString)
                 }
-            }
-            catch (e: Exception)
-            {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

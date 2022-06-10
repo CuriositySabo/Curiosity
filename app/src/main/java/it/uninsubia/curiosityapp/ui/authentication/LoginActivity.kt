@@ -14,9 +14,9 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import it.uninsubia.curiosityapp.ui.MainActivity
 import it.uninsubia.curiosityapp.R
 import it.uninsubia.curiosityapp.databinding.ActivityLoginBinding
+import it.uninsubia.curiosityapp.ui.MainActivity
 
 // Activity realizzata per gestire la form di Login mostrata all'utente
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
@@ -38,7 +38,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         FirebaseApp.initializeApp(this)
         auth = Firebase.auth
         if (auth.currentUser != null && auth.currentUser!!.isEmailVerified) {
-            startActivity(Intent(this, MainActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
             this.finish()
         }
 
@@ -93,6 +95,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     val user = FirebaseAuth.getInstance().currentUser
                     if (user!!.isEmailVerified) {
                         val intent = Intent(this, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         startActivity(intent)
                         Toast.makeText(
                             applicationContext,
